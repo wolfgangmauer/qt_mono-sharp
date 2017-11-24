@@ -27,4 +27,7 @@ Namespace Qt
   HBoxLayout
   VBoxLayout
   UiLoader
+  UiLoaderAttribute
   ....
+  
+  Just take a look at the example.
