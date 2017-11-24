@@ -7,25 +7,25 @@ namespace TestQtMonoSharp
 {
 	public class MessagePanel : Dialog
 	{
-		[UiLoaderAttribute("CAPTION")]
+		[UiLoader("CAPTION")]
 		Label _caption;
 
-		[UiLoaderAttribute("NOW")]
+		[UiLoader("NOW")]
 		Label _now;
 
-		[UiLoaderAttribute("NEXT")]
+		[UiLoader("NEXT")]
 		Label _next;
 
-		[UiLoaderAttribute("REDBUTTON")]
+		[UiLoader("REDBUTTON")]
 		Label _redlabel;
 
-		[UiLoaderAttribute()]
+		[UiLoader()]
 		Label GREENBUTTON;
 
-		[UiLoaderAttribute()]
+		[UiLoader()]
 		Label YELLOWBUTTON;
 
-		[UiLoaderAttribute()]
+		[UiLoader()]
 		Label BLUEBUTTON;
 
 		public MessagePanel (Qt.Widget parent = null) : base(IntPtr.Zero)
