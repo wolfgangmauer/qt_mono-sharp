@@ -9,27 +9,50 @@ using a C-Bridge (glue) to wrap the Qt C++ functions using "mono embedded".
 ## Namespace Qt
 
   Rect
+  
   Size
+  
   SizePolicy
+  
   Style
+  
   Font
+  
   Application
+  
   GuiApplication
+  
   CoreApplication
+  
   MainWindow
+  
   Dialog
+  
   Object
+  
   Widget
+  
   Line
+  
   Frame
+  
   Label
+  
   ProgressBar
+  
   Layout
+  
   BoxLayout
+  
   HBoxLayout
+  
   VBoxLayout
+  
   UiLoader
+  
   UiLoaderAttribute
+  
   ....
+  
   
   Just take a look at the example.
