@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2C5FA56E-9EAA-4E8E-B636-A5FA927972ED}</ProjectGuid>
+    <Compiler>
+      <Compiler ctype="GccCompiler" />
+    </Compiler>
+    <Language>C</Language>
+    <Target>Bin</Target>
+    <Packages>
+      <Packages>
+        <Package file="/usr/lib/x86_64-linux-gnu/pkgconfig/Qt5Core.pc" name="Qt5 Core" IsProject="False" />
+        <Package file="/usr/lib/pkgconfig/mono-2.pc" name="Mono" IsProject="False" />
+        <Package file="/usr/lib/x86_64-linux-gnu/pkgconfig/Qt5Gui.pc" name="Qt5 Gui" IsProject="False" />
+        <Package file="/usr/lib/x86_64-linux-gnu/pkgconfig/Qt5UiTools.pc" name="Qt5 UiTools" IsProject="False" />
+        <Package file="/usr/lib/x86_64-linux-gnu/pkgconfig/Qt5Widgets.pc" name="Qt5 Widgets" IsProject="False" />
+        <Package file="/usr/lib/x86_64-linux-gnu/pkgconfig/glib-2.0.pc" name="GLib" IsProject="False" />
+      </Packages>
+    </Packages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>Debug\bin</OutputPath>
+    <OutputName>qt_mono-sharpglue</OutputName>
+    <CompileTarget>SharedLibrary</CompileTarget>
+    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>Release\bin</OutputPath>
+    <OutputName>qt_mono-sharpglue</OutputName>
+    <CompileTarget>SharedLibrary</CompileTarget>
+    <OptimizationLevel>3</OptimizationLevel>
+    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="monointernal.cpp" />
+    <Compile Include="monointernal_sizepolicy.cpp" />
+    <Compile Include="QGlueApplication.cpp" />
+    <Compile Include="QGlueBoxLayout.cpp" />
+    <Compile Include="QGlueDialog.cpp" />
+    <Compile Include="QGlueFont.cpp" />
+    <Compile Include="QGlueFrame.cpp" />
+    <Compile Include="QGlueGridLayout.cpp" />
+    <Compile Include="QGlueHBoxLayout.cpp" />
+    <Compile Include="QGlueLabel.cpp" />
+    <Compile Include="QGlueLayout.cpp" />
+    <Compile Include="QGlueMainWindow.cpp" />
+    <Compile Include="QGlueObject.cpp" />
+    <Compile Include="QGlueProgressBar.cpp" />
+    <Compile Include="QGlueSizePolicy.cpp" />
+    <Compile Include="QGlueUiLoader.cpp" />
+    <Compile Include="QGlueVBoxLayout.cpp" />
+    <Compile Include="QGlueWidget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="QGlueApplication.h" />
+    <None Include="QGlueBoxLayout.h" />
+    <None Include="QGlueDialog.h" />
+    <None Include="QGlueFont.h" />
+    <None Include="QGlueFrame.h" />
+    <None Include="QGlueGridLayout.h" />
+    <None Include="QGlueHBoxLayout.h" />
+    <None Include="QGlueLabel.h" />
+    <None Include="QGlueLayout.h" />
+    <None Include="QGlueMainWindow.h" />
+    <None Include="QGlueObject.h" />
+    <None Include="QGlueProgressBar.h" />
+    <None Include="QGlueSizePolicy.h" />
+    <None Include="QGlueUiLoader.h" />
+    <None Include="QGlueVBoxLayout.h" />
+    <None Include="QGlueWidget.h" />
+    <None Include="qt_mono-sharpglue.cproj" />
+  </ItemGroup>
+</Project>
