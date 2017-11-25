@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qt_mono-sharp", "qt-sharp\qt_mono-sharp.csproj", "{5891A582-7C06-458C-AA01-9387E3C26A16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qt_mono-sharp", "qt_mono-sharp\qt_mono-sharp.csproj", "{5891A582-7C06-458C-AA01-9387E3C26A16}"
+EndProject
+Project("{2857B73E-F847-4B02-9238-064979017E93}") = "qt_mono-sharpglue", "qt_mono-sharpglue\qt_mono-sharpglue.cproj", "{9972227E-28EE-495E-ACDD-D542E3F01FD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +15,9 @@ Global
 		{5891A582-7C06-458C-AA01-9387E3C26A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5891A582-7C06-458C-AA01-9387E3C26A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5891A582-7C06-458C-AA01-9387E3C26A16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9972227E-28EE-495E-ACDD-D542E3F01FD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9972227E-28EE-495E-ACDD-D542E3F01FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9972227E-28EE-495E-ACDD-D542E3F01FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9972227E-28EE-495E-ACDD-D542E3F01FD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
