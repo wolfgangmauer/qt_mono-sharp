@@ -3,3 +3,6 @@
 ################################################################################
 
 /TextQtWidget/bin
+/qt-sharp/obj/Debug/qt_mono-sharp.dll
+/qt-sharp/obj/Debug/qt_mono-sharp.pdb
+/qt-sharp/obj/Debug
