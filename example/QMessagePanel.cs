@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Qt;
 using System.IO;
 using System.Reflection;
@@ -30,7 +30,7 @@ namespace TestQtMonoSharp
 
 		public MessagePanel (Qt.Widget parent = null) : base(IntPtr.Zero)
 		{
-			Raw = new UiLoader(parent).Load( uiFile, this);
+			Raw = new UiLoader(this).Load(uiFile);
 
 			_caption.Text = "Caption";
 			_redlabel.Text = "Nein";
