@@ -1,0 +1,5 @@
+Name: qt_mono-sharpglue
+Description: 
+Version: 0.1
+Libs: -L"/home/wolfgang/Projects/qt_mono-sharp/qt_mono-sharpglue/Release/bin" -lqt_mono-sharpglue
+Cflags: -I"/home/wolfgang/Projects/qt_mono-sharp/qt_mono-sharpglue"
