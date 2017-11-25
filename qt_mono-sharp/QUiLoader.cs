@@ -24,7 +24,7 @@ namespace Qt
 		public IntPtr Load(string uiFile)
 		{
 			var retVal = qt_uiloader_load (Handle, uiFile, _parent != null ? _parent.Handle : IntPtr.Zero);			
-			if (_parent != null)
+			if (retVal != IntPtr.Zero)
 			{
 				var fields4Loader = _parent.GetType().GetFields(BindingFlags.NonPublic| BindingFlags.Instance).Where(field => field.IsDefined(typeof(UiLoaderAttribute), false));
 				foreach (var field in fields4Loader)
