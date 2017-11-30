@@ -1,23 +1,28 @@
 ﻿using System;
 using Qt;
 using System.Threading;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace TestQtMonoSharp
 {
 	class MainClass
 	{
+		[DllImport("__Internal", EntryPoint="mono_get_runtime_build_info")]
+		public extern static string GetMonoVersion();
+
 		delegate void HideFromJit(string[] args);
 
 		public static void Main (string[] args)
 		{
-			HideFromJit d = StartUp;
-			d (args);
+			GLib.Global.ProgramName = "ProgramName";
+			StartUp (args);
+//			HideFromJit d = StartUp;
+//			d (args);
 		}
 
 		public static void StartUp(string[] args)
 		{
-			GLib.Global.ProgramName = "ProgramName";
-
 			CoreApplication.InitMonoInternal ();
 
 			Application.Attribute = ApplicationAttribute.AA_EnableHighDpiScaling;
@@ -28,7 +33,7 @@ namespace TestQtMonoSharp
 			mainWindow.FixedSize = new Size(1920/2, 1080/2);
 			mainWindow.Show ();
 
-			var splash = new MessagePanel (mainWindow);
+			var splash = new MessagePanel ();
 			splash.Exec ();
 
 			app.Exec ();

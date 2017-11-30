@@ -28,15 +28,17 @@ namespace TestQtMonoSharp
 		[UiLoader()]
 		Label BLUEBUTTON;
 
-		public MessagePanel (Qt.Widget parent = null) : base(IntPtr.Zero)
-		{
-			Raw = new UiLoader(this).Load(uiFile);
+		[UiLoader()]
+		Label label;
 
-			_caption.Text = "Caption";
-			_redlabel.Text = "Nein";
-			GREENBUTTON.Text = "Ja";
-			YELLOWBUTTON.Text = string.Empty;
-			BLUEBUTTON.Text ="Optionen";
+		public MessagePanel (Qt.Widget parent = null) : base(parent)
+		{
+//			_caption.Text = "Caption";
+//			_redlabel.Text = "Nein";
+//			GREENBUTTON.Text = "Ja";
+//			YELLOWBUTTON.Text = string.Empty;
+//			BLUEBUTTON.Text ="Optionen";
+			//label.Text = "abc";
 		}
 	}
 }
