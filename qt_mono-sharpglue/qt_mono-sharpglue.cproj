@@ -103,26 +103,7 @@
     <None Include="QGlueVBoxLayout.h" />
     <None Include="QGlueWidget.h" />
     <None Include="qt_mono-sharpglue.cproj" />
-    <None Include="moc\moc_application.cpp" />
-    <None Include="moc\moc_boxlayout.cpp" />
-    <None Include="moc\moc_dialog.cpp" />
-    <None Include="moc\moc_font.cpp" />
-    <None Include="moc\moc_frame.cpp" />
-    <None Include="moc\moc_gridlayout.cpp" />
-    <None Include="moc\moc_hboxlayout.cpp" />
-    <None Include="moc\moc_label.cpp" />
-    <None Include="moc\moc_layout.cpp" />
-    <None Include="moc\moc_mainwindow.cpp" />
-    <None Include="moc\moc_object.cpp" />
-    <None Include="moc\moc_progressbar.cpp" />
-    <None Include="moc\moc_sizepolicy.cpp" />
-    <None Include="moc\moc_uiloader.cpp" />
-    <None Include="moc\moc_vboxlayout.cpp" />
-    <None Include="moc\moc_widget.cpp" />
     <None Include="QGlueTableView.cpp" />
     <None Include="QGlueTableView.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="moc\" />
   </ItemGroup>
 </Project>

@@ -14,9 +14,6 @@ protected:
 
 private:
 	MonoObject* _thisObject;
-//	MonoClass* _klass;
-//	MonoMethod* _keyPressEventMethod;
-//	MonoMethod* _keyReleaseEventMethod;
 };
 
 //extern "C" void* qt_dialog_new(void* parent);
