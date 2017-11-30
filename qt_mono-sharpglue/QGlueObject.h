@@ -14,9 +14,10 @@ typedef MonoObject* (*getmanangedobjectcallback) ();
 
 class GlueObject : public QObject
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
 	GlueObject(MonoObject* thisObject, GlueObject* parent = 0);
+	void setObjectName(MonoString*);
 
 private:
 	MonoObject* _thisObject;

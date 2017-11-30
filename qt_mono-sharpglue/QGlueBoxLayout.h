@@ -7,7 +7,7 @@
 
 class GlueBoxLayout : public QBoxLayout
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     GlueBoxLayout(MonoObject*, QBoxLayout::Direction dir, GlueWidget* parent = 0);
 private:

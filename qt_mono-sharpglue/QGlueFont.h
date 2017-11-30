@@ -3,7 +3,7 @@
 
 class GlueFont : public QFont
 {
-    Q_GADGET
+    //Q_GADGET
 public:
     GlueFont();
     GlueFont(char* family, int pointSize, int weight, bool italic);

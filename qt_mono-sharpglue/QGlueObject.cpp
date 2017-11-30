@@ -8,6 +8,13 @@ GlueObject::GlueObject(MonoObject* thisObject, GlueObject* parent) : QObject(par
 	_thisObject = thisObject;
 }
 
+void GlueObject::setObjectName(MonoString* name)
+{
+	char* p = mono_string_to_utf8(name);
+	QObject::setObjectName(p);
+	g_free(p);
+}
+
 MonoMethod* mono_class_get_method_from_name_recursive(MonoClass *klass, std::string name, uint32_t param_count)
 {
 	MonoMethod *method = NULL;

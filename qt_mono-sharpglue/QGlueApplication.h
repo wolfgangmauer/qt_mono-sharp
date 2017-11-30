@@ -11,16 +11,10 @@
 
 class GlueApplication : public QApplication
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
-    GlueApplication(MonoObject*, int, char**);
+    GlueApplication(MonoObject*, int&, char**);
 
 private:
 	MonoObject* _thisObject;
 };
-
-void* qt_coreapplication_new();
-void* qt_guiapplication_new();
-void* qt_application_new(MonoObject*, MonoArray*);
-void qt_application_attribute_set(uint32_t attribute);
-uint32_t qt_application_exec(void*);

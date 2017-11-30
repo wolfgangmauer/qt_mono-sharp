@@ -9,17 +9,41 @@
 #include "QGlueLayout.h"
 #include "QGlueUiLoader.h"
 #include "QGlueProgressBar.h"
+#include "QGlueTableView.h"
+
+//Warning: The data referred to by argc and argv must stay valid for the entire lifetime of the QApplication object.
+//In addition, argc must be greater than zero and argv must contain at least one valid character string." 
+static int argc;
+static char** _argv;
+static GlueApplication* qt_application_new(MonoObject* thisObject, MonoArray* argv)
+{
+	GlueApplication* retVal;
+	argc = mono_array_length (argv);
+	_argv = new char*[argc];
+	for (int i = 0; i < argc; i++)
+		_argv[i] = mono_string_to_utf8(mono_array_get (argv, MonoString*, i));
+	retVal = new GlueApplication(thisObject, argc, _argv);
+	return retVal;
+}
+
+static int qt_application_exec(GlueApplication* application)
+{
+	return application->exec();
+}
+
+static void qt_application_attribute_set(Qt::ApplicationAttribute attribute)
+{
+	GlueApplication::setAttribute(attribute);
+}
 
 static MonoString* qt_objectname_get(GlueObject* obj)
 {
 	return mono_string_new(mono_domain_get (), obj->objectName().toLatin1().data());
 }
 
-static void qt_objectname_set(QObject* obj, MonoString* name)
+static void qt_objectname_set(GlueObject* obj, MonoString* name)
 {
-	char* p = mono_string_to_utf8(name);
-	obj->setObjectName(p);
-	g_free(p);
+	obj->setObjectName(name);
 }
 
 static GlueUiLoader* qt_uiloader_new(MonoObject* obj, GlueObject* parent)
@@ -118,11 +142,9 @@ static void qt_widget_font_set(GlueWidget* widget, GlueFont* font)
 	widget->setFont(*font);
 }
 
-static QFont tmpFont;
 static GlueFont* qt_widget_font_get(GlueWidget* widget)
 {
-	tmpFont = widget->font();
-	return reinterpret_cast<GlueFont*>(&tmpFont);
+	return widget->font();
 }
 
 static double qt_widget_windowopacity_get(GlueWidget* widget)
@@ -135,11 +157,9 @@ static void qt_widget_windowopacity_set(GlueWidget* widget, double windowopacity
 	widget->setWindowOpacity(windowopacity);
 }
 
-static QSizePolicy tmpSizePolicy;
 static QSizePolicy* qt_widget_sizepolicy_get(GlueWidget* widget)
 {
-	tmpSizePolicy = widget->sizePolicy();
-	return &tmpSizePolicy;
+	return widget->sizePolicy();
 }
 
 static void qt_widget_sizepolicy_set(GlueWidget* widget, QSizePolicy* sizePolicy)
@@ -225,11 +245,7 @@ static void qt_widget_adjustsize(GlueWidget* widget)
 
 static void qt_widget_geometry_get(GlueWidget* widget, int* x, int* y, int* width, int* height)
 {
-	QRect rect = widget->geometry();
-	*x = rect.x();
-	*y = rect.y();
-	*width = rect.width();
-	*height = rect.height();
+	widget->geometry(x, y, width, height);
 }
 
 static void qt_widget_geometry_set(GlueWidget* widget, int x, int y, int width, int height)
@@ -403,9 +419,7 @@ static MonoString* qt_label_text_get(GlueLabel* label)
 
 static void qt_label_text_set(GlueLabel* label, MonoString* text)
 {
-	char* p = mono_string_to_utf8(text);
-	label->setText(p);
-	g_free(p);
+	label->setText(text);
 }
 
 static Qt::Alignment qt_label_alignment_get(GlueLabel* label)
@@ -557,13 +571,114 @@ static GlueMainWindow* qt_mainwindow_new(MonoObject* obj, GlueWidget* parent, Qt
 	return new GlueMainWindow(obj, parent, f);
 }
 
-#include "monointernal_sizepolicy.cpp"
+static GlueSizePolicy* qt_sizepolicy_new ()
+{
+	return new GlueSizePolicy();
+}
+
+static GlueSizePolicy* qt_sizepolicy_new_with_policy (QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)
+{
+	return new GlueSizePolicy(horizontal, vertical);
+}
+
+static GlueSizePolicy* qt_sizepolicy_new_with_controltype (QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical, QSizePolicy::ControlType type)
+{
+	return new GlueSizePolicy(horizontal, vertical, type);
+}
+
+static QSizePolicy::Policy qt_sizepolicy_horizontal_get(QSizePolicy* policy)
+{
+	return policy->horizontalPolicy();
+}
+
+static void qt_sizepolicy_horizontal_set(GlueSizePolicy* policy, QSizePolicy::Policy horizontal)
+{
+	policy->setHorizontalPolicy(horizontal);
+}
+
+static QSizePolicy::Policy qt_sizepolicy_vertical_get(GlueSizePolicy* policy)
+{
+	return policy->verticalPolicy();
+}
+
+static void qt_sizepolicy_vertical_set(GlueSizePolicy* policy, QSizePolicy::Policy vertical)
+{
+	policy->setVerticalPolicy(vertical);
+}
+
+static QSizePolicy::ControlType qt_sizepolicy_controltype_get(GlueSizePolicy* policy)
+{
+	return policy->controlType();
+}
+
+static void qt_sizepolicy_controltype_set(GlueSizePolicy* policy, QSizePolicy::ControlType controlType)
+{
+	policy->setControlType(controlType);
+}
+
+static Qt::Orientations qt_sizepolicy_expanding_directions(GlueSizePolicy* policy)
+{
+	return policy->expandingDirections();
+}
+
+static bool qt_sizepolicy_heightforwidth_get(GlueSizePolicy* policy)
+{
+	return policy->hasHeightForWidth();
+}
+
+static void qt_sizepolicy_heightforwidth_set(GlueSizePolicy* policy, bool heightForWidth)
+{
+	policy->setHeightForWidth(heightForWidth);
+}
+
+static bool qt_sizepolicy_widthforheight_get(GlueSizePolicy* policy)
+{
+	return policy->hasHeightForWidth();
+}
+
+static void qt_sizepolicy_widthforheight_set(GlueSizePolicy* policy, bool widthForHeight)
+{
+	policy->setHeightForWidth(widthForHeight);
+}
+
+static int qt_sizepolicy_horizontalstretch_get(GlueSizePolicy* policy)
+{
+	return policy->horizontalStretch();
+}
+
+static void qt_sizepolicy_horizontalstretch_set(GlueSizePolicy* policy, int horizontalStretch)
+{
+	policy->setHorizontalStretch((unsigned char)horizontalStretch);
+}
+
+static bool qt_sizepolicy_verticalstretch_get(GlueSizePolicy* policy)
+{
+	return policy->verticalStretch();
+}
+
+static void qt_sizepolicy_verticalstretch_set(GlueSizePolicy* policy, int verticalStretch)
+{
+	policy->setVerticalStretch((unsigned char)verticalStretch);
+}
+
+static GlueTableView* qt_tableview_new(MonoObject* thisObject, GlueWidget* parent)
+{
+	return new GlueTableView(thisObject, parent);
+}
+
+static QHeaderView* qt_widget_horizontalheader_get(GlueTableView* tableView)
+{
+	return tableView->horizontalHeader();
+}
+
+static QHeaderView* qt_widget_verticalheader_get(GlueTableView* tableView)
+{
+	return tableView->verticalHeader();
+}
 
 extern "C" void qt_application_monointernal_init()
 {
 	mono_add_internal_call ("Qt.Application::qt_application_new", reinterpret_cast<void*>(qt_application_new));
-	mono_add_internal_call ("Qt.Application::qt_guiapplication_new", reinterpret_cast<void*>(qt_guiapplication_new));
-	mono_add_internal_call ("Qt.Application::qt_coreapplication_new", reinterpret_cast<void*>(qt_coreapplication_new));
 	mono_add_internal_call ("Qt.Application::qt_application_exec", reinterpret_cast<void*>(qt_application_exec));
 	mono_add_internal_call ("Qt.CoreApplication::qt_application_attribute_set", reinterpret_cast<void*>(qt_application_attribute_set));
 
@@ -578,6 +693,11 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_exec", reinterpret_cast<void*>(qt_dialog_exec));
 
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_new", reinterpret_cast<void*>(qt_progressbar_new));
+
+	mono_add_internal_call ("Qt.TableView::qt_tableview_new", reinterpret_cast<void*>(qt_tableview_new));
+	mono_add_internal_call ("Qt.TableView::qt_widget_horizontalheader_get", reinterpret_cast<void*>(qt_widget_horizontalheader_get));
+	mono_add_internal_call ("Qt.TableView::qt_widget_verticalheader_get", reinterpret_cast<void*>(qt_widget_verticalheader_get));
+
 
 	mono_add_internal_call ("Qt.Label::qt_label_new", reinterpret_cast<void*>(qt_label_new));
 	mono_add_internal_call ("Qt.Label::qt_label_new_with_text", reinterpret_cast<void*>(qt_label_new_with_text));

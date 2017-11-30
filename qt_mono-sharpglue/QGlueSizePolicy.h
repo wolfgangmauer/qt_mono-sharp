@@ -1,10 +1,9 @@
 ﻿#pragma once
 #include <QSizePolicy>
-#include "QGlueWidget.h"
 
 class GlueSizePolicy : public QSizePolicy
 {
-    Q_GADGET
+    //Q_GADGET
 public:
     GlueSizePolicy();
     GlueSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical);

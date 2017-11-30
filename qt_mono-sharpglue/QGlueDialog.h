@@ -4,7 +4,7 @@
 
 class GlueDialog : public QDialog
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     GlueDialog(MonoObject* thisObject, GlueWidget* parent = 0, Qt::WindowFlags f = 0);
 

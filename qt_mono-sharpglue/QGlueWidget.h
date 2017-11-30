@@ -4,22 +4,30 @@
 #include <QKeyEvent>
 #include "QGlueObject.h"
 #include "QGlueFont.h"
+#include "QGlueSizePolicy.h"
 
 class GlueWidget : public QWidget
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     GlueWidget(MonoObject* thisObject, GlueWidget* parent = 0, Qt::WindowFlags f = 0);
 //	~GlueWidget();
+
+	void geometry(int*, int*, int*, int*);
+	GlueFont* font();
+	GlueSizePolicy* sizePolicy();
 
 protected:
 	void keyPressEvent(QKeyEvent *) override;
 	void keyReleaseEvent(QKeyEvent *) override;
 
-	static int dokeyPressEvent(MonoObject* thisObject, QKeyEvent *keyEvent);
-	static int dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *keyEvent);
+	static void dokeyPressEvent(MonoObject* thisObject, QKeyEvent *keyEvent);
+	static void dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *keyEvent);
 //
 private:
+	QFont glueFont;
+	QSizePolicy glueSizePolicy;
+
 	MonoObject* _thisObject;
 	MonoClass* _klass;
 	MonoMethod* _keyPressEventMethod;

@@ -4,9 +4,11 @@
 
 class GlueFrame : public QFrame
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     GlueFrame(MonoObject* thisObject, GlueWidget* parent = 0);
+private:
+	MonoObject* _thisObject;
 };
 //
 //QFrame* qt_frame_new(QWidget* parent);

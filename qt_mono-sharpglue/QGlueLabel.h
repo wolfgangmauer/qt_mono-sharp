@@ -4,10 +4,14 @@
 
 class GlueLabel : public QLabel
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     GlueLabel(MonoObject* thisObject, GlueWidget *parent=0, Qt::WindowFlags f=0);
     GlueLabel(MonoObject* thisObject, char* text, GlueWidget *parent=0, Qt::WindowFlags f=0);
+
+    void setText(MonoString*);
+private:
+    MonoObject* _thisObject;
 };
 
 //void qt_label_alignment_set(QLabel* label, Qt::Alignment alignment);

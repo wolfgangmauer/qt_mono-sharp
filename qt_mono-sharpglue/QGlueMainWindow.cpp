@@ -14,12 +14,10 @@ GlueMainWindow::~GlueMainWindow()
 
 void GlueMainWindow::keyPressEvent(QKeyEvent *keyEvent)
 {
-	if (GlueWidget::dokeyPressEvent(_thisObject, keyEvent) == -1)
-		QMainWindow::keyPressEvent(keyEvent); // base class implementation
+	GlueWidget::dokeyPressEvent(_thisObject, keyEvent);
 }
 
 void GlueMainWindow::keyReleaseEvent(QKeyEvent *keyEvent)
 {
-	if (GlueWidget::dokeyReleaseEvent(_thisObject, keyEvent) == -1)
-		QMainWindow::keyReleaseEvent(keyEvent);
+	GlueWidget::dokeyReleaseEvent(_thisObject, keyEvent);
 }

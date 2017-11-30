@@ -13,12 +13,10 @@ GlueDialog::GlueDialog(MonoObject* thisObject, GlueWidget* parent, Qt::WindowFla
 
 void GlueDialog::keyReleaseEvent(QKeyEvent *keyEvent)
 {
-	if (GlueWidget::dokeyPressEvent(_thisObject, keyEvent) == -1)
-		QDialog::keyPressEvent(keyEvent); // base class implementation
+	GlueWidget::dokeyPressEvent(_thisObject, keyEvent);
 }
 
 void GlueDialog::keyPressEvent(QKeyEvent *keyEvent)
 {
-	if (GlueWidget::dokeyReleaseEvent(_thisObject, keyEvent) == -1)
-		QDialog::keyReleaseEvent(keyEvent);
+	GlueWidget::dokeyReleaseEvent(_thisObject, keyEvent);
 }

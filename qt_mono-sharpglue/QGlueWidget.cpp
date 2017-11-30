@@ -18,64 +18,87 @@ GlueWidget::GlueWidget(MonoObject* thisObject, GlueWidget* parent, Qt::WindowFla
 //}
 //
 
-int GlueWidget::dokeyPressEvent(MonoObject* thisObject, QKeyEvent *keyEvent)
+void GlueWidget::geometry(int* x, int* y, int* width, int* height)
 {
-	auto klass = mono_object_get_class (thisObject);
-	auto keyPressEventMethod = mono_class_get_method_from_name_recursive(klass, (char*)"KeyPress", 1);
-	void* args[1];
-	MonoObject *result;
-	MonoImage* image = mono_class_get_image(mono_method_get_class(keyPressEventMethod));
-	MonoClass* keyEventArgs = mono_class_from_name (image, "Qt", "KeyEventArgs");
-	if (keyEventArgs)
-	{
-		result = mono_object_new (mono_object_get_domain(thisObject), keyEventArgs);
-		mono_runtime_object_init (result);
-
-		mono_property_set(result, (char*)"Key", keyEvent->key());
-		mono_property_set(result, (char*)"Modifiers", (int)keyEvent->modifiers());
-		mono_property_set(result, (char*)"Text", mono_string_new(mono_object_get_domain(thisObject), keyEvent->text().toLatin1().data()));
-		mono_property_set(result, (char*)"AutoRepeat", keyEvent->isAutoRepeat());
-		mono_property_set(result, (char*)"Count", keyEvent->count());
-	}
-	args[0] = result;
-	MonoMethod* method = mono_object_get_virtual_method (thisObject, keyPressEventMethod);
-	result = mono_runtime_invoke(method, thisObject, args, NULL);
-	return *(int*)mono_object_unbox (result);
+	QRect rect = QWidget::geometry();
+	*x = rect.x();
+	*y = rect.y();
+	*width = rect.width();
+	*height = rect.height();
 }
 
-int GlueWidget::dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *keyEvent)
+GlueFont* GlueWidget::font()
+{
+	glueFont = QWidget::font();
+	return reinterpret_cast<GlueFont*>(&glueFont);
+}
+
+GlueSizePolicy* GlueWidget::sizePolicy()
+{
+	glueSizePolicy = QWidget::sizePolicy();
+	return reinterpret_cast<GlueSizePolicy*>(&glueSizePolicy);
+}
+
+void GlueWidget::dokeyPressEvent(MonoObject* thisObject, QKeyEvent *keyEvent)
 {
 	auto klass = mono_object_get_class (thisObject);
-	auto keyReleaseEventMethod = mono_class_get_method_from_name_recursive(klass, (char*)"KeyRelease", 1);
+	auto keyPressEventMethod = mono_class_get_method_from_name_recursive(klass, (char*)"OnKeyPress", 1);
 	void* args[1];
-	MonoObject *result;
-	MonoImage* image = mono_class_get_image(mono_method_get_class(keyReleaseEventMethod));
-	MonoClass* keyEventArgs = mono_class_from_name (image, "Qt", "KeyEventArgs");
-	if (keyEventArgs)
+	MonoObject *result = NULL;
+	if (keyPressEventMethod)
 	{
-		result = mono_object_new (mono_object_get_domain(thisObject), keyEventArgs);
-		mono_runtime_object_init (result);
+		MonoImage* image = mono_class_get_image(mono_method_get_class(keyPressEventMethod));
+		MonoClass* keyEventArgs = mono_class_from_name (image, "Qt", "KeyEvent");
+		if (keyEventArgs)
+		{
+			result = mono_object_new (mono_object_get_domain(thisObject), keyEventArgs);
+			mono_runtime_object_init (result);
 
-		mono_property_set(result, (char*)"Key", keyEvent->key());
-		mono_property_set(result, (char*)"Modifiers", (int)keyEvent->modifiers());
-		mono_property_set(result, (char*)"Text", keyEvent->text().toLatin1().data());
-		mono_property_set(result, (char*)"AutoRepeat", keyEvent->isAutoRepeat());
-		mono_property_set(result, (char*)"Count", keyEvent->count());
+			mono_property_set(result, (char*)"Key", keyEvent->key());
+			mono_property_set(result, (char*)"Modifiers", (int)keyEvent->modifiers());
+			mono_property_set(result, (char*)"Text", mono_string_new(mono_object_get_domain(thisObject), keyEvent->text().toLatin1().data()));
+			mono_property_set(result, (char*)"AutoRepeat", keyEvent->isAutoRepeat());
+			mono_property_set(result, (char*)"Count", keyEvent->count());
+		}
+		args[0] = result;
+		MonoMethod* method = mono_object_get_virtual_method (thisObject, keyPressEventMethod);
+		mono_runtime_invoke(method, thisObject, args, NULL);
 	}
-	args[0] = result;
-	MonoMethod* method = mono_object_get_virtual_method (thisObject, keyReleaseEventMethod);
-	result = mono_runtime_invoke(method, thisObject, args, NULL);
-	return *(int*)mono_object_unbox (result);
+}
+
+void GlueWidget::dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *keyEvent)
+{
+	auto klass = mono_object_get_class (thisObject);
+	auto keyReleaseEventMethod = mono_class_get_method_from_name_recursive(klass, (char*)"OnKeyRelease", 1);
+	void* args[1];
+	MonoObject *result = NULL;
+	if (keyReleaseEventMethod)
+	{
+		MonoImage* image = mono_class_get_image(mono_method_get_class(keyReleaseEventMethod));
+		MonoClass* keyEventArgs = mono_class_from_name (image, "Qt", "KeyEvent");
+		if (keyEventArgs)
+		{
+			result = mono_object_new (mono_object_get_domain(thisObject), keyEventArgs);
+			mono_runtime_object_init (result);
+
+			mono_property_set(result, (char*)"Key", keyEvent->key());
+			mono_property_set(result, (char*)"Modifiers", (int)keyEvent->modifiers());
+			mono_property_set(result, (char*)"Text", keyEvent->text().toLatin1().data());
+			mono_property_set(result, (char*)"AutoRepeat", keyEvent->isAutoRepeat());
+			mono_property_set(result, (char*)"Count", keyEvent->count());
+		}
+		args[0] = result;
+		MonoMethod* method = mono_object_get_virtual_method (thisObject, keyReleaseEventMethod);
+		mono_runtime_invoke(method, thisObject, args, NULL);
+	}
 }
 
 void GlueWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
-	if (GlueWidget::dokeyPressEvent(_thisObject, keyEvent) == -1)
-		QWidget::keyPressEvent(keyEvent);
+	dokeyPressEvent(_thisObject, keyEvent);
 }
 
 void GlueWidget::keyReleaseEvent(QKeyEvent *keyEvent)
 {
-	if (GlueWidget::dokeyReleaseEvent(_thisObject, keyEvent) == -1)
-		QWidget::keyReleaseEvent(keyEvent);
+	dokeyReleaseEvent(_thisObject, keyEvent);
 }
