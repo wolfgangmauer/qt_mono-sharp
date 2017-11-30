@@ -60,11 +60,11 @@ namespace Qt
 			ToolButton       = 0x00004000
 		};
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern IntPtr qt_sizepolicy_new ();
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern IntPtr qt_sizepolicy_new_with_policy (Policy horizontal, Policy vertical);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern IntPtr qt_sizepolicy_new_with_controltype (Policy horizontal, Policy vertical, ControlTypeEnum type);
 
 		[XmlIgnore]
@@ -90,9 +90,9 @@ namespace Qt
 			Handle = qt_sizepolicy_new_with_controltype (horizontal, vertical, type);
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern Policy qt_sizepolicy_horizontal_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_horizontal_set (IntPtr raw, Policy horizontal);
 		[XmlAttribute("hsizetype")]
 		public Policy HorizontalPolicy
@@ -105,9 +105,9 @@ namespace Qt
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern Policy qt_sizepolicy_vertical_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_vertical_set (IntPtr raw, Policy vertical);
 		[XmlAttribute("vsizetype")]
 		public Policy VerticalPolicy
@@ -120,9 +120,9 @@ namespace Qt
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern ControlTypeEnum qt_sizepolicy_controltype_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_controltype_set (IntPtr raw, ControlTypeEnum controlType);
 		public ControlTypeEnum ControlType 
 		{
@@ -134,16 +134,16 @@ namespace Qt
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern Orientation qt_sizepolicy_expanding_directions (IntPtr raw);
 		Orientation ExpandingDirections()
 		{
 			return qt_sizepolicy_expanding_directions (Handle);
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern bool qt_sizepolicy_heightforwidth_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_heightforwidth_set (IntPtr raw, bool heightForWidth);
 		public bool HeightForWidth 
 		{
@@ -157,9 +157,9 @@ namespace Qt
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern bool qt_sizepolicy_widthforheight_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_widthforheight_set (IntPtr raw, bool widthForHeight);
 		public bool WidthForHeight
 		{
@@ -173,9 +173,9 @@ namespace Qt
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern int qt_sizepolicy_horizontalstretch_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_horizontalstretch_set (IntPtr raw, int horizontalStretch);
 		[XmlAttribute("horstretch")]
 		public int HorizontalStretch {
@@ -189,9 +189,9 @@ namespace Qt
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern int qt_sizepolicy_verticalstretch_get (IntPtr raw);
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern void qt_sizepolicy_verticalstretch_set (IntPtr raw, int verticalStretch);
 		[XmlAttribute("verstretch")]
 		public int VerticalStretch {

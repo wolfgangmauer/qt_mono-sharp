@@ -15,6 +15,8 @@ namespace Qt
 
 		public MainWindow (Widget parent) : this(parent, 0) {}
 
+		protected MainWindow(Widget parent, string uiFile) : base(parent, uiFile) {}
+
 		public MainWindow (Widget parent, WindowType f) : base(IntPtr.Zero)
 		{
 			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);

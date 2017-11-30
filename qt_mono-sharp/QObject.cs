@@ -126,6 +126,11 @@ namespace Qt
 				qt_objectname_set(Handle, value);
 			}
         }
+
+		protected virtual bool OnEvent(Event ev)
+		{
+			return true;
+		}
 	}
 }
 

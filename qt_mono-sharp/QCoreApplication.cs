@@ -27,15 +27,15 @@ namespace Qt
 			monointernal_init = true;
 		}
 
-		[MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		protected static extern void qt_application_attribute_set(uint attribute);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_application_attribute_set(ApplicationAttribute attribute);
 		public static ApplicationAttribute Attribute
 		{
 			set
 			{
 				if (!monointernal_init)
 					InitMonoInternal ();
-				qt_application_attribute_set ((uint)value);
+				qt_application_attribute_set (value);
 			}
 		}
     }

@@ -15,6 +15,8 @@ namespace Qt
 
 		public Dialog (Widget parent) : this(parent, 0) {}
 
+		protected Dialog(Widget parent, string uiFile) : base(parent, uiFile) {}
+
 		public Dialog (Widget parent, WindowType f) : base(IntPtr.Zero)
 		{
 			Raw = qt_dialog_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);

@@ -3,25 +3,27 @@ using System.Runtime.InteropServices;
 
 namespace Qt
 {
-	public class EventArgs
+	public class Event
 	{
 		public EventType Type { get; set; }
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public class InputEventArgs : Qt.EventArgs
+	public class MouseEvent
+	{
+	}
+
+	public class InputEvent : Qt.Event
 	{
 		public KeyboardModifier Modifiers { get; set; }
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public class KeyEventArgs : InputEventArgs
+	public class KeyEvent : InputEvent
 	{
-		public KeyEventArgs()
+		public KeyEvent()
 		{
 		}
 
-		public KeyEventArgs(EventType type, int key, KeyboardModifier modifiers, string text = "", bool autorep = false, ushort count = 1)
+		public KeyEvent(EventType type, int key, KeyboardModifier modifiers, string text = "", bool autorep = false, ushort count = 1)
 		{
 			Type = type;
 			Key = key;
@@ -53,4 +55,3 @@ namespace Qt
 		}
 	}
 }
-

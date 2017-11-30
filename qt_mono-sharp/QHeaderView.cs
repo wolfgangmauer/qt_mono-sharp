@@ -13,7 +13,7 @@ namespace Qt
 		Custom = Fixed
 	}
 
-    public class HeaderView : AbstractItemView
+    public class HeaderView : ItemView
     {
 		public HeaderView(IntPtr raw) : base(raw) { }
     }

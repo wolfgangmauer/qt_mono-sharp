@@ -6,7 +6,7 @@ namespace Qt
 {
     public class LayoutItem : Layout
     {
-		[MethodImpl( MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime )]
+		[MethodImpl( MethodImplOptions.InternalCall )]
 		protected static extern IntPtr qt_layoutitem_new(LayoutItem thisObject, IntPtr parent);
 
 		protected LayoutItem(IntPtr raw) : base(raw) { }

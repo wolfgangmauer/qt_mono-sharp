@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace Qt
 {
@@ -13,7 +15,10 @@ namespace Qt
         {
 			if (!monointernal_init)
 				InitMonoInternal ();
-			Raw = qt_application_new(this, argv);
+			var ass = Assembly.GetEntryAssembly ().CodeBase.Replace("file://", string.Empty);
+			var list = new List<string> (argv);
+			list.Insert (0, ass);
+			Raw = qt_application_new(this, list.ToArray());
         }
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -7,8 +7,10 @@ namespace Qt
 {
 	public class Widget : Object
 	{
-		public event EventHandler<KeyEventArgs> KeyPressEvent;
-		public event EventHandler<KeyEventArgs> KeyReleaseEvent;
+		public event EventHandler<string> WindowTitleChanged;
+		public event EventHandler<Icon> WindowIconChanged;
+		public event EventHandler<string> WindowIconTextChanged;
+		public event EventHandler<Point> CustomContextMenuRequested;
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_new (Widget thisObject, IntPtr parent, uint f);
@@ -18,6 +20,13 @@ namespace Qt
 		public Widget () : this (null) {}
 
 		public Widget (Widget parent) : this (parent, 0) {}
+
+		protected Widget(Widget parent, string uiFile) : base(IntPtr.Zero)
+		{
+			Raw = new UiLoader (this).Load (uiFile);
+			if (parent != null)
+				Parent = parent;
+		}
 
 		public Widget (Widget parent, WindowType f) : base(IntPtr.Zero)
 		{
@@ -42,7 +51,7 @@ namespace Qt
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_show(IntPtr raw);
-		public virtual void Show()
+		public void Show()
 		{
 			//var handle = GetObjectFromRaw (Handle);
 			qt_widget_show(Handle);
@@ -321,18 +330,33 @@ namespace Qt
 			qt_widget_updategeometry (Handle);
 		}
 
-		protected int KeyPress (KeyEventArgs args)
+		public override bool OnEvent(Event ev)
 		{
-			var tmp = KeyPressEvent;
-			tmp?.Invoke (this, args);
-			return -1;
+			return base.OnEvent (ev);
 		}
 
-		protected int KeyRelease(KeyEventArgs args)
+		protected virtual void OnMousePressEvent(MouseEvent ev)
 		{
-			var tmp = KeyReleaseEvent;
-			tmp?.Invoke (this, args);
-			return -1;
+		}
+
+		protected virtual void OnMouseReleaseEvent(MouseEvent ev)
+		{
+		}
+
+		protected virtual void OnMouseDoubleClickEvent(MouseEvent ev)
+		{
+		}
+
+		protected virtual void OnMouseMoveEvent(MouseEvent ev)
+		{
+		}
+
+		protected virtual void OnKeyPress (KeyEvent ev)
+		{
+		}
+
+		protected virtual void KeyRelease(KeyEvent ev)
+		{
 		}
     }
 }
