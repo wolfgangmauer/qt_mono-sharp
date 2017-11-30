@@ -106,4 +106,7 @@
     <None Include="QGlueTableView.cpp" />
     <None Include="QGlueTableView.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="moc\" />
+  </ItemGroup>
 </Project>
