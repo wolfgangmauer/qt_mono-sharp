@@ -27,51 +27,46 @@ namespace Qt
 		}
 
 		#region IDisposable implementation
+
 		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+
 		public bool IsDisposed;
+
 		protected virtual void Dispose (bool disposing)
 		{
 			// free managed resources
-			if (disposing)
-			{
+			if (disposing) {
 			}
 			IsDisposed = true;
 			var tmp = DisposedEvent;
 			tmp?.Invoke (this, new System.EventArgs ());
 		}
+
 		#endregion
 
-		public IntPtr Handle
-		{
-			get
-			{
+		public IntPtr Handle {
+			get {
 				return handle;
 			}
 		}
 
-		protected virtual IntPtr Raw
-		{
-			get
-			{
+		protected virtual IntPtr Raw {
+			get {
 				return handle;
 			}
-			set 
-			{
+			set {
 				if (handle == value)
 					return;
-				lock (objects)
-				{
-					if (handle != IntPtr.Zero)
-					{
+				lock (objects) {
+					if (handle != IntPtr.Zero) {
 						objects.Remove (handle);
 					}
 					handle = value;
-					if (handle != IntPtr.Zero)
-					{
+					if (handle != IntPtr.Zero) {
 						objects [handle] = this;
 						if (string.IsNullOrWhiteSpace (ObjectName))
 							ObjectName = GetType ().Name;
@@ -80,54 +75,55 @@ namespace Qt
 			}
 		}
 
-		protected object GetManangedObject()
+		protected object GetManangedObject ()
 		{
 			return this;
 		}
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern void qt_native_delegate_set(IntPtr raw, Delegate method);
-		protected virtual void CreateNativeObject(Delegate method = null)
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_native_delegate_set (IntPtr raw, Delegate method);
+
+		protected virtual void CreateNativeObject (Delegate method = null)
 		{
 		}
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern IntPtr qt_object_find(IntPtr raw, string objectName);
-		public static IntPtr FindRawObject(IntPtr raw, string objectName)
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_object_find (IntPtr raw, string objectName);
+
+		public static IntPtr FindRawObject (IntPtr raw, string objectName)
 		{
 			return qt_object_find (raw, objectName);
 		}
 
-		static protected Object GetObjectFromRaw(IntPtr raw)
+		static protected Object GetObjectFromRaw (IntPtr raw)
 		{
-			if (objects.ContainsKey(raw))
-				return objects[raw];
+			if (objects.ContainsKey (raw))
+				return objects [raw];
 			return null;
 		}
 
-		static protected Object GetObjectFromName(string name)
+		static protected Object GetObjectFromName (string name)
 		{
 			var obj = objects.Values.FirstOrDefault (o => o.ObjectName.Equals (name));
 			return obj;
 		}
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static string qt_objectname_get (IntPtr handle);
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		extern static void qt_objectname_set (IntPtr handle, string name);
-        public string ObjectName
-		{
-			get
-			{
-				return qt_objectname_get(Handle);
-			}
-			set
-			{
-				qt_objectname_set(Handle, value);
-			}
-        }
 
-		protected virtual bool OnEvent(Event ev)
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static void qt_objectname_set (IntPtr handle, string name);
+
+		public string ObjectName {
+			get {
+				return qt_objectname_get (Handle);
+			}
+			set {
+				qt_objectname_set (Handle, value);
+			}
+		}
+
+		protected virtual bool OnEvent (Event ev)
 		{
 			return true;
 		}

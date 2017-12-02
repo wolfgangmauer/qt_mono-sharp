@@ -1,13 +1,16 @@
 ﻿#pragma once
-#include <QMainWindow>
 #include "QGlueEvents.h"
-#include "QGlueDialog.h"
 
-class GlueMainWindow : public QMainWindow
+#include <mono/jit/jit.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/class.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
+
+class GlueEvents : QWidget
 {
 public:
-    GlueMainWindow(MonoObject* thisObject, GlueWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~GlueMainWindow();
+	GlueEvents(MonoObject* thisObject);
 
 protected:
     // Event handlers
@@ -22,4 +25,5 @@ protected:
 
 private:
 	MonoObject* _thisObject;
+
 };

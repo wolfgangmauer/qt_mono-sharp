@@ -51,6 +51,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,7 +73,6 @@
     <Compile Include="QListView.cs" />
     <Compile Include="QObject.cs" />
     <Compile Include="QProgressBar.cs" />
-    <Compile Include="QSize.cs" />
     <Compile Include="QSizePolicy.cs" />
     <Compile Include="QSpacerItem.cs" />
     <Compile Include="QStyle.cs" />
@@ -84,14 +84,12 @@
     <Compile Include="QWidget.cs" />
     <Compile Include="QMainWindow.cs" />
     <Compile Include="QWidgetList.cs" />
-    <Compile Include="QRect.cs" />
     <Compile Include="QLine.cs" />
     <Compile Include="QUiLoader.cs" />
     <Compile Include="QUiLoaderAttribute.cs" />
     <Compile Include="QModelIndex.cs" />
     <Compile Include="QIcon.cs" />
-    <Compile Include="QPoint.cs" />
-    <Compile Include="QKeyEvent.cs" />
+    <Compile Include="QEvents.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

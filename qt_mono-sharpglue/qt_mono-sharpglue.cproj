@@ -65,6 +65,11 @@
     <SourceDirectory>.</SourceDirectory>
     <ExtraCompilerArguments>-m64 -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB</ExtraCompilerArguments>
     <ExtraLinkerArguments>-m64 -Wl,-rpath-link,/usr/lib/x86_64-linux-gnu</ExtraLinkerArguments>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="qt_mono-sharpglue_moc" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="QGlueApplication.cpp" />
@@ -84,6 +89,24 @@
     <Compile Include="QGlueVBoxLayout.cpp" />
     <Compile Include="QGlueWidget.cpp" />
     <Compile Include="monointernal.cpp" />
+    <Compile Include="QGlueTableView.cpp" />
+    <Compile Include="moc\moc_application.cpp" />
+    <Compile Include="moc\moc_boxlayout.cpp" />
+    <Compile Include="moc\moc_dialog.cpp" />
+    <Compile Include="moc\moc_font.cpp" />
+    <Compile Include="moc\moc_frame.cpp" />
+    <Compile Include="moc\moc_gridlayout.cpp" />
+    <Compile Include="moc\moc_hboxlayout.cpp" />
+    <Compile Include="moc\moc_label.cpp" />
+    <Compile Include="moc\moc_layout.cpp" />
+    <Compile Include="moc\moc_mainwindow.cpp" />
+    <Compile Include="moc\moc_object.cpp" />
+    <Compile Include="moc\moc_progressbar.cpp" />
+    <Compile Include="moc\moc_sizepolicy.cpp" />
+    <Compile Include="moc\moc_tableview.cpp" />
+    <Compile Include="moc\moc_uiloader.cpp" />
+    <Compile Include="moc\moc_vboxlayout.cpp" />
+    <Compile Include="moc\moc_widget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QGlueApplication.h" />
@@ -103,7 +126,8 @@
     <None Include="QGlueVBoxLayout.h" />
     <None Include="QGlueWidget.h" />
     <None Include="qt_mono-sharpglue.cproj" />
-    <None Include="QGlueTableView.cpp" />
     <None Include="QGlueTableView.h" />
+    <None Include="QGlueEvents.cpp" />
+    <None Include="QGlueEvents.h" />
   </ItemGroup>
 </Project>

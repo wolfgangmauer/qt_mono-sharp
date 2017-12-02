@@ -39,30 +39,30 @@ MonoClass* mono_class_get_base(MonoClass* klass)
 	return retVal;
 }
 
-void mono_property_set(MonoObject* obj, char* property, int value)
+void mono_property_set(MonoObject* obj, std::string property, int value)
 {
 	MonoClass* klass = mono_object_get_class (obj);
-	MonoProperty* prop = mono_class_get_property_from_name(klass, property);
+	MonoProperty* prop = mono_class_get_property_from_name(klass, property.c_str());
 	int key = value;
 	void *args[1];
 	args[0] = &key;
 	mono_property_set_value(prop, obj, args, NULL);
 }
 
-void mono_property_set(MonoObject* obj, char* property, bool value)
+void mono_property_set(MonoObject* obj, std::string property, bool value)
 {
 	MonoClass* klass = mono_object_get_class (obj);
-	MonoProperty* prop = mono_class_get_property_from_name(klass, property);
+	MonoProperty* prop = mono_class_get_property_from_name(klass, property.c_str());
 	bool key = value;
 	void *args[1];
 	args[0] = &key;
 	mono_property_set_value(prop, obj, args, NULL);
 }
 
-void mono_property_set(MonoObject* obj, char* property, MonoString* value)
+void mono_property_set(MonoObject* obj, std::string property, MonoString* value)
 {
 	MonoClass* klass = mono_object_get_class (obj);
-	MonoProperty* prop = mono_class_get_property_from_name(klass, property);
+	MonoProperty* prop = mono_class_get_property_from_name(klass, property.c_str());
 	void *args[1];
 	args[0] = value;
 	mono_property_set_value(prop, obj, args, NULL);

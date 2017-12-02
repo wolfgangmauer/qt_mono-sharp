@@ -11,12 +11,37 @@ GlueDialog::GlueDialog(MonoObject* thisObject, GlueWidget* parent, Qt::WindowFla
 //		_image = mono_image_open("qt-sharp.dll", status);
 }
 
-void GlueDialog::keyReleaseEvent(QKeyEvent *keyEvent)
-{
-	GlueWidget::dokeyPressEvent(_thisObject, keyEvent);
-}
-
 void GlueDialog::keyPressEvent(QKeyEvent *keyEvent)
 {
-	GlueWidget::dokeyReleaseEvent(_thisObject, keyEvent);
+	dokeyPressEvent(_thisObject, keyEvent);
+}
+
+void GlueDialog::keyReleaseEvent(QKeyEvent *keyEvent)
+{
+	dokeyReleaseEvent(_thisObject, keyEvent);
+}
+
+bool GlueDialog::event (QEvent* event)
+{
+	return doEvent(_thisObject, event);
+}
+
+void GlueDialog::mousePressEvent (QMouseEvent *event)
+{
+	doMousePressEvent(_thisObject, event);
+}
+
+void GlueDialog::mouseReleaseEvent (QMouseEvent *event)
+{
+	doMouseReleaseEvent(_thisObject, event);
+}
+
+void GlueDialog::mouseDoubleClickEvent (QMouseEvent *event)
+{
+	doMouseDoubleClickEvent(_thisObject, event);
+}
+
+void GlueDialog::mouseMoveEvent (QMouseEvent *event)
+{
+	doMouseMoveEvent(_thisObject, event);
 }
