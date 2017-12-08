@@ -7,9 +7,9 @@
 
 class GlueGridLayout : public QGridLayout
 {
-    //Q_OBJECT
 public:
-    GlueGridLayout(MonoObject*, GlueWidget* parent = 0);
+    GlueGridLayout(MonoObject*, QWidget* parent = 0);
+
 private:
 	MonoObject* _thisObject;
 };

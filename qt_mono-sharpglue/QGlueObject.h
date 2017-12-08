@@ -10,11 +10,10 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/threads.h>
 
-typedef MonoObject* (*getmanangedobjectcallback) ();
+//typedef MonoObject* (*getmanangedobjectcallback) ();
 
 class GlueObject : public QObject
 {
-    //Q_OBJECT
 public:
 	GlueObject(MonoObject* thisObject, GlueObject* parent = 0);
 	void setObjectName(MonoString*);

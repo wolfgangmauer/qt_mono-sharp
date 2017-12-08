@@ -4,9 +4,8 @@
 
 class GlueVBoxLayout : public QVBoxLayout
 {
-    //Q_OBJECT
 public:
-    GlueVBoxLayout(MonoObject* thisObject, GlueWidget* parent = 0);
+    GlueVBoxLayout(MonoObject* thisObject, QWidget* parent = 0);
 private:
     MonoObject* _thisObject;
 };

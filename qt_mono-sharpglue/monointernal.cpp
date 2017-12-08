@@ -9,7 +9,9 @@
 #include "QGlueLayout.h"
 #include "QGlueUiLoader.h"
 #include "QGlueProgressBar.h"
+#include "QGlueStandardItemModel.h"
 #include "QGlueTableView.h"
+#include "QGlueTableWidget.h"
 
 //Warning: The data referred to by argc and argv must stay valid for the entire lifetime of the QApplication object.
 //In addition, argc must be greater than zero and argv must contain at least one valid character string." 
@@ -38,7 +40,7 @@ void qt_application_attribute_set(Qt::ApplicationAttribute attribute)
 
 MonoString* qt_objectname_get(GlueObject* obj)
 {
-	return mono_string_new(mono_domain_get (), obj->objectName().toLatin1().data());
+	return mono_string_new(mono_domain_get (), obj->objectName().toStdString().c_str());
 }
 
 void qt_objectname_set(GlueObject* obj, MonoString* name)
@@ -51,7 +53,7 @@ GlueUiLoader* qt_uiloader_new(MonoObject* obj, GlueObject* parent)
 	return new GlueUiLoader(obj, parent);
 }
 
-QWidget* qt_uiloader_load(GlueUiLoader* loader, MonoString* uiFile, GlueWidget* parentWidget)
+QWidget* qt_uiloader_load(GlueUiLoader* loader, MonoString* uiFile, QWidget* parentWidget)
 {
 	char* p = mono_string_to_utf8(uiFile);
 	QFile file(p);
@@ -59,16 +61,16 @@ QWidget* qt_uiloader_load(GlueUiLoader* loader, MonoString* uiFile, GlueWidget* 
 	return loader->loadFile(&file, parentWidget);
 }
 
-QWidget* qt_object_find(QWidget* startFrom, MonoString* name)
+QObject* qt_object_find(QWidget* startFrom, MonoString* name)
 {
-	QWidget* retVal = NULL;
+	QObject* retVal = NULL;
 	char* p = mono_string_to_utf8(name);
-	retVal = startFrom->findChild<QWidget*>(QLatin1String(p));
+	retVal = startFrom->findChild<QObject*>(QLatin1String(p));
 	g_free(p);
 	return retVal;
 }
 
-GlueWidget* qt_widget_new(MonoObject* obj, GlueWidget* parent, Qt::WindowFlags f)
+GlueWidget* qt_widget_new(MonoObject* obj, QWidget* parent, Qt::WindowFlags f)
 {
 	return new GlueWidget(obj, parent, f);
 }
@@ -90,7 +92,7 @@ GlueWidget* qt_widget_parent_get(GlueWidget* widget)
 	return reinterpret_cast<GlueWidget*>(widget->parentWidget());
 }
 
-void qt_widget_parent_set(GlueWidget* widget, GlueWidget* parent)
+void qt_widget_parent_set(GlueWidget* widget, QWidget* parent)
 {
 	widget->setParent(parent);
 }
@@ -238,19 +240,29 @@ void qt_widget_autofillbackground_set(GlueWidget* widget, bool autofillbackgroun
 	widget->setAutoFillBackground(autofillbackground);
 }
 
+QLayout* qt_widget_layout_get(GlueWidget* widget)
+{
+	return widget->layout();
+}
+
+void qt_widget_layout_set(GlueWidget* widget, QLayout* layout)
+{
+	return widget->setLayout(layout);
+}
+
 void qt_widget_adjustsize(GlueWidget* widget)
 {
 	widget->adjustSize();
 }
 
-void qt_widget_geometry_get(GlueWidget* widget, int* x, int* y, int* width, int* height)
+const QRect qt_widget_geometry_get(GlueWidget* widget)
 {
-	widget->geometry(x, y, width, height);
+	return widget->geometry();
 }
 
-void qt_widget_geometry_set(GlueWidget* widget, int x, int y, int width, int height)
+void qt_widget_geometry_set(GlueWidget* widget, const QRect& rect)
 {
-	widget->setGeometry(x, y, width, height);
+	widget->setGeometry(rect);
 }
 
 void qt_widget_updategeometry(GlueWidget* widget)
@@ -258,19 +270,19 @@ void qt_widget_updategeometry(GlueWidget* widget)
 	widget->updateGeometry();
 }
 
-GlueBoxLayout* qt_boxlayout_new(MonoObject* thisObject, QBoxLayout::Direction dir, GlueWidget* parent)
+GlueBoxLayout* qt_boxlayout_new(MonoObject* thisObject, QBoxLayout::Direction dir, QWidget* parent)
 {
 	return new GlueBoxLayout(thisObject, dir, parent);
 }
 
-void qt_boxlayout_widget_add(GlueBoxLayout* boxlayout, GlueWidget* widget, int stretch, Qt::Alignment alignment)
+void qt_boxlayout_widget_add(GlueBoxLayout* layout, GlueWidget* widget, int stretch, Qt::Alignment alignment)
 {
-	boxlayout->addWidget(widget, stretch, alignment);
+	layout->addWidget(widget, stretch, alignment);
 }
 
-void qt_boxlayout_layout_add(GlueBoxLayout* boxlayout, GlueLayout* layout, int stretch)
+void qt_boxlayout_layout_add(GlueBoxLayout* layout, GlueLayout* widget, int stretch)
 {
-	boxlayout->addLayout(layout, stretch);
+	layout->addLayout(widget, stretch);
 }
 
 QBoxLayout::Direction qt_boxlayout_direction_get(GlueBoxLayout* boxlayout)
@@ -283,7 +295,7 @@ void qt_boxlayout_direction_set(GlueBoxLayout* boxlayout, QBoxLayout::Direction 
 	return boxlayout->setDirection(direction);
 }
 
-GlueGridLayout* qt_gridlayout_new(MonoObject* thisObject, GlueWidget* parent)
+GlueGridLayout* qt_gridlayout_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueGridLayout(thisObject, parent);
 }
@@ -303,7 +315,7 @@ void qt_gridlayout_widget_span_add(GlueGridLayout* gridlayout, GlueWidget* widge
 	gridlayout->addWidget(widget, row, column, rowSpan, columnSpan, alignment);
 }
 
-GlueDialog* qt_dialog_new(MonoObject* thisObject, GlueWidget* parent, uint32_t f)
+GlueDialog* qt_dialog_new(MonoObject* thisObject, QWidget* parent, uint32_t f)
 {
 	return new GlueDialog(thisObject, parent, (Qt::WindowFlags)f);
 }
@@ -323,17 +335,17 @@ void qt_dialog_modal_set(GlueDialog* dialog, bool modal)
 	dialog->setModal(modal);
 }
 
-GlueVBoxLayout* qt_vboxlayout_new(MonoObject* thisObject, GlueWidget* parent)
+GlueVBoxLayout* qt_vboxlayout_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueVBoxLayout(thisObject, parent);
 }
 
-GlueHBoxLayout* qt_hboxlayout_new(MonoObject* thisObject, GlueWidget* parent)
+GlueHBoxLayout* qt_hboxlayout_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueHBoxLayout(thisObject, parent);
 }
 
-GlueFrame* qt_frame_new(MonoObject* thisObject, GlueWidget* parent)
+GlueFrame* qt_frame_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueFrame(thisObject, parent);
 }
@@ -398,12 +410,12 @@ void qt_progressbar_maximum_set(GlueProgressBar* widget, int value)
 	widget->setMaximum(value);
 }
 
-GlueLabel* qt_label_new(MonoObject* thisObject, GlueWidget* parent, Qt::WindowFlags f)
+GlueLabel* qt_label_new(MonoObject* thisObject, QWidget* parent, Qt::WindowFlags f)
 {
 	return new GlueLabel(thisObject, parent, f);
 }
 
-GlueLabel* qt_label_new_with_text(MonoObject* thisObject, MonoString* text, GlueWidget* parent, Qt::WindowFlags f)
+GlueLabel* qt_label_new_with_text(MonoObject* thisObject, MonoString* text, QWidget* parent, Qt::WindowFlags f)
 {
 	GlueLabel* retVal;
 	char* p = mono_string_to_utf8(text);
@@ -462,7 +474,7 @@ void qt_label_textformat_set(GlueLabel* label, Qt::TextFormat textFormat)
 	label->setTextFormat(textFormat);
 }
 
-GlueProgressBar* qt_progressbar_new(MonoObject* thisObject, GlueWidget* parent)
+GlueProgressBar* qt_progressbar_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueProgressBar(thisObject, parent);
 }
@@ -517,17 +529,14 @@ void qt_layout_sizeconstraint_set(QLayout* layout, QLayout::SizeConstraint sizeC
 	return layout->setSizeConstraint(sizeConstraint);
 }
 
-void qt_layout_geometry_get(QLayout* layout, int* x, int* y, int* width, int* height)
+const QRect qt_layout_geometry_get(QLayout* layout)
 {
-	QRect r = layout->geometry();
-	r.getRect(x, y, width, height);
+	return layout->geometry();
 }
 
-void qt_layout_geometry_set(GlueLayout* layout, int x, int y, int width, int height)
+void qt_layout_geometry_set(GlueLayout* layout, const QRect& rect)
 {
-	QRect r;
-	r.setRect(x, y, width, height);
-	layout->setGeometry(r);
+	layout->setGeometry(rect);
 }
 
 GlueFont* qt_font_new()
@@ -566,7 +575,7 @@ void qt_font_pointsize_set(GlueFont* obj, int pointsize)
 	obj->setPointSize(pointsize);
 }
 
-GlueMainWindow* qt_mainwindow_new(MonoObject* obj, GlueWidget* parent, Qt::WindowFlags f)
+GlueMainWindow* qt_mainwindow_new(MonoObject* obj, QWidget* parent, Qt::WindowFlags f)
 {
 	return new GlueMainWindow(obj, parent, f);
 }
@@ -661,7 +670,7 @@ void qt_sizepolicy_verticalstretch_set(GlueSizePolicy* policy, int verticalStret
 	policy->setVerticalStretch((unsigned char)verticalStretch);
 }
 
-GlueTableView* qt_tableview_new(MonoObject* thisObject, GlueWidget* parent)
+GlueTableView* qt_tableview_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueTableView(thisObject, parent);
 }
@@ -674,6 +683,570 @@ QHeaderView* qt_widget_horizontalheader_get(GlueTableView* tableView)
 QHeaderView* qt_widget_verticalheader_get(GlueTableView* tableView)
 {
 	return tableView->verticalHeader();
+}
+
+QEvent::Type qt_event_type_get(MonoObject* thisObject)
+{
+	QEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->type();
+}
+
+bool qt_event_spontaneous_get(MonoObject* thisObject)
+{
+	QEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->spontaneous();
+}
+
+bool qt_event_accepted_get(MonoObject* thisObject)
+{
+	QEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->isAccepted();
+}
+
+void qt_event_accepted_set(MonoObject* thisObject, bool accepted)
+{
+	QEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	event->setAccepted(accepted);
+}
+
+ulong qt_inputevent_timestamp_get(MonoObject* thisObject)
+{
+	QInputEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->timestamp();
+}
+
+void qt_inputevent_timestamp_set(MonoObject* thisObject, ulong timestamp)
+{
+	QInputEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	event->setTimestamp(timestamp);
+}
+
+Qt::KeyboardModifiers qt_inputevent_modifiers_get(MonoObject* thisObject)
+{
+	QInputEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->modifiers();
+}
+
+void qt_inputevent_modifiers_set(MonoObject* thisObject, Qt::KeyboardModifiers modifiers)
+{
+	QInputEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	event->setModifiers(modifiers);
+}
+
+QContextMenuEvent::Reason qt_contextmenuevent_reason_get(MonoObject* thisObject)
+{
+	QContextMenuEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->reason();
+}
+
+const QPoint qt_contextmenuevent_pos_get(MonoObject* thisObject)
+{
+	QContextMenuEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->pos();
+}
+
+const QPoint qt_contextmenuevent_globalpos_get(MonoObject* thisObject)
+{
+	QContextMenuEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->globalPos();
+}
+
+const QRect qt_paintevent_rect_get(MonoObject* thisObject)
+{
+	QPaintEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->rect();
+}
+
+uint32_t qt_keyevent_nativescancode_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->nativeScanCode();
+}
+
+uint32_t qt_keyevent_nativevirtualkey_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->nativeVirtualKey();
+}
+
+uint32_t qt_keyevent_nativemodifiers_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->nativeModifiers();
+}
+
+Qt::KeyboardModifiers qt_keyevent_modifiers_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->modifiers();
+}
+
+MonoString* qt_keyevent_text_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return mono_string_new(mono_domain_get (), event->text().toStdString().c_str());
+}
+
+bool qt_keyevent_autorepeat_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->isAutoRepeat();
+}
+
+ushort qt_keyevent_count_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->count();
+}
+
+int qt_keyevent_key_get(MonoObject* thisObject)
+{
+	QKeyEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->key();
+}
+
+const QPoint qt_moveevent_pos_get(MonoObject* thisObject)
+{
+	QMoveEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->pos();
+}
+
+const QPoint qt_moveevent_oldpos_get(MonoObject* thisObject)
+{
+	QMoveEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->oldPos();
+}
+
+const QSize qt_resizeevent_size_get(MonoObject* thisObject)
+{
+	QResizeEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->size();
+}
+
+const QSize qt_resizeevent_oldsize_get(MonoObject* thisObject)
+{
+	QResizeEvent* event;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->oldSize();
+}
+
+int qt_size_width_get(MonoObject* thisObject)
+{
+	QSize size;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
+	return size.width();
+}
+
+void qt_size_width_set(MonoObject* thisObject, int width)
+{
+	QSize size;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
+	return size.setWidth(width);
+}
+
+int qt_size_height_get(MonoObject* thisObject)
+{
+	QSize size;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
+	return size.height();
+}
+
+void qt_size_height_set(MonoObject* thisObject, int height)
+{
+	QSize size;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
+	return size.setHeight(height);
+}
+
+int qt_rectangle_x_get(MonoObject* thisObject)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.x();
+}
+
+void qt_rectangle_x_set(MonoObject* thisObject, int x)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.setX(x);
+}
+
+int qt_rectangle_y_get(MonoObject* thisObject)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.y();
+}
+
+void qt_rectangle_y_set(MonoObject* thisObject, int y)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.setY(y);
+}
+
+int qt_rectangle_width_get(MonoObject* thisObject)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.width();
+}
+
+void qt_rectangle_width_set(MonoObject* thisObject, int width)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.setWidth(width);
+}
+
+int qt_rectangle_height_get(MonoObject* thisObject)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.height();
+}
+
+void qt_rectangle_height_set(MonoObject* thisObject, int height)
+{
+	QRect rect;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
+	return rect.setHeight(height);
+}
+
+int qt_point_x_get(MonoObject* thisObject)
+{
+	QPoint point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.x();
+}
+
+void qt_point_x_set(MonoObject* thisObject, int x)
+{
+	QPoint point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.setX(x);
+}
+
+int qt_point_y_get(MonoObject* thisObject)
+{
+	QPoint point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.y();
+}
+
+void qt_point_y_set(MonoObject* thisObject, int y)
+{
+	QPoint point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.setY(y);
+}
+
+double qt_pointf_x_get(MonoObject* thisObject)
+{
+	QPointF point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.x();
+}
+
+void qt_pointf_x_set(MonoObject* thisObject, double x)
+{
+	QPointF point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.setX(x);
+}
+
+double qt_pointf_y_get(MonoObject* thisObject)
+{
+	QPointF point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.y();
+}
+
+void qt_pointf_y_set(MonoObject* thisObject, double y)
+{
+	QPointF point;
+	auto widget_class = mono_object_get_class(thisObject);
+	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
+	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
+	return point.setY(y);
+}
+
+GlueStandardItemModel* qt_itemmodel_new(MonoObject* thisObject, GlueObject* parent)
+{
+	return new GlueStandardItemModel(thisObject, parent);
+}
+
+void qt_itemmodel_item_row_set(QStandardItemModel* standardItemModel, int row, QStandardItem* item)
+{
+	standardItemModel->setItem(row, item);
+}
+
+void qt_itemmodel_item_row_column_set(QStandardItemModel* standardItemModel, int row, int column, QStandardItem* item)
+{
+	standardItemModel->setItem(row, column, item);
+}
+
+void qt_itemmodel_item_append(QStandardItemModel* standardItemModel, QStandardItem* item)
+{
+	standardItemModel->appendRow(item);
+}
+
+int qt_itemmodel_rowcount_get(QStandardItemModel* standardItemModel)
+{
+	standardItemModel->rowCount();
+}
+
+void qt_itemmodel_rowcount_set(QStandardItemModel* standardItemModel, int rows)
+{
+	standardItemModel->setRowCount(rows);
+}
+
+int qt_itemmodel_columncount_get(QStandardItemModel* standardItemModel)
+{
+	standardItemModel->columnCount();
+}
+
+void qt_itemmodel_columncount_set(QStandardItemModel* standardItemModel, int columns)
+{
+	standardItemModel->setColumnCount(columns);
+}
+
+QAbstractItemModel* qt_itemview_model_get(QTableView* tableView)
+{
+	return tableView->model();
+}
+
+void qt_itemview_model_set(QTableView* tableView, QAbstractItemModel* itemModel)
+{
+	tableView->setModel(itemModel);
+}
+
+void qt_tableview_resizerowtocontents(QTableView* tableView, int row)
+{
+	tableView->resizeRowToContents(row);
+}
+
+void qt_tableview_resizerowstocontents(QTableView* tableView)
+{
+	tableView->resizeColumnsToContents();
+}
+
+void qt_tableview_resizecolumntocontents(QTableView* tableView, int column)
+{
+	tableView->resizeColumnToContents(column);
+}
+
+void qt_tableview_resizecolumnstocontents(QTableView* tableView)
+{
+	tableView->resizeColumnsToContents();
+}
+
+void qt_tableview_selectrow(QTableView* tableView, int row)
+{
+	tableView->selectRow(row);
+}
+
+void qt_tableview_selectcolumn(QTableView* tableView, int column)
+{
+	tableView->selectColumn(column);
+}
+
+void qt_tableview_showrow(QTableView* tableView, int row)
+{
+	tableView->showRow(row);
+}
+
+void qt_tableview_showcolumn(QTableView* tableView, int column)
+{
+	tableView->showColumn(column);
+}
+
+void qt_tableview_hiderow(QTableView* tableView, int row)
+{
+	tableView->hideRow(row);
+}
+
+void qt_tableview_hidecolumn(QTableView* tableView, int column)
+{
+	tableView->hideColumn(column);
+}
+
+void qt_tableview_columnwidth_set(QTableView* tableView, int column, int width)
+{
+	tableView->setColumnWidth(column, width);
+}
+
+int qt_tableview_columnwidth_get(QTableView* tableView, int column)
+{
+	return tableView->columnWidth(column);
+}
+
+void qt_tableview_grid_show(QTableView* tableView, bool show)
+{
+	tableView->setShowGrid(show);
+}
+
+QTableWidgetItem* qt_tablewidgetitem_new(MonoString* text)
+{
+	QTableWidgetItem* retVal = NULL;
+	char* p = mono_string_to_utf8(text);
+	retVal = new QTableWidgetItem(p);
+	g_free(p);
+	return retVal;
+}
+
+QStandardItem* qt_standarditem_new(MonoString* text)
+{
+	QStandardItem* retVal = NULL;
+	char* p = mono_string_to_utf8(text);
+	retVal = new QStandardItem(p);
+	g_free(p);
+	return retVal;
+}
+
+void qt_headerview_visible_set(QHeaderView* headerView, bool visible)
+{
+	headerView->setVisible(visible);
+}
+
+GlueTableWidget* qt_tablewidget_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueTableWidget(thisObject, parent);
+}
+
+int qt_tablewidget_rowcount_get(QTableWidget* tableWidget)
+{
+	return tableWidget->rowCount();
+}
+
+void qt_tablewidget_rowcount_set(QTableWidget* tableWidget, int rows)
+{
+	return tableWidget->setRowCount(rows);
+}
+
+int qt_tablewidget_columncount_get(QTableWidget* tableWidget)
+{
+	return tableWidget->columnCount();
+}
+
+void qt_tablewidget_columncount_set(QTableWidget* tableWidget, int columns)
+{
+	return tableWidget->setColumnCount(columns);
+}
+
+void qt_tablewidget_row_column_set(QTableWidget* tableWidget, int row, int col, QTableWidgetItem* item)
+{
+	tableWidget->setItem(row, col, item);
 }
 
 extern "C" void qt_application_monointernal_init()
@@ -695,9 +1268,35 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_new", reinterpret_cast<void*>(qt_progressbar_new));
 
 	mono_add_internal_call ("Qt.TableView::qt_tableview_new", reinterpret_cast<void*>(qt_tableview_new));
-	mono_add_internal_call ("Qt.TableView::qt_widget_horizontalheader_get", reinterpret_cast<void*>(qt_widget_horizontalheader_get));
-	mono_add_internal_call ("Qt.TableView::qt_widget_verticalheader_get", reinterpret_cast<void*>(qt_widget_verticalheader_get));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_horizontalheader_get", reinterpret_cast<void*>(qt_widget_horizontalheader_get));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_verticalheader_get", reinterpret_cast<void*>(qt_widget_verticalheader_get));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_resizerowstocontents", reinterpret_cast<void*>(qt_tableview_resizerowstocontents));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_resizerowtocontents", reinterpret_cast<void*>(qt_tableview_resizerowtocontents));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_resizecolumnstocontents", reinterpret_cast<void*>(qt_tableview_resizecolumnstocontents));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_resizecolumntocontents", reinterpret_cast<void*>(qt_tableview_resizecolumntocontents));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_selectrow", reinterpret_cast<void*>(qt_tableview_selectrow));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_selectcolumn", reinterpret_cast<void*>(qt_tableview_selectcolumn));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_showrow", reinterpret_cast<void*>(qt_tableview_showrow));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_hiderow", reinterpret_cast<void*>(qt_tableview_hiderow));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_showcolumn", reinterpret_cast<void*>(qt_tableview_showcolumn));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_hidecolumn", reinterpret_cast<void*>(qt_tableview_hidecolumn));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_columnwidth_get", reinterpret_cast<void*>(qt_tableview_columnwidth_get));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_columnwidth_set", reinterpret_cast<void*>(qt_tableview_columnwidth_set));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_grid_show", reinterpret_cast<void*>(qt_tableview_grid_show));
 
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_new", reinterpret_cast<void*>(qt_tablewidget_new));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_get", reinterpret_cast<void*>(qt_tablewidget_rowcount_get));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_set", reinterpret_cast<void*>(qt_tablewidget_rowcount_set));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_columncount_get", reinterpret_cast<void*>(qt_tablewidget_columncount_get));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_columncount_set", reinterpret_cast<void*>(qt_tablewidget_columncount_set));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_column_set", reinterpret_cast<void*>(qt_tablewidget_row_column_set));
+
+	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_get", reinterpret_cast<void*>(qt_itemview_model_get));
+	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_set", reinterpret_cast<void*>(qt_itemview_model_set));
+
+	mono_add_internal_call ("Qt.StandardItem::qt_standarditem_new", reinterpret_cast<void*>(qt_standarditem_new));
+
+	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_new", reinterpret_cast<void*>(qt_tablewidgetitem_new));
 
 	mono_add_internal_call ("Qt.Label::qt_label_new", reinterpret_cast<void*>(qt_label_new));
 	mono_add_internal_call ("Qt.Label::qt_label_new_with_text", reinterpret_cast<void*>(qt_label_new_with_text));
@@ -729,6 +1328,29 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_get", reinterpret_cast<void*>(qt_progressbar_maximum_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_set", reinterpret_cast<void*>(qt_progressbar_maximum_set));
 
+	mono_add_internal_call ("Qt.Size::get_Width", reinterpret_cast<void*>(qt_size_width_get));
+	mono_add_internal_call ("Qt.Size::set_Width", reinterpret_cast<void*>(qt_size_width_set));
+	mono_add_internal_call ("Qt.Size::get_Height", reinterpret_cast<void*>(qt_size_height_get));
+	mono_add_internal_call ("Qt.Size::set_Height", reinterpret_cast<void*>(qt_size_height_set));
+
+	mono_add_internal_call ("Qt.Rectangle::get_X", reinterpret_cast<void*>(qt_rectangle_x_get));
+	mono_add_internal_call ("Qt.Rectangle::set_X", reinterpret_cast<void*>(qt_rectangle_x_set));
+	mono_add_internal_call ("Qt.Rectangle::get_Y", reinterpret_cast<void*>(qt_rectangle_y_get));
+	mono_add_internal_call ("Qt.Rectangle::set_Y", reinterpret_cast<void*>(qt_rectangle_y_set));
+	mono_add_internal_call ("Qt.Rectangle::get_Width", reinterpret_cast<void*>(qt_rectangle_width_get));
+	mono_add_internal_call ("Qt.Rectangle::set_Width", reinterpret_cast<void*>(qt_rectangle_width_set));
+	mono_add_internal_call ("Qt.Rectangle::get_Height", reinterpret_cast<void*>(qt_rectangle_height_get));
+	mono_add_internal_call ("Qt.Rectangle::set_Height", reinterpret_cast<void*>(qt_rectangle_height_set));
+
+	mono_add_internal_call ("Qt.Point::get_X", reinterpret_cast<void*>(qt_point_x_get));
+	mono_add_internal_call ("Qt.Point::set_X", reinterpret_cast<void*>(qt_point_x_set));
+	mono_add_internal_call ("Qt.Point::get_Y", reinterpret_cast<void*>(qt_point_y_get));
+	mono_add_internal_call ("Qt.Point::set_Y", reinterpret_cast<void*>(qt_point_y_set));
+
+	mono_add_internal_call ("Qt.PointF::get_X", reinterpret_cast<void*>(qt_pointf_x_get));
+	mono_add_internal_call ("Qt.PointF::set_X", reinterpret_cast<void*>(qt_pointf_x_set));
+	mono_add_internal_call ("Qt.PointF::get_Y", reinterpret_cast<void*>(qt_pointf_y_get));
+	mono_add_internal_call ("Qt.PointF::set_Y", reinterpret_cast<void*>(qt_pointf_y_set));
 
 	mono_add_internal_call ("Qt.SizePolicy::qt_sizepolicy_new", reinterpret_cast<void*>(qt_sizepolicy_new));
 	mono_add_internal_call ("Qt.SizePolicy::qt_sizepolicy_new_with_policy", reinterpret_cast<void*>(qt_sizepolicy_new_with_policy));
@@ -762,6 +1384,37 @@ extern "C" void qt_application_monointernal_init()
 
 	mono_add_internal_call ("Qt.VBoxLayout::qt_vboxlayout_new", reinterpret_cast<void*>(qt_vboxlayout_new));
 	mono_add_internal_call ("Qt.HBoxLayout::qt_hboxlayout_new", reinterpret_cast<void*>(qt_hboxlayout_new));
+
+	mono_add_internal_call ("Qt.Event::get_Type", reinterpret_cast<void*>(qt_event_type_get));
+	mono_add_internal_call ("Qt.Event::get_Spontaneous", reinterpret_cast<void*>(qt_event_spontaneous_get));
+	mono_add_internal_call ("Qt.Event::get_Accepted", reinterpret_cast<void*>(qt_event_accepted_get));
+	mono_add_internal_call ("Qt.Event::set_Accepted", reinterpret_cast<void*>(qt_event_accepted_set));
+
+	mono_add_internal_call ("Qt.InputEvent::get_Timestamp", reinterpret_cast<void*>(qt_inputevent_timestamp_get));
+	mono_add_internal_call ("Qt.InputEvent::set_Timestamp", reinterpret_cast<void*>(qt_inputevent_timestamp_set));
+	mono_add_internal_call ("Qt.InputEvent::get_Modifiers", reinterpret_cast<void*>(qt_inputevent_modifiers_get));
+	mono_add_internal_call ("Qt.InputEvent::set_Modifiers", reinterpret_cast<void*>(qt_inputevent_modifiers_set));
+
+	mono_add_internal_call ("Qt.ContextMenuEvent::get_Reason", reinterpret_cast<void*>(qt_contextmenuevent_reason_get));
+	mono_add_internal_call ("Qt.ContextMenuEvent::get_Pos", reinterpret_cast<void*>(qt_contextmenuevent_pos_get));
+	mono_add_internal_call ("Qt.ContextMenuEvent::get_GlobalPos", reinterpret_cast<void*>(qt_contextmenuevent_globalpos_get));
+
+	mono_add_internal_call ("Qt.MoveEvent::get_rawPos", reinterpret_cast<void*>(qt_moveevent_pos_get));
+	mono_add_internal_call ("Qt.MoveEvent::get_rawOldPos", reinterpret_cast<void*>(qt_moveevent_oldpos_get));
+
+	mono_add_internal_call ("Qt.ResizeEvent::get_rawSize", reinterpret_cast<void*>(qt_resizeevent_size_get));
+	mono_add_internal_call ("Qt.ResizeEvent::get_rawOldSize", reinterpret_cast<void*>(qt_resizeevent_oldsize_get));
+
+	mono_add_internal_call ("Qt.PaintEvent::get_rawRect", reinterpret_cast<void*>(qt_paintevent_rect_get));
+
+	mono_add_internal_call ("Qt.KeyEvent::get_NativeScanCode", reinterpret_cast<void*>(qt_keyevent_nativescancode_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_NativeVirtualKey", reinterpret_cast<void*>(qt_keyevent_nativevirtualkey_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_NativeModifiers", reinterpret_cast<void*>(qt_keyevent_nativemodifiers_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_Text", reinterpret_cast<void*>(qt_keyevent_text_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_Key", reinterpret_cast<void*>(qt_keyevent_key_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_AutoRepeat", reinterpret_cast<void*>(qt_keyevent_autorepeat_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_Modifiers", reinterpret_cast<void*>(qt_keyevent_modifiers_get));
+	mono_add_internal_call ("Qt.KeyEvent::get_Count", reinterpret_cast<void*>(qt_keyevent_count_get));
 
 	mono_add_internal_call ("Qt.Layout::qt_layout_parent_get", reinterpret_cast<void*>(qt_layout_parent_get));
 	mono_add_internal_call ("Qt.Layout::qt_layout_widget_add", reinterpret_cast<void*>(qt_layout_widget_add));
@@ -816,6 +1469,9 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Widget::qt_widget_autofillbackground_get", reinterpret_cast<void*>(qt_widget_autofillbackground_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_autofillbackground_set", reinterpret_cast<void*>(qt_widget_autofillbackground_set));
 
+	mono_add_internal_call ("Qt.Widget::qt_widget_layout_get", reinterpret_cast<void*>(qt_widget_layout_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_layout_set", reinterpret_cast<void*>(qt_widget_layout_set));
+
 	mono_add_internal_call ("Qt.Object::qt_objectname_get", reinterpret_cast<void*>(qt_objectname_get));
 	mono_add_internal_call ("Qt.Object::qt_objectname_set", reinterpret_cast<void*>(qt_objectname_set));
 	mono_add_internal_call ("Qt.Object::qt_object_find", reinterpret_cast<void*>(qt_object_find));
@@ -827,4 +1483,15 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Font::qt_font_family_set", reinterpret_cast<void*>(qt_font_family_set));
 	mono_add_internal_call ("Qt.Font::qt_font_pointsize_get", reinterpret_cast<void*>(qt_font_pointsize_get));
 	mono_add_internal_call ("Qt.Font::qt_font_pointsize_set", reinterpret_cast<void*>(qt_font_pointsize_set));
+
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_new", reinterpret_cast<void*>(qt_itemmodel_new));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_item_row_set", reinterpret_cast<void*>(qt_itemmodel_item_row_set));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_item_row_column_set", reinterpret_cast<void*>(qt_itemmodel_item_row_column_set));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_item_append", reinterpret_cast<void*>(qt_itemmodel_item_append));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_rowcount_get", reinterpret_cast<void*>(qt_itemmodel_rowcount_get));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_rowcount_set", reinterpret_cast<void*>(qt_itemmodel_rowcount_set));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_columncount_get", reinterpret_cast<void*>(qt_itemmodel_columncount_get));
+	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_columncount_set", reinterpret_cast<void*>(qt_itemmodel_columncount_set));
+
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_visible_set", reinterpret_cast<void*>(qt_headerview_visible_set));
 }

@@ -1,6 +1,6 @@
 ﻿#include "QGlueBoxLayout.h"
 
-GlueBoxLayout::GlueBoxLayout(MonoObject* thisObject, QBoxLayout::Direction dir, GlueWidget* parent) : QBoxLayout(dir, parent)
+GlueBoxLayout::GlueBoxLayout(MonoObject* thisObject, QBoxLayout::Direction dir, QWidget* parent) : QBoxLayout(dir, parent)
 {
 	_thisObject = thisObject;
 }

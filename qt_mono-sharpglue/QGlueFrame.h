@@ -4,13 +4,11 @@
 
 class GlueFrame : public QFrame
 {
-    //Q_OBJECT
+#define BaseClass QFrame
+#include "internalevents.h"
 public:
-    GlueFrame(MonoObject* thisObject, GlueWidget* parent = 0);
+    GlueFrame(MonoObject* thisObject, QWidget* parent = 0);
+
 private:
 	MonoObject* _thisObject;
 };
-//
-//QFrame* qt_frame_new(QWidget* parent);
-//QFrame::Shape qt_frame_shape_get(QFrame* widget);
-//void qt_frame_shape_set(QFrame* widget, QFrame::Shape shape);

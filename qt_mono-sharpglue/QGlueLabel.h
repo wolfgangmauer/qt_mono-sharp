@@ -4,10 +4,11 @@
 
 class GlueLabel : public QLabel
 {
-    //Q_OBJECT
+#define BaseClass QLabel
+#include "internalevents.h"
 public:
-    GlueLabel(MonoObject* thisObject, GlueWidget *parent=0, Qt::WindowFlags f=0);
-    GlueLabel(MonoObject* thisObject, char* text, GlueWidget *parent=0, Qt::WindowFlags f=0);
+    GlueLabel(MonoObject* thisObject, QWidget *parent=0, Qt::WindowFlags f=0);
+    GlueLabel(MonoObject* thisObject, char* text, QWidget *parent=0, Qt::WindowFlags f=0);
 
     void setText(MonoString*);
 private:

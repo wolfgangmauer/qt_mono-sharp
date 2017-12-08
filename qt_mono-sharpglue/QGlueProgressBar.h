@@ -4,9 +4,10 @@
 
 class GlueProgressBar : public QProgressBar
 {
-	//Q_OBJECT
+#define BaseClass QProgressBar
+#include "internalevents.h"
 public:
-    GlueProgressBar(MonoObject* thisObject, GlueWidget* parent = 0);
+    GlueProgressBar(MonoObject* thisObject, QWidget* parent = 0);
 private:
     MonoObject* _thisObject;
 };

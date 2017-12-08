@@ -11,11 +11,11 @@ void GlueEvents::keyReleaseEvent(QKeyEvent *keyEvent)
 {
 	dokeyReleaseEvent(_thisObject, keyEvent);
 }
-
-bool GlueEvents::event (QEvent* event)
-{
-	return doEvent(_thisObject, event);
-}
+//
+//bool GlueEvents::event (QEvent* event)
+//{
+//	return doEvent(_thisObject, event);
+//}
 
 void GlueEvents::mousePressEvent (QMouseEvent *event)
 {

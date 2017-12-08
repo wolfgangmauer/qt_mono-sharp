@@ -5,21 +5,11 @@
 
 class GlueMainWindow : public QMainWindow
 {
+#define BaseClass QMainWindow
+#include "internalevents.h"
 public:
-    GlueMainWindow(MonoObject* thisObject, GlueWidget *parent = 0, Qt::WindowFlags flags = 0);
+    GlueMainWindow(MonoObject* thisObject, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~GlueMainWindow();
-
-protected:
-    // Event handlers
-    bool event(QEvent *event)  override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-
-	void keyPressEvent(QKeyEvent *) override;
-	void keyReleaseEvent(QKeyEvent *) override;
-
 private:
 	MonoObject* _thisObject;
 };

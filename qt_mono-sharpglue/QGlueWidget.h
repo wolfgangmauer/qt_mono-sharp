@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <stdint.h>
 #include <QWidget>
+#include <QtUiPlugin/QDesignerExportWidget>
 #include <QEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -8,70 +9,58 @@
 #include "QGlueFont.h"
 #include "QGlueSizePolicy.h"
 
-bool doEvent(MonoObject* thisObject, QEvent* event);
-void dokeyPressEvent(MonoObject* thisObject, QKeyEvent* keyEvent);
-void dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent* keyEvent);
+bool dokeyPressEvent(MonoObject* thisObject, QKeyEvent* event);
+bool dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent* event);
 
-void doMousePressEvent(MonoObject* thisObject, QMouseEvent* event);
-void doMouseReleaseEvent(MonoObject* thisObject, QMouseEvent* event);
-void doMouseMoveEvent(MonoObject* thisObject, QMouseEvent* event);
-void doMouseDoubleClickEvent(MonoObject* thisObject, QMouseEvent* event);
+bool doMousePressEvent(MonoObject* thisObject, QMouseEvent* event);
+bool doMouseReleaseEvent(MonoObject* thisObject, QMouseEvent* event);
+bool doMouseMoveEvent(MonoObject* thisObject, QMouseEvent* event);
+bool doMouseDoubleClickEvent(MonoObject* thisObject, QMouseEvent* event);
+
+bool dowheelEvent(MonoObject* thisObject, QWheelEvent *event);
+
+void dofocusInEvent(MonoObject* thisObject, QFocusEvent* event);
+void dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event);
+
+bool doenterEvent(MonoObject* thisObject, QEvent* event);
+bool doleaveEvent(MonoObject* thisObject, QEvent* event);
+
+bool dopaintEvent(MonoObject* thisObject, QPaintEvent* event);
+bool domoveEvent(MonoObject* thisObject, QMoveEvent* event);
+bool doresizeEvent(MonoObject* thisObject, QResizeEvent* event);
+bool docloseEvent(MonoObject* thisObject, QCloseEvent* event);
+
+#ifndef QT_NO_CONTEXTMENU
+void docontextMenuEvent(MonoObject* thisObject, QContextMenuEvent *event);
+#endif
+#ifndef QT_NO_TABLETEVENT
+void dotabletEvent(MonoObject* thisObject, QTabletEvent *event);
+#endif
+#ifndef QT_NO_ACTION
+void doactionEvent(MonoObject* thisObject, QActionEvent *event);
+#endif
+
+#ifndef QT_NO_DRAGANDDROP
+void dodragEnterEvent(MonoObject* thisObject, QDragEnterEvent *event);
+void dodragMoveEvent(MonoObject* thisObject, QDragMoveEvent *event);
+void dodragLeaveEvent(MonoObject* thisObject, QDragLeaveEvent *event);
+void dodropEvent(MonoObject* thisObject, QDropEvent *event);
+#endif
+bool doshowEvent(MonoObject* thisObject, QShowEvent* event);
+bool dohideEvent(MonoObject* thisObject, QHideEvent* event);
+//bool donativeEvent(MonoObject* thisObject, const QByteArray &eventType, void *message, long *result);
+
+bool dochangeEvent(MonoObject* thisObject, QEvent* event);
 
 class GlueWidget : public QWidget
 {
-    //Q_OBJECT
+#define BaseClass QWidget
+#include "internalevents.h"
 public:
-    GlueWidget(MonoObject* thisObject, GlueWidget* parent = 0, Qt::WindowFlags f = 0);
-//	~GlueWidget();
+    GlueWidget(MonoObject* thisObject, QWidget* parent = 0, Qt::WindowFlags f = 0);
 
-	void geometry(int*, int*, int*, int*);
 	GlueFont* font();
 	GlueSizePolicy* sizePolicy();
-
-protected:
-    // Event handlers
-    bool event(QEvent *event)  override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-//#ifndef QT_NO_WHEELEVENT
-//    void wheelEvent(QWheelEvent *event) override;
-//#endif
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
-//    void focusInEvent(QFocusEvent *event) override;
-//    void focusOutEvent(QFocusEvent *event) override;
-//    void enterEvent(QEvent *event) override;
-//    void leaveEvent(QEvent *event) override;
-//    void paintEvent(QPaintEvent *event) override;
-//    void moveEvent(QMoveEvent *event) override;
-//    void resizeEvent(QResizeEvent *event) override;
-//    void closeEvent(QCloseEvent *event) override;
-//#ifndef QT_NO_CONTEXTMENU
-//    void contextMenuEvent(QContextMenuEvent *event) override;
-//#endif
-//#ifndef QT_NO_TABLETEVENT
-//    void tabletEvent(QTabletEvent *event) override;
-//#endif
-//#ifndef QT_NO_ACTION
-//    void actionEvent(QActionEvent *event) override;
-//#endif
-//
-//#ifndef QT_NO_DRAGANDDROP
-//    void dragEnterEvent(QDragEnterEvent *event) override;
-//    void dragMoveEvent(QDragMoveEvent *event) override;
-//    void dragLeaveEvent(QDragLeaveEvent *event) override;
-//    void dropEvent(QDropEvent *event) override;
-//#endif
-//
-//    void showEvent(QShowEvent *event) override;
-//    void hideEvent(QHideEvent *event) override;
-//    bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
-//
-//    // Misc. protected functions
-//    void changeEvent(QEvent *) override;
-//
 private:
 	QFont glueFont;
 	QSizePolicy glueSizePolicy;

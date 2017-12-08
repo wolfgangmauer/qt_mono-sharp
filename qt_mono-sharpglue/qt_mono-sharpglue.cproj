@@ -25,9 +25,9 @@
     <OutputPath>..\example\bin\Debug</OutputPath>
     <OutputName>qt_mono-sharpglue</OutputName>
     <CompileTarget>SharedLibrary</CompileTarget>
-    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <DefineSymbols>DEBUG MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
-    <ExtraCompilerArguments>-pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB</ExtraCompilerArguments>
+    <ExtraCompilerArguments>-pipe -g -std=gnu++11 -Wall -W -fPIC</ExtraCompilerArguments>
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeBuild" command="qt_mono-sharpglue_moc" workingdir="${ProjectDir}" externalConsole="True" />
@@ -40,8 +40,10 @@
     <OutputName>qt_mono-sharpglue</OutputName>
     <CompileTarget>SharedLibrary</CompileTarget>
     <OptimizationLevel>3</OptimizationLevel>
-    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <DefineSymbols>MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
+    <ExtraCompilerArguments>-m64 -pipe -std=gnu++11 -W -fPIC </ExtraCompilerArguments>
+    <ExtraLinkerArguments>-m64 -Wl,-rpath-link,/usr/lib/x86_64-linux-gnu</ExtraLinkerArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\example\bin\Debug</OutputPath>
@@ -49,7 +51,7 @@
     <CompileTarget>SharedLibrary</CompileTarget>
     <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
-    <ExtraCompilerArguments>-m32 -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB</ExtraCompilerArguments>
+    <ExtraCompilerArguments>-m32 -pipe -g -std=gnu++11 -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB</ExtraCompilerArguments>
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeBuild" command="qt_mono-sharpglue_moc" workingdir="${ProjectDir}" externalConsole="True" />
@@ -61,15 +63,20 @@
     <OutputPath>..\example\bin\Debug</OutputPath>
     <OutputName>qt_mono-sharpglue</OutputName>
     <CompileTarget>SharedLibrary</CompileTarget>
-    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <DefineSymbols>DEBUG MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_QML_DEBUG QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
-    <ExtraCompilerArguments>-m64 -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB</ExtraCompilerArguments>
-    <ExtraLinkerArguments>-m64 -Wl,-rpath-link,/usr/lib/x86_64-linux-gnu</ExtraLinkerArguments>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="BeforeBuild" command="qt_mono-sharpglue_moc" workingdir="${ProjectDir}" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
+    <ExtraCompilerArguments>-m64 -pipe -g -Og -std=gnu++11 -W -fPIC </ExtraCompilerArguments>
+    <ExtraLinkerArguments>-m64 -g -Og</ExtraLinkerArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\example\bin\Release</OutputPath>
+    <OutputName>qt_mono-sharpglue</OutputName>
+    <CompileTarget>SharedLibrary</CompileTarget>
+    <DefineSymbols>MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_QML_DEBUG QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <ExtraCompilerArguments>-m64 -pipe -std=gnu++11 -W -fPIC </ExtraCompilerArguments>
+    <ExtraLinkerArguments>-m64</ExtraLinkerArguments>
+    <OptimizationLevel>3</OptimizationLevel>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="QGlueApplication.cpp" />
@@ -90,23 +97,10 @@
     <Compile Include="QGlueWidget.cpp" />
     <Compile Include="monointernal.cpp" />
     <Compile Include="QGlueTableView.cpp" />
-    <Compile Include="moc\moc_application.cpp" />
-    <Compile Include="moc\moc_boxlayout.cpp" />
-    <Compile Include="moc\moc_dialog.cpp" />
-    <Compile Include="moc\moc_font.cpp" />
     <Compile Include="moc\moc_frame.cpp" />
-    <Compile Include="moc\moc_gridlayout.cpp" />
-    <Compile Include="moc\moc_hboxlayout.cpp" />
     <Compile Include="moc\moc_label.cpp" />
-    <Compile Include="moc\moc_layout.cpp" />
-    <Compile Include="moc\moc_mainwindow.cpp" />
-    <Compile Include="moc\moc_object.cpp" />
-    <Compile Include="moc\moc_progressbar.cpp" />
-    <Compile Include="moc\moc_sizepolicy.cpp" />
-    <Compile Include="moc\moc_tableview.cpp" />
-    <Compile Include="moc\moc_uiloader.cpp" />
-    <Compile Include="moc\moc_vboxlayout.cpp" />
-    <Compile Include="moc\moc_widget.cpp" />
+    <Compile Include="QGlueStandardItemModel.cpp" />
+    <Compile Include="QGlueTableWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QGlueApplication.h" />
@@ -125,9 +119,24 @@
     <None Include="QGlueUiLoader.h" />
     <None Include="QGlueVBoxLayout.h" />
     <None Include="QGlueWidget.h" />
-    <None Include="qt_mono-sharpglue.cproj" />
     <None Include="QGlueTableView.h" />
-    <None Include="QGlueEvents.cpp" />
-    <None Include="QGlueEvents.h" />
+    <None Include="internalevents.h" />
+    <None Include="moc\moc_application.cpp" />
+    <None Include="moc\moc_boxlayout.cpp" />
+    <None Include="moc\moc_dialog.cpp" />
+    <None Include="moc\moc_font.cpp" />
+    <None Include="moc\moc_gridlayout.cpp" />
+    <None Include="moc\moc_hboxlayout.cpp" />
+    <None Include="moc\moc_layout.cpp" />
+    <None Include="moc\moc_mainwindow.cpp" />
+    <None Include="moc\moc_object.cpp" />
+    <None Include="moc\moc_progressbar.cpp" />
+    <None Include="moc\moc_sizepolicy.cpp" />
+    <None Include="moc\moc_tableview.cpp" />
+    <None Include="moc\moc_uiloader.cpp" />
+    <None Include="moc\moc_vboxlayout.cpp" />
+    <None Include="moc\moc_widget.cpp" />
+    <None Include="QGlueStandardItemModel.h" />
+    <None Include="QGlueTableWidget.h" />
   </ItemGroup>
 </Project>

@@ -1,18 +1,14 @@
 ﻿#include "QGlueLabel.h"
 
-GlueLabel::GlueLabel(MonoObject* thisObject, GlueWidget *parent, Qt::WindowFlags f) : QLabel(parent, f)
+GlueLabel::GlueLabel(MonoObject* thisObject, QWidget *parent, Qt::WindowFlags f) : QLabel(parent, f)
 {
 	_thisObject = thisObject;
 }
 
-GlueLabel::GlueLabel(MonoObject* thisObject, char* text, GlueWidget *parent, Qt::WindowFlags f) : QLabel(text, parent, f)
+GlueLabel::GlueLabel(MonoObject* thisObject, char* text, QWidget *parent, Qt::WindowFlags f) : QLabel(text, parent, f)
 {
 	_thisObject = thisObject;
 }
-//
-//GlueLabel::~GlueLabel()
-//{
-//}
 
 void GlueLabel::setText(MonoString* text)
 {
