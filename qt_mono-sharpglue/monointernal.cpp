@@ -685,399 +685,313 @@ QHeaderView* qt_widget_verticalheader_get(GlueTableView* tableView)
 	return tableView->verticalHeader();
 }
 
-QEvent::Type qt_event_type_get(MonoObject* thisObject)
+QEvent::Type qt_event_type_get(QEvent* event)
 {
-	QEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->type();
 }
 
-bool qt_event_spontaneous_get(MonoObject* thisObject)
+bool qt_event_spontaneous_get(QEvent* event)
 {
-	QEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->spontaneous();
 }
 
-bool qt_event_accepted_get(MonoObject* thisObject)
+bool qt_event_accepted_get(QEvent* event)
 {
-	QEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->isAccepted();
 }
 
-void qt_event_accepted_set(MonoObject* thisObject, bool accepted)
+void qt_event_accepted_set(QEvent* event, bool accepted)
 {
-	QEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	event->setAccepted(accepted);
 }
 
-ulong qt_inputevent_timestamp_get(MonoObject* thisObject)
+ulong qt_inputevent_timestamp_get(QInputEvent* event)
 {
-	QInputEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->timestamp();
 }
 
-void qt_inputevent_timestamp_set(MonoObject* thisObject, ulong timestamp)
+void qt_inputevent_timestamp_set(QInputEvent* event, ulong timestamp)
 {
-	QInputEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	event->setTimestamp(timestamp);
 }
 
-Qt::KeyboardModifiers qt_inputevent_modifiers_get(MonoObject* thisObject)
+Qt::KeyboardModifiers qt_inputevent_modifiers_get(QInputEvent* event)
 {
-	QInputEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->modifiers();
 }
 
-void qt_inputevent_modifiers_set(MonoObject* thisObject, Qt::KeyboardModifiers modifiers)
+void qt_inputevent_modifiers_set(QInputEvent* event, Qt::KeyboardModifiers modifiers)
 {
-	QInputEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	event->setModifiers(modifiers);
 }
 
-QContextMenuEvent::Reason qt_contextmenuevent_reason_get(MonoObject* thisObject)
+QContextMenuEvent::Reason qt_contextmenuevent_reason_get(QContextMenuEvent* event)
 {
-	QContextMenuEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->reason();
 }
 
-const QPoint qt_contextmenuevent_pos_get(MonoObject* thisObject)
+const QPoint qt_contextmenuevent_pos_get(QContextMenuEvent* event)
 {
-	QContextMenuEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->pos();
 }
 
-const QPoint qt_contextmenuevent_globalpos_get(MonoObject* thisObject)
+const QPoint qt_contextmenuevent_globalpos_get(QContextMenuEvent* event)
 {
-	QContextMenuEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->globalPos();
 }
 
-const QRect qt_paintevent_rect_get(MonoObject* thisObject)
+const QRect qt_paintevent_rect_get(QPaintEvent* event)
 {
-	QPaintEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->rect();
 }
 
-uint32_t qt_keyevent_nativescancode_get(MonoObject* thisObject)
+Qt::FocusReason qt_focusevent_reason_get(QFocusEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
+	return event->reason();
+}
+
+bool qt_wheelevent_inverted_get(QWheelEvent* event)
+{
+	return event->inverted();
+}
+
+Qt::ScrollPhase qt_wheelevent_phase_get(QWheelEvent* event)
+{
+	return event->phase();
+}
+
+Qt::MouseEventSource qt_wheelevent_source_get(QWheelEvent* event)
+{
+	return event->source();
+}
+
+Qt::MouseButtons qt_wheelevent_buttons_get(QWheelEvent* event)
+{
+	return event->buttons();
+}
+
+QPointF qt_wheelevent_globalposf_get(QWheelEvent* event)
+{
+	return event->globalPosF();
+}
+
+QPointF qt_wheelevent_posf_get(QWheelEvent* event)
+{
+	return event->posF();
+}
+
+Qt::Orientation qt_wheelevent_orientation_get(QWheelEvent* event)
+{
+	return event->orientation();
+}
+
+int qt_wheelevent_delta_get(QWheelEvent* event)
+{
+	return event->delta();
+}
+
+QPoint qt_wheelevent_angledelta_get(QWheelEvent* event)
+{
+	return event->angleDelta();
+}
+
+QPoint qt_wheelevent_pixeldelta_get(QWheelEvent* event)
+{
+	return event->pixelDelta();
+}
+
+Qt::MouseEventSource qt_mouseevent_source_get(QMouseEvent* event)
+{
+	return event->source();
+}
+
+Qt::MouseEventFlags qt_mouseevent_flags_get(QMouseEvent* event)
+{
+	return event->flags();
+}
+
+Qt::MouseButton qt_mouseevent_button_get(QMouseEvent* event)
+{
+	return event->button();
+}
+
+Qt::MouseButtons qt_mouseevent_buttons_get(QMouseEvent* event)
+{
+	return event->buttons();
+}
+
+QPointF qt_mouseevent_localpos_get(QMouseEvent* event)
+{
+	return event->localPos();
+}
+
+QPointF qt_mouseevent_windowpos_get(QMouseEvent* event)
+{
+	return event->windowPos();
+}
+
+QPointF qt_mouseevent_screenpos_get(QMouseEvent* event)
+{
+	return event->screenPos();
+}
+
+uint32_t qt_keyevent_nativescancode_get(QKeyEvent* event)
+{
 	return event->nativeScanCode();
 }
 
-uint32_t qt_keyevent_nativevirtualkey_get(MonoObject* thisObject)
+uint32_t qt_keyevent_nativevirtualkey_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->nativeVirtualKey();
 }
 
-uint32_t qt_keyevent_nativemodifiers_get(MonoObject* thisObject)
+uint32_t qt_keyevent_nativemodifiers_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->nativeModifiers();
 }
 
-Qt::KeyboardModifiers qt_keyevent_modifiers_get(MonoObject* thisObject)
+Qt::KeyboardModifiers qt_keyevent_modifiers_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->modifiers();
 }
 
-MonoString* qt_keyevent_text_get(MonoObject* thisObject)
+MonoString* qt_keyevent_text_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return mono_string_new(mono_domain_get (), event->text().toStdString().c_str());
 }
 
-bool qt_keyevent_autorepeat_get(MonoObject* thisObject)
+bool qt_keyevent_autorepeat_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->isAutoRepeat();
 }
 
-ushort qt_keyevent_count_get(MonoObject* thisObject)
+ushort qt_keyevent_count_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->count();
 }
 
-int qt_keyevent_key_get(MonoObject* thisObject)
+int qt_keyevent_key_get(QKeyEvent* event)
 {
-	QKeyEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->key();
 }
 
-const QPoint qt_moveevent_pos_get(MonoObject* thisObject)
+const QPoint qt_moveevent_pos_get(QMoveEvent* event)
 {
-	QMoveEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->pos();
 }
 
-const QPoint qt_moveevent_oldpos_get(MonoObject* thisObject)
+const QPoint qt_moveevent_oldpos_get(QMoveEvent* event)
 {
-	QMoveEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->oldPos();
 }
 
-const QSize qt_resizeevent_size_get(MonoObject* thisObject)
+const QSize qt_resizeevent_size_get(QResizeEvent* event)
 {
-	QResizeEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->size();
 }
 
-const QSize qt_resizeevent_oldsize_get(MonoObject* thisObject)
+const QSize qt_resizeevent_oldsize_get(QResizeEvent* event)
 {
-	QResizeEvent* event;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&event));
 	return event->oldSize();
 }
 
-int qt_size_width_get(MonoObject* thisObject)
+int qt_size_width_get(QSize size)
 {
-	QSize size;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
 	return size.width();
 }
 
-void qt_size_width_set(MonoObject* thisObject, int width)
+void qt_size_width_set(QSize size, int width)
 {
-	QSize size;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
 	return size.setWidth(width);
 }
 
-int qt_size_height_get(MonoObject* thisObject)
+int qt_size_height_get(QSize size)
 {
-	QSize size;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
 	return size.height();
 }
 
-void qt_size_height_set(MonoObject* thisObject, int height)
+void qt_size_height_set(QSize size, int height)
 {
-	QSize size;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&size));
 	return size.setHeight(height);
 }
 
-int qt_rectangle_x_get(MonoObject* thisObject)
+int qt_rectangle_x_get(QRect rect)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.x();
 }
 
-void qt_rectangle_x_set(MonoObject* thisObject, int x)
+void qt_rectangle_x_set(QRect rect, int x)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.setX(x);
 }
 
-int qt_rectangle_y_get(MonoObject* thisObject)
+int qt_rectangle_y_get(QRect rect)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.y();
 }
 
-void qt_rectangle_y_set(MonoObject* thisObject, int y)
+void qt_rectangle_y_set(QRect rect, int y)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.setY(y);
 }
 
-int qt_rectangle_width_get(MonoObject* thisObject)
+int qt_rectangle_width_get(QRect rect)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.width();
 }
 
-void qt_rectangle_width_set(MonoObject* thisObject, int width)
+void qt_rectangle_width_set(QRect rect, int width)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.setWidth(width);
 }
 
-int qt_rectangle_height_get(MonoObject* thisObject)
+int qt_rectangle_height_get(QRect rect)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.height();
 }
 
-void qt_rectangle_height_set(MonoObject* thisObject, int height)
+void qt_rectangle_height_set(QRect rect, int height)
 {
-	QRect rect;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&rect));
 	return rect.setHeight(height);
 }
 
-int qt_point_x_get(MonoObject* thisObject)
+int qt_point_x_get(QPoint point)
 {
-	QPoint point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.x();
 }
 
-void qt_point_x_set(MonoObject* thisObject, int x)
+void qt_point_x_set(QPoint point, int x)
 {
-	QPoint point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.setX(x);
 }
 
-int qt_point_y_get(MonoObject* thisObject)
+int qt_point_y_get(QPoint point)
 {
-	QPoint point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.y();
 }
 
-void qt_point_y_set(MonoObject* thisObject, int y)
+void qt_point_y_set(QPoint point, int y)
 {
-	QPoint point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.setY(y);
 }
 
-double qt_pointf_x_get(MonoObject* thisObject)
+double qt_pointf_x_get(QPointF point)
 {
-	QPointF point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.x();
 }
 
-void qt_pointf_x_set(MonoObject* thisObject, double x)
+void qt_pointf_x_set(QPointF point, double x)
 {
-	QPointF point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.setX(x);
 }
 
-double qt_pointf_y_get(MonoObject* thisObject)
+double qt_pointf_y_get(QPointF point)
 {
-	QPointF point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.y();
 }
 
-void qt_pointf_y_set(MonoObject* thisObject, double y)
+void qt_pointf_y_set(QPointF point, double y)
 {
-	QPointF point;
-	auto widget_class = mono_object_get_class(thisObject);
-	auto native_handle_field = mono_class_get_field_from_name(widget_class, "Raw");
-	mono_field_get_value(thisObject, native_handle_field, reinterpret_cast<void*>(&point));
 	return point.setY(y);
 }
 
@@ -1121,14 +1035,34 @@ void qt_itemmodel_columncount_set(QStandardItemModel* standardItemModel, int col
 	standardItemModel->setColumnCount(columns);
 }
 
-QAbstractItemModel* qt_itemview_model_get(QTableView* tableView)
+QAbstractItemModel* qt_itemview_model_get(QAbstractItemView* abstractItemView)
 {
-	return tableView->model();
+	return abstractItemView->model();
 }
 
-void qt_itemview_model_set(QTableView* tableView, QAbstractItemModel* itemModel)
+void qt_itemview_model_set(QAbstractItemView* abstractItemView, QAbstractItemModel* itemModel)
 {
-	tableView->setModel(itemModel);
+	abstractItemView->setModel(itemModel);
+}
+
+QAbstractItemView::SelectionBehavior qt_itemview_selectctionbehavior_get(QAbstractItemView* abstractItemView)
+{
+	return abstractItemView->selectionBehavior();
+}
+
+void qt_itemview_selectctionbehavior_set(QAbstractItemView* abstractItemView, QAbstractItemView::SelectionBehavior selectionBehavior)
+{
+	abstractItemView->setSelectionBehavior(selectionBehavior);
+}
+
+QAbstractItemView::SelectionMode qt_itemview_selectctionmode_get(QAbstractItemView* abstractItemView)
+{
+	return abstractItemView->selectionMode();
+}
+
+void qt_itemview_selectctionmode_set(QAbstractItemView* abstractItemView, QAbstractItemView::SelectionMode mode)
+{
+	abstractItemView->setSelectionMode(mode);
 }
 
 void qt_tableview_resizerowtocontents(QTableView* tableView, int row)
@@ -1293,6 +1227,10 @@ extern "C" void qt_application_monointernal_init()
 
 	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_get", reinterpret_cast<void*>(qt_itemview_model_get));
 	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_set", reinterpret_cast<void*>(qt_itemview_model_set));
+	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionbehavior_get", reinterpret_cast<void*>(qt_itemview_selectctionbehavior_get));
+	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionbehavior_set", reinterpret_cast<void*>(qt_itemview_selectctionbehavior_set));
+	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionmode_get", reinterpret_cast<void*>(qt_itemview_selectctionmode_get));
+	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionmode_set", reinterpret_cast<void*>(qt_itemview_selectctionmode_set));
 
 	mono_add_internal_call ("Qt.StandardItem::qt_standarditem_new", reinterpret_cast<void*>(qt_standarditem_new));
 
@@ -1328,29 +1266,29 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_get", reinterpret_cast<void*>(qt_progressbar_maximum_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_set", reinterpret_cast<void*>(qt_progressbar_maximum_set));
 
-	mono_add_internal_call ("Qt.Size::get_Width", reinterpret_cast<void*>(qt_size_width_get));
-	mono_add_internal_call ("Qt.Size::set_Width", reinterpret_cast<void*>(qt_size_width_set));
-	mono_add_internal_call ("Qt.Size::get_Height", reinterpret_cast<void*>(qt_size_height_get));
-	mono_add_internal_call ("Qt.Size::set_Height", reinterpret_cast<void*>(qt_size_height_set));
+	mono_add_internal_call ("Qt.Size::qt_size_width_get", reinterpret_cast<void*>(qt_size_width_get));
+	mono_add_internal_call ("Qt.Size::qt_size_width_set", reinterpret_cast<void*>(qt_size_width_set));
+	mono_add_internal_call ("Qt.Size::qt_size_height_get", reinterpret_cast<void*>(qt_size_height_get));
+	mono_add_internal_call ("Qt.Size::qt_size_height_set", reinterpret_cast<void*>(qt_size_height_set));
 
-	mono_add_internal_call ("Qt.Rectangle::get_X", reinterpret_cast<void*>(qt_rectangle_x_get));
-	mono_add_internal_call ("Qt.Rectangle::set_X", reinterpret_cast<void*>(qt_rectangle_x_set));
-	mono_add_internal_call ("Qt.Rectangle::get_Y", reinterpret_cast<void*>(qt_rectangle_y_get));
-	mono_add_internal_call ("Qt.Rectangle::set_Y", reinterpret_cast<void*>(qt_rectangle_y_set));
-	mono_add_internal_call ("Qt.Rectangle::get_Width", reinterpret_cast<void*>(qt_rectangle_width_get));
-	mono_add_internal_call ("Qt.Rectangle::set_Width", reinterpret_cast<void*>(qt_rectangle_width_set));
-	mono_add_internal_call ("Qt.Rectangle::get_Height", reinterpret_cast<void*>(qt_rectangle_height_get));
-	mono_add_internal_call ("Qt.Rectangle::set_Height", reinterpret_cast<void*>(qt_rectangle_height_set));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_x_get", reinterpret_cast<void*>(qt_rectangle_x_get));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_x_set", reinterpret_cast<void*>(qt_rectangle_x_set));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_y_get", reinterpret_cast<void*>(qt_rectangle_y_get));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_y_set", reinterpret_cast<void*>(qt_rectangle_y_set));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_width_get", reinterpret_cast<void*>(qt_rectangle_width_get));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_width_set", reinterpret_cast<void*>(qt_rectangle_width_set));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_height_get", reinterpret_cast<void*>(qt_rectangle_height_get));
+	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_height_set", reinterpret_cast<void*>(qt_rectangle_height_set));
 
-	mono_add_internal_call ("Qt.Point::get_X", reinterpret_cast<void*>(qt_point_x_get));
-	mono_add_internal_call ("Qt.Point::set_X", reinterpret_cast<void*>(qt_point_x_set));
-	mono_add_internal_call ("Qt.Point::get_Y", reinterpret_cast<void*>(qt_point_y_get));
-	mono_add_internal_call ("Qt.Point::set_Y", reinterpret_cast<void*>(qt_point_y_set));
+	mono_add_internal_call ("Qt.Point::qt_point_x_get", reinterpret_cast<void*>(qt_point_x_get));
+	mono_add_internal_call ("Qt.Point::qt_point_x_set", reinterpret_cast<void*>(qt_point_x_set));
+	mono_add_internal_call ("Qt.Point::qt_point_y_get", reinterpret_cast<void*>(qt_point_y_get));
+	mono_add_internal_call ("Qt.Point::qt_point_y_set", reinterpret_cast<void*>(qt_point_y_set));
 
-	mono_add_internal_call ("Qt.PointF::get_X", reinterpret_cast<void*>(qt_pointf_x_get));
-	mono_add_internal_call ("Qt.PointF::set_X", reinterpret_cast<void*>(qt_pointf_x_set));
-	mono_add_internal_call ("Qt.PointF::get_Y", reinterpret_cast<void*>(qt_pointf_y_get));
-	mono_add_internal_call ("Qt.PointF::set_Y", reinterpret_cast<void*>(qt_pointf_y_set));
+	mono_add_internal_call ("Qt.PointF::qt_pointf_x_get", reinterpret_cast<void*>(qt_pointf_x_get));
+	mono_add_internal_call ("Qt.PointF::qt_pointf_x_set", reinterpret_cast<void*>(qt_pointf_x_set));
+	mono_add_internal_call ("Qt.PointF::qt_pointf_y_get", reinterpret_cast<void*>(qt_pointf_y_get));
+	mono_add_internal_call ("Qt.PointF::qt_pointf_y_set", reinterpret_cast<void*>(qt_pointf_y_set));
 
 	mono_add_internal_call ("Qt.SizePolicy::qt_sizepolicy_new", reinterpret_cast<void*>(qt_sizepolicy_new));
 	mono_add_internal_call ("Qt.SizePolicy::qt_sizepolicy_new_with_policy", reinterpret_cast<void*>(qt_sizepolicy_new_with_policy));
@@ -1385,36 +1323,57 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.VBoxLayout::qt_vboxlayout_new", reinterpret_cast<void*>(qt_vboxlayout_new));
 	mono_add_internal_call ("Qt.HBoxLayout::qt_hboxlayout_new", reinterpret_cast<void*>(qt_hboxlayout_new));
 
-	mono_add_internal_call ("Qt.Event::get_Type", reinterpret_cast<void*>(qt_event_type_get));
-	mono_add_internal_call ("Qt.Event::get_Spontaneous", reinterpret_cast<void*>(qt_event_spontaneous_get));
-	mono_add_internal_call ("Qt.Event::get_Accepted", reinterpret_cast<void*>(qt_event_accepted_get));
-	mono_add_internal_call ("Qt.Event::set_Accepted", reinterpret_cast<void*>(qt_event_accepted_set));
+	mono_add_internal_call ("Qt.Event::qt_event_type_get", reinterpret_cast<void*>(qt_event_type_get));
+	mono_add_internal_call ("Qt.Event::qt_event_spontaneous_get", reinterpret_cast<void*>(qt_event_spontaneous_get));
+	mono_add_internal_call ("Qt.Event::qt_event_accepted_get", reinterpret_cast<void*>(qt_event_accepted_get));
+	mono_add_internal_call ("Qt.Event::qt_event_accepted_set", reinterpret_cast<void*>(qt_event_accepted_set));
 
-	mono_add_internal_call ("Qt.InputEvent::get_Timestamp", reinterpret_cast<void*>(qt_inputevent_timestamp_get));
-	mono_add_internal_call ("Qt.InputEvent::set_Timestamp", reinterpret_cast<void*>(qt_inputevent_timestamp_set));
-	mono_add_internal_call ("Qt.InputEvent::get_Modifiers", reinterpret_cast<void*>(qt_inputevent_modifiers_get));
-	mono_add_internal_call ("Qt.InputEvent::set_Modifiers", reinterpret_cast<void*>(qt_inputevent_modifiers_set));
+	mono_add_internal_call ("Qt.InputEvent::qt_inputevent_timestamp_get", reinterpret_cast<void*>(qt_inputevent_timestamp_get));
+	mono_add_internal_call ("Qt.InputEvent::qt_inputevent_timestamp_set", reinterpret_cast<void*>(qt_inputevent_timestamp_set));
+	mono_add_internal_call ("Qt.InputEvent::qt_inputevent_modifiers_get", reinterpret_cast<void*>(qt_inputevent_modifiers_get));
+	mono_add_internal_call ("Qt.InputEvent::qt_inputevent_modifiers_set", reinterpret_cast<void*>(qt_inputevent_modifiers_set));
 
-	mono_add_internal_call ("Qt.ContextMenuEvent::get_Reason", reinterpret_cast<void*>(qt_contextmenuevent_reason_get));
-	mono_add_internal_call ("Qt.ContextMenuEvent::get_Pos", reinterpret_cast<void*>(qt_contextmenuevent_pos_get));
-	mono_add_internal_call ("Qt.ContextMenuEvent::get_GlobalPos", reinterpret_cast<void*>(qt_contextmenuevent_globalpos_get));
+	mono_add_internal_call ("Qt.ContextMenuEvent::qt_contextmenuevent_reason_get", reinterpret_cast<void*>(qt_contextmenuevent_reason_get));
+	mono_add_internal_call ("Qt.ContextMenuEvent::qt_contextmenuevent_pos_get", reinterpret_cast<void*>(qt_contextmenuevent_pos_get));
+	mono_add_internal_call ("Qt.ContextMenuEvent::qt_contextmenuevent_globalpos_get", reinterpret_cast<void*>(qt_contextmenuevent_globalpos_get));
 
-	mono_add_internal_call ("Qt.MoveEvent::get_rawPos", reinterpret_cast<void*>(qt_moveevent_pos_get));
-	mono_add_internal_call ("Qt.MoveEvent::get_rawOldPos", reinterpret_cast<void*>(qt_moveevent_oldpos_get));
+	mono_add_internal_call ("Qt.MoveEvent::qt_moveevent_pos_get", reinterpret_cast<void*>(qt_moveevent_pos_get));
+	mono_add_internal_call ("Qt.MoveEvent::qt_moveevent_oldpos_get", reinterpret_cast<void*>(qt_moveevent_oldpos_get));
 
-	mono_add_internal_call ("Qt.ResizeEvent::get_rawSize", reinterpret_cast<void*>(qt_resizeevent_size_get));
-	mono_add_internal_call ("Qt.ResizeEvent::get_rawOldSize", reinterpret_cast<void*>(qt_resizeevent_oldsize_get));
+	mono_add_internal_call ("Qt.ResizeEvent::qt_resizeevent_size_get", reinterpret_cast<void*>(qt_resizeevent_size_get));
+	mono_add_internal_call ("Qt.ResizeEvent::qt_resizeevent_oldsize_get", reinterpret_cast<void*>(qt_resizeevent_oldsize_get));
 
-	mono_add_internal_call ("Qt.PaintEvent::get_rawRect", reinterpret_cast<void*>(qt_paintevent_rect_get));
+	mono_add_internal_call ("Qt.PaintEvent::qt_paintevent_rect_get", reinterpret_cast<void*>(qt_paintevent_rect_get));
 
-	mono_add_internal_call ("Qt.KeyEvent::get_NativeScanCode", reinterpret_cast<void*>(qt_keyevent_nativescancode_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_NativeVirtualKey", reinterpret_cast<void*>(qt_keyevent_nativevirtualkey_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_NativeModifiers", reinterpret_cast<void*>(qt_keyevent_nativemodifiers_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_Text", reinterpret_cast<void*>(qt_keyevent_text_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_Key", reinterpret_cast<void*>(qt_keyevent_key_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_AutoRepeat", reinterpret_cast<void*>(qt_keyevent_autorepeat_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_Modifiers", reinterpret_cast<void*>(qt_keyevent_modifiers_get));
-	mono_add_internal_call ("Qt.KeyEvent::get_Count", reinterpret_cast<void*>(qt_keyevent_count_get));
+	mono_add_internal_call ("Qt.FocusEvent::qt_focusevent_reason_get", reinterpret_cast<void*>(qt_focusevent_reason_get));
+
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_inverted_get", reinterpret_cast<void*>(qt_wheelevent_inverted_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_phase_get", reinterpret_cast<void*>(qt_wheelevent_phase_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_delta_get", reinterpret_cast<void*>(qt_wheelevent_delta_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_orientation_get", reinterpret_cast<void*>(qt_wheelevent_orientation_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_source_get", reinterpret_cast<void*>(qt_wheelevent_source_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_pixeldelta_get", reinterpret_cast<void*>(qt_wheelevent_pixeldelta_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_angledelta_get", reinterpret_cast<void*>(qt_wheelevent_angledelta_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_posf_get", reinterpret_cast<void*>(qt_wheelevent_posf_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_globalposf_get", reinterpret_cast<void*>(qt_wheelevent_globalposf_get));
+	mono_add_internal_call ("Qt.WheelEvent::qt_wheelevent_buttons_get", reinterpret_cast<void*>(qt_wheelevent_buttons_get));
+
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_source_get", reinterpret_cast<void*>(qt_mouseevent_source_get));
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_flags_get", reinterpret_cast<void*>(qt_mouseevent_flags_get));
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_button_get", reinterpret_cast<void*>(qt_mouseevent_button_get));
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_buttons_get", reinterpret_cast<void*>(qt_mouseevent_buttons_get));
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_localpos_get", reinterpret_cast<void*>(qt_mouseevent_localpos_get));
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_windowpos_get", reinterpret_cast<void*>(qt_mouseevent_windowpos_get));
+	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_screenpos_get", reinterpret_cast<void*>(qt_mouseevent_screenpos_get));
+
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_nativescancode_get", reinterpret_cast<void*>(qt_keyevent_nativescancode_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_nativevirtualkey_get", reinterpret_cast<void*>(qt_keyevent_nativevirtualkey_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_nativemodifiers_get", reinterpret_cast<void*>(qt_keyevent_nativemodifiers_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_text_get", reinterpret_cast<void*>(qt_keyevent_text_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_key_get", reinterpret_cast<void*>(qt_keyevent_key_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_autorepeat_get", reinterpret_cast<void*>(qt_keyevent_autorepeat_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_modifiers_get", reinterpret_cast<void*>(qt_keyevent_modifiers_get));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_count_get", reinterpret_cast<void*>(qt_keyevent_count_get));
 
 	mono_add_internal_call ("Qt.Layout::qt_layout_parent_get", reinterpret_cast<void*>(qt_layout_parent_get));
 	mono_add_internal_call ("Qt.Layout::qt_layout_widget_add", reinterpret_cast<void*>(qt_layout_widget_add));
