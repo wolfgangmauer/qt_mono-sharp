@@ -17,9 +17,9 @@ namespace TestQtMonoSharp
 		public static void Main (string[] args)
 		{
 			GLib.Global.ProgramName = "ProgramName";
-			StartUp (args);
-//			HideFromJit d = StartUp;
-//			d (args);
+			//StartUp (args);
+			HideFromJit d = StartUp;
+			d (args);
 		}
 
 		public static void StartUp (string[] args)
@@ -31,10 +31,12 @@ namespace TestQtMonoSharp
 			var app = new Application (args);
 
 			var mainWindow = new MyMainWindow ();
-			mainWindow.FixedSize = new Size (1920 / 2, 1080 / 2);
+//			mainWindow.FixedSize = new Size (1920 / 2, 1080 / 2);
+//			mainWindow.FocusPolicy = FocusPolicy.StrongFocus;
+//			mainWindow.WindowTitle = "NNNN";
 			mainWindow.Show ();
 
-			var splash = new MessagePanel ();
+			var splash = new SplashScreen();
 			splash.Exec ();
 
 			app.Exec ();
