@@ -16,5 +16,12 @@ namespace Qt
     public class HeaderView : ItemView
     {
 		public HeaderView(IntPtr raw) : base(raw) { }
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_headerview_visible_set (IntPtr raw, bool visible);
+		public bool Visible
+		{
+			set{ qt_headerview_visible_set (Handle, value); }
+		}
     }
 }

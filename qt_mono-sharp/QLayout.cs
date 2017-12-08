@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
-using System.Drawing;
 
 namespace Qt
 {
@@ -91,33 +90,26 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_layout_geometry_get (IntPtr raw, ref int x, ref int y, ref int width, ref int height);
+		protected static extern Rectangle qt_layout_geometry_get (IntPtr raw);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_layout_geometry_set (IntPtr raw, int x, int y, int width, int height);
+		protected static extern void qt_layout_geometry_set (IntPtr raw, Rectangle rect);
 
 		public Rectangle Geometry {
 			get {
-				int x = 0, y = 0, width = 0, height = 0;
-				qt_layout_geometry_get (Handle, ref x, ref y, ref width, ref height);
-				return new Rectangle (x, y, width, height);
+				return qt_layout_geometry_get (Handle);
 			}
 			set {
-				qt_layout_geometry_set (Handle, value.X, value.Y, value.Width, value.Height);
+				qt_layout_geometry_set (Handle, value);
 			}
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_layout_widget_add (IntPtr raw, IntPtr widget);
 
-		public virtual void AddWidget (Widget widget)
+		public void AddWidget (Widget widget)
 		{
 			qt_layout_widget_add (Handle, widget.Handle);
-		}
-
-		public virtual void AddLayout (Layout widget, int stretch = 0)
-		{
-			HasLayout = true;
 		}
 
 		public virtual bool HasLayout { get; protected set; }

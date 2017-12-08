@@ -7,13 +7,20 @@ namespace Qt
 	public class HBoxLayout : BoxLayout
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern IntPtr qt_hboxlayout_new (IntPtr parent);
+		protected static extern IntPtr qt_hboxlayout_new (HBoxLayout thisObject, IntPtr parent);
 
-		protected HBoxLayout (IntPtr raw) : base(raw) {}
+		private HBoxLayout (IntPtr parent) : base(IntPtr.Zero)
+		{
+			if (GetType () != typeof(HBoxLayout))
+				return;
+			Raw = qt_hboxlayout_new (this, parent);
+		}
 
 		public HBoxLayout (Widget parent = null) : base(IntPtr.Zero)
 		{
-			Raw = qt_hboxlayout_new (parent != null ? parent.Handle : IntPtr.Zero);
+			if (GetType () != typeof(HBoxLayout))
+				return;
+			Raw = qt_hboxlayout_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 	}
 }

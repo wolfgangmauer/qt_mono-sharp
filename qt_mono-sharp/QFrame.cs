@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace Qt
 {
-	public partial class Frame : Widget
+	public class Frame : Widget
 	{
 		public enum Shape
 		{
@@ -46,16 +46,21 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_frame_new (Frame thisObject, IntPtr parent);
 
-		protected Frame (IntPtr raw) : base (raw)
+		protected Frame (IntPtr parent) : base(parent)
 		{
+			if (GetType () != typeof(Frame))
+				return;
+			Raw = qt_frame_new (this, parent);
 		}
 
 		public Frame () : this (null)
 		{
 		}
 
-		public Frame (Widget parent) : base (IntPtr.Zero)
+		public Frame (Widget parent = null) : base (IntPtr.Zero)
 		{
+			if (GetType () != typeof(Frame))
+				return;
 			Raw = qt_frame_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 

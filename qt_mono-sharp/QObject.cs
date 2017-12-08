@@ -95,7 +95,7 @@ namespace Qt
 			return qt_object_find (raw, objectName);
 		}
 
-		static protected Object GetObjectFromRaw (IntPtr raw)
+		static public Object GetObjectFromRaw (IntPtr raw)
 		{
 			if (objects.ContainsKey (raw))
 				return objects [raw];
@@ -121,11 +121,6 @@ namespace Qt
 			set {
 				qt_objectname_set (Handle, value);
 			}
-		}
-
-		protected virtual bool OnEvent (Event ev)
-		{
-			return true;
 		}
 	}
 }

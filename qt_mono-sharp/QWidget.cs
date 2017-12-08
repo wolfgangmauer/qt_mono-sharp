@@ -2,22 +2,37 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Runtime.CompilerServices;
-using System.Drawing;
 
 namespace Qt
 {
 	public class Widget : Object
 	{
 		public event EventHandler<string> WindowTitleChanged;
-		public event EventHandler<Icon> WindowIconChanged;
-		public event EventHandler<string> WindowIconTextChanged;
-		public event EventHandler<Point> CustomContextMenuRequested;
+		public event EventHandler<Event> BaseEvent;
+		public event EventHandler<ShowEvent> ShowEvent;
+		public event EventHandler<HideEvent> HideEvent;
+		public event EventHandler<Event> EnterEvent;
+		public event EventHandler<Event> LeaveEvent;
+		public event EventHandler<PaintEvent> PaintEvent;
+		public event EventHandler<CloseEvent> CloseEvent;
+		public event EventHandler<ResizeEvent> ResizeEvent;
+		public event EventHandler<MoveEvent> MoveEvent;
+		public event EventHandler<WheelEvent> WheelEvent;
+		public event EventHandler<MouseEvent> MousePressEvent;
+		public event EventHandler<MouseEvent> MouseReleaseEvent;
+		public event EventHandler<MouseEvent> MouseDoubleClickEvent;
+		public event EventHandler<MouseEvent> MouseMoveEvent;
+		public event EventHandler<KeyEvent> KeyPressEvent;
+		public event EventHandler<KeyEvent> KeyReleaseEvent;
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_new (Widget thisObject, IntPtr parent, uint f);
 
-		internal Widget (IntPtr raw) : base (raw)
+		protected Widget (IntPtr parent) : base(parent)
 		{
+			if (GetType() != typeof(Widget))
+				return;
+			Raw = qt_widget_new (this, parent, 0);
 		}
 
 		public Widget () : this (null)
@@ -37,15 +52,39 @@ namespace Qt
 
 		public Widget (Widget parent, WindowType f) : base (IntPtr.Zero)
 		{
+			if (GetType() != typeof(Widget))
+				return;
 			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, (uint)f);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern uint qt_widget_windowmodality_get (IntPtr raw);
+		protected static extern IntPtr qt_widget_layout_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_layout_set (IntPtr raw, IntPtr layout);
+		public Layout Layout
+		{
+			get {
+				return (Layout)GetObjectFromRaw(qt_widget_layout_get (Handle));
+			}
+			set {
+				qt_widget_layout_set (Handle, value.Handle);
+			}
+		}
+
+		public IntPtr LayoutIntPtr
+		{
+			get {
+				return qt_widget_layout_get (Handle);
+			}
+			set {
+				qt_widget_layout_set (Handle, value);
+			}
+		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern uint qt_widget_windowmodality_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_windowmodality_set (IntPtr raw, uint windowModality);
-
 		public WindowModality WindowModality {
 			get {
 				return (WindowModality)qt_widget_windowmodality_get (Handle);
@@ -60,7 +99,6 @@ namespace Qt
 
 		public void Show ()
 		{
-			//var handle = GetObjectFromRaw (Handle);
 			qt_widget_show (Handle);
 		}
 
@@ -104,19 +142,17 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_minimumsize_get (IntPtr raw, ref int w, ref int h);
+		protected static extern Size qt_widget_minimumsize_get (IntPtr raw);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_minimumsize_set (IntPtr raw, int w, int h);
+		protected static extern void qt_widget_minimumsize_set (IntPtr raw, int minw, int minh);
 
 		public Size MinimumSize {
 			get {
-				int w = 0, h = 0;
-				qt_widget_minimumsize_get (Handle, ref w, ref h);
-				return new Size (w, h);
+				return qt_widget_minimumsize_get (Handle);
 			}
 			set {
-				qt_widget_minimumsize_set (Handle, value.Width, value.Height);
+				SetMinimumSize (value.Width, value.Height);
 			}
 		}
 
@@ -126,16 +162,14 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_maximumsize_get (IntPtr raw, ref int w, ref int h);
+		protected static extern Size qt_widget_maximumsize_get (IntPtr raw);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_maximumsize_set (IntPtr raw, int w, int h);
 
 		public Size MaximumSize {
 			get {
-				int w = 16777215, h = 16777215;
-				qt_widget_maximumsize_get (Handle, ref w, ref h);
-				return new Size (w, h);
+				return qt_widget_maximumsize_get (Handle);
 			}
 			set {
 				qt_widget_maximumsize_set (Handle, value.Width, value.Height);
@@ -228,7 +262,7 @@ namespace Qt
 //                return qt_widget_font_get(Handle);
 //            }
 			set {
-				qt_widget_font_set (Handle, value.Handle);
+				qt_widget_font_set (Handle, value != null ? value.Handle : IntPtr.Zero);
 			}
 		}
 
@@ -267,7 +301,7 @@ namespace Qt
 				return GetObjectFromRaw (qt_widget_parent_get (Handle)) as Widget;
 			}
 			set {
-				qt_widget_parent_set (Handle, value.Handle);
+				qt_widget_parent_set (Handle, value != null ? value.Handle : IntPtr.Zero);
 			}
 		}
 
@@ -290,25 +324,24 @@ namespace Qt
 		protected static extern void qt_widget_fixedsize_set (IntPtr raw, int w, int h);
 
 		public Size FixedSize {
-			set {
+			set
+			{
 				qt_widget_fixedsize_set (Handle, value.Width, value.Height);
 			}
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_geometry_get (IntPtr raw, ref int x, ref int y, ref int width, ref int height);
+		protected static extern Rectangle qt_widget_geometry_get (IntPtr raw);
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_geometry_set (IntPtr raw, int x, int y, int width, int height);
+		protected static extern void qt_widget_geometry_set (IntPtr raw, Rectangle rect);
 
-		public System.Drawing.Rectangle Geometry {
+		public Rectangle Geometry {
 			get {
-				int x = 0, y = 0, width = 0, height = 0;
-				qt_widget_geometry_get (Handle, ref x, ref y, ref width, ref height);
-				return new Rectangle (x, y, width, height);
+				return qt_widget_geometry_get (Handle);
 			}
 			set {
-				qt_widget_geometry_set (Handle, value.X, value.Y, value.Width, value.Height);
+				qt_widget_geometry_set (Handle, value);
 			}
 		}
 
@@ -328,34 +361,115 @@ namespace Qt
 			qt_widget_updategeometry (Handle);
 		}
 
-		protected override bool OnEvent (Event ev)
+		private bool OnShow(ShowEvent ev)
 		{
-			return base.OnEvent (ev);
+			var tmp = ShowEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
-		protected virtual void OnMousePressEvent (MouseEvent ev)
+		private bool OnHide(HideEvent ev)
 		{
+			var tmp = HideEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
-		protected virtual void OnMouseReleaseEvent (MouseEvent ev)
+		private bool OnEnter(Event ev)
 		{
+			var tmp = EnterEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
-		protected virtual void OnMouseDoubleClickEvent (MouseEvent ev)
+		private bool OnLeave(Event ev)
 		{
+			var tmp = LeaveEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
-		protected virtual void OnMouseMoveEvent (MouseEvent ev)
+		private bool OnPaint(PaintEvent ev)
 		{
+			var tmp = PaintEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
-		protected virtual void OnKeyPress (KeyEvent ev)
+		private bool OnClose(CloseEvent ev)
 		{
+			var tmp = CloseEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
-		protected virtual void KeyRelease (KeyEvent ev)
+		private bool OnResize(ResizeEvent ev)
 		{
+			var tmp = ResizeEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnMove(MoveEvent ev)
+		{
+			var tmp = MoveEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnWheel(WheelEvent ev)
+		{
+			var tmp = WheelEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnMousePress (MouseEvent ev)
+		{
+			var tmp = MousePressEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnMouseRelease (MouseEvent ev)
+		{
+			var tmp = MouseReleaseEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnMouseDoubleClick (MouseEvent ev)
+		{
+			var tmp = MouseDoubleClickEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnMouseMove (MouseEvent ev)
+		{
+			var tmp = MouseMoveEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnKeyPress (KeyEvent ev)
+		{
+			var tmp = KeyPressEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnKeyRelease (KeyEvent ev)
+		{
+			var tmp = KeyReleaseEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private void OnWindowTitleChanged(string title)
+		{
+			var tmp = WindowTitleChanged;
+			tmp?.Invoke (this, title);
 		}
 	}
 }
-

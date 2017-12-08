@@ -1,11 +1,29 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-	public class QSize
+	public class Size
 	{
-		public QSize ()
+		IntPtr Raw;
+		public Size (IntPtr raw)
 		{
+			Raw = raw;
+		}
+
+		public int Width
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
+		}
+		public int Height
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
 		}
 	}
 }

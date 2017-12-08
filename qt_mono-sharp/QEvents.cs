@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Qt
 {
@@ -355,94 +355,344 @@ namespace Qt
 			// last user event id
 		}
 
-		public Event ()
+		protected IntPtr Raw;
+
+		protected Event (IntPtr raw)
 		{
+			Raw = raw;
 		}
 
-		public Event (EventType type, bool spontaneous, bool accepted)
+		public void Accept ()
 		{
-			Type = type;
-			Spontaneous = spontaneous;
-			Accepted = accepted;
+			Accepted = true;
 		}
 
-		public EventType Type { get; set; }
+		public void Ignore ()
+		{
+			Accepted = false;
+		}
 
-		public bool Spontaneous { get; set; }
+		public EventType Type { 
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
 
-		public bool Accepted { get; set; }
+		public bool Spontaneous {
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
+		}
+
+		public bool Accepted { 
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
+		}
 	}
 
-	public class InputEvent : Qt.Event
+	public class CloseEvent : Event
 	{
-		public KeyboardModifier Modifiers { get; set; }
+		protected CloseEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class ShowEvent : Event
+	{
+		protected ShowEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class HideEvent : Event
+	{
+		protected HideEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class DropEvent : Event
+	{
+		protected DropEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class DragMoveEvent : DropEvent
+	{
+		protected DragMoveEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class DragEnterEvent : DragMoveEvent
+	{
+		protected DragEnterEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class InputEvent : Event
+	{
+		protected InputEvent (IntPtr raw) : base (raw)
+		{
+		}
+		public UInt64 Timestamp
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
+		}
+		public KeyboardModifier Modifiers
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
+		}
+	}
+
+	public class TabletEvent : InputEvent
+	{
+		protected TabletEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class ActionEvent : Event
+	{
+		protected ActionEvent (IntPtr raw) : base (raw)
+		{
+		}
+	}
+
+	public class ContextMenuEvent : InputEvent
+	{
+		public enum ReasonEnum
+		{
+			Mouse,
+			Keyboard,
+			Other
+		}
+		protected ContextMenuEvent (IntPtr raw) : base (raw)
+		{
+		}
+		public ReasonEnum Reason
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+		public Point Pos
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+		public Point GlobalPos
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+	}
+
+	public class ResizeEvent : Event
+	{
+		protected ResizeEvent (IntPtr raw) : base (raw)
+		{
+		}
+
+		public Size Size 
+		{
+			get{ return new Size (rawSize); }
+		}
+
+		public Size OldSize 
+		{
+			get{ return new Size (rawOldSize); }
+		}
+
+		private IntPtr rawSize 
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		private IntPtr rawOldSize 
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+	}
+
+	public class MoveEvent : Event
+	{
+		protected MoveEvent (IntPtr raw) : base (raw)
+		{
+		}
+
+		public Point Pos
+		{
+			get
+			{
+				return new Point (rawPos); 
+			}
+		}
+
+		public Point OldPos
+		{
+			get 
+			{
+				return new Point (rawOldPos); 
+			}
+		}
+
+		private IntPtr rawPos
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		private IntPtr rawOldPos
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+	}
+
+	public class PaintEvent : Event
+	{
+		protected PaintEvent (IntPtr raw) : base (raw)
+		{
+		}
+
+		public Rectangle Rect
+		{
+			get
+			{
+				return new Rectangle (rawRect);
+			}
+		}
+
+		private IntPtr rawRect
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+	}
+
+	public class FocusEvent : Event
+	{
+		protected FocusEvent (IntPtr raw) : base (raw)
+		{
+		}
+
+		public FocusReason Reason
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			set;
+		}
+	}
+
+	public class WheelEvent : InputEvent
+	{
+		protected WheelEvent (IntPtr raw) : base (raw)
+		{
+		}
+
+		public bool Inverted { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public ScrollPhase Phase { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public int Delta { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public Orientation Orientation { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public MouseEventSource Source { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public PointF PixelDelta { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public PointF AngleDelta { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public PointF Pos { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public PointF GlobalPos { [MethodImpl (MethodImplOptions.InternalCall)]get; }
+
+		public MouseButton Buttons { [MethodImpl (MethodImplOptions.InternalCall)]get; [MethodImpl (MethodImplOptions.InternalCall)]set; }
 	}
 
 	public class MouseEvent : InputEvent
 	{
-		public MouseEvent (EventType type, float localPosx, float localPosy, float windowPosx, float windowPosy, float screenPosx, float screenPosy, MouseButton button, MouseButton buttons, KeyboardModifier modifiers, MouseEventSource source)
+		protected MouseEvent (IntPtr raw) : base (raw)
 		{
-			Type = type;
-			LocalPos = new PointF (localPosx, localPosy);
-			WindowPos = new PointF (windowPosx, windowPosy);
-			ScreenPos = new PointF (screenPosx, screenPosy);
-			Button = button;
-			Buttons = buttons;
-			Modifiers = modifiers;
-			Source = source;
 		}
 
-		public MouseEventSource Source{ get; set; }
+		public MouseEventSource Source{ [MethodImpl (MethodImplOptions.InternalCall)]get; [MethodImpl (MethodImplOptions.InternalCall)]set; }
 
-		public MouseEventFlag Flags{ get; set; }
+		public MouseEventFlag Flags{ [MethodImpl (MethodImplOptions.InternalCall)]get; [MethodImpl (MethodImplOptions.InternalCall)]set; }
 
-		public PointF Pos { get; set; }
+		public PointF Pos { [MethodImpl (MethodImplOptions.InternalCall)]get; [MethodImpl (MethodImplOptions.InternalCall)]set; }
 
-		public MouseButton Button { get; set; }
+		public MouseButton Button { [MethodImpl (MethodImplOptions.InternalCall)]get; [MethodImpl (MethodImplOptions.InternalCall)]set; }
 
-		public MouseButton Buttons { get; set; }
+		public MouseButton Buttons { [MethodImpl (MethodImplOptions.InternalCall)]get; [MethodImpl (MethodImplOptions.InternalCall)]set; }
 
-		public PointF LocalPos { get; private set; }
+		public PointF LocalPos { [MethodImpl (MethodImplOptions.InternalCall)]get; }
 
-		public PointF WindowPos{ get; private set; }
+		public PointF WindowPos{ [MethodImpl (MethodImplOptions.InternalCall)]get; }
 
-		public PointF ScreenPos{ get; private set; }
+		public PointF ScreenPos{ [MethodImpl (MethodImplOptions.InternalCall)]get; }
 	}
 
 	public class KeyEvent : InputEvent
 	{
-		public KeyEvent ()
+		protected KeyEvent (IntPtr raw) : base (raw)
 		{
 		}
 
-		public KeyEvent (EventType type, int key, KeyboardModifier modifiers, string text = "", bool autorep = false, ushort count = 1)
+		public UInt32 NativeScanCode
 		{
-			Type = type;
-			Key = key;
-			Modifiers = modifiers;
-			Text = text;
-			AutoRepeat = autorep;
-			Count = count;
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		public int Key {
+		public UInt32 NativeVirtualKey
+		{ 
+			[MethodImpl (MethodImplOptions.InternalCall)]
 			get;
-			set;
 		}
 
-		public string Text {
+		public UInt32 NativeModifiers
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
 			get;
-			set;
 		}
 
-		public bool AutoRepeat {
+		public int Key
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
 			get;
-			set;
 		}
 
-		public ushort Count {
+		public string Text
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
 			get;
-			set;
+		}
+
+		public bool AutoRepeat
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		public ushort Count
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
 		}
 	}
 }

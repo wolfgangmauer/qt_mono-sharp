@@ -1,8 +1,32 @@
-﻿using System;
+﻿﻿using System;
 using System.Xml.Serialization;
 
 namespace Qt
 {
+	public enum FocusReason : uint
+	{
+		MouseFocusReason,
+		TabFocusReason,
+		BacktabFocusReason,
+		ActiveWindowFocusReason,
+		PopupFocusReason,
+		ShortcutFocusReason,
+		MenuBarFocusReason,
+		OtherFocusReason,
+		NoFocusReason
+	}
+
+	[Flags]
+	public enum DropActions : uint
+	{
+		CopyAction = 0x1,
+		MoveAction = 0x2,
+		LinkAction = 0x4,
+		ActionMask = 0xff,
+		TargetMoveAction = 0x8002,
+		IgnoreAction = 0x0
+	}
+
 	[Flags]
 	public enum KeyboardModifier : uint
 	{
@@ -61,7 +85,15 @@ namespace Qt
 		MouseButtonMask = 0xffffffff
 	}
 
-	public enum MouseEventSource
+	public enum ScrollPhase : uint
+	{
+		NoScrollPhase = 0,
+		ScrollBegin,
+		ScrollUpdate,
+		ScrollEnd
+	}
+
+	public enum MouseEventSource : uint
 	{
 		MouseEventNotSynthesized,
 		MouseEventSynthesizedBySystem,
@@ -70,7 +102,7 @@ namespace Qt
 	}
 
 	[Flags]
-	public enum MouseEventFlag
+	public enum MouseEventFlag : uint
 	{
 		MouseEventCreatedDoubleClick = 0x01,
 		MouseEventFlagMask = 0xFF
@@ -89,7 +121,7 @@ namespace Qt
 		TextBrowserInteraction = TextSelectableByMouse | LinksAccessibleByMouse | LinksAccessibleByKeyboard
 	}
 
-	public enum Orientation
+	public enum Orientation : uint
 	{
 		[XmlEnum ("Qt::Horizontal")]
 		Horizontal = 0x1,
@@ -97,7 +129,7 @@ namespace Qt
 		Vertical = 0x2
 	}
 
-	public enum TextInteractionFlags
+	public enum TextInteractionFlags : uint
 	{
 		[XmlEnum ("Qt::NoTextInteraction")]
 		NoTextInteraction = 0,
@@ -118,7 +150,7 @@ namespace Qt
 	}
 
 	[Flags]
-	public enum Alignment
+	public enum Alignment : uint
 	{
 		[XmlEnum ("Qt::AlignLeft")]
 		AlignLeft = 0x0001,
@@ -160,7 +192,7 @@ namespace Qt
 		PreventContextMenu
 	}
 
-	public enum Direction
+	public enum Direction : uint
 	{
 		LeftToRight,
 		RightToLeft,
@@ -171,7 +203,7 @@ namespace Qt
 
 	;
 
-	public enum TextFormat
+	public enum TextFormat : uint
 	{
 		[XmlEnum ("Qt::PlainText")]
 		PlainText,
@@ -183,7 +215,7 @@ namespace Qt
 		LogText
 	}
 
-	public enum SizeConstraint
+	public enum SizeConstraint : uint
 	{
 		[XmlEnum ("QLayout::SetDefaultConstraint")]
 		SetDefaultConstraint,

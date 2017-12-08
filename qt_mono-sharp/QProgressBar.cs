@@ -7,15 +7,22 @@ namespace Qt
 	public class ProgressBar : Widget
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern IntPtr qt_progressbar_new (IntPtr parent);
+		protected static extern IntPtr qt_progressbar_new (ProgressBar thisObject, IntPtr parent);
 
-		protected ProgressBar(IntPtr raw) : base(raw) { }
+		private ProgressBar (IntPtr parent) : base(IntPtr.Zero)
+		{
+			if (GetType () != typeof(ProgressBar))
+				return;
+			Raw = qt_progressbar_new (this, parent);
+		}
 
 		public ProgressBar () : this(null) {}
 
 		public ProgressBar (Widget parent) : base(IntPtr.Zero)
 		{
-			Raw = qt_progressbar_new (parent != null ? parent.Handle : IntPtr.Zero);		
+			if (GetType () != typeof(ProgressBar))
+				return;
+			Raw = qt_progressbar_new (this, parent != null ? parent.Handle : IntPtr.Zero);		
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

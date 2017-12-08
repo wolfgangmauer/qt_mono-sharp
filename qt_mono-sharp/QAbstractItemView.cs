@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using System.Drawing;
 
 namespace Qt
 {
-	public abstract class ItemView : ScrollArea
+	public class ItemView : ScrollArea
 	{
 		public enum SelectionMode
 		{
@@ -71,11 +70,33 @@ namespace Qt
 
 		protected ItemView (IntPtr raw) : base (raw)
 		{
+			if (GetType () != typeof(ItemView))
+				return;
+			Raw = qt_abstractitemview_new (raw);
 		}
 
 		protected ItemView (Widget parent) : base (IntPtr.Zero)
 		{
+			if (GetType () != typeof(ItemView))
+				return;
 			Raw = qt_abstractitemview_new (parent != null ? parent.Handle : IntPtr.Zero);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_itemview_model_get (IntPtr parent);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_itemview_model_set (IntPtr parent, IntPtr item);
+		public ItemModel Model
+		{
+			get
+			{
+				var model = qt_itemview_model_get (Handle);
+				return GetObjectFromRaw (model) as ItemModel;
+			}
+			set
+			{
+				qt_itemview_model_set (Handle, value.Handle);
+			}
 		}
 
 		void OnPressed (ModelIndex index)

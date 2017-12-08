@@ -7,12 +7,19 @@ namespace Qt
 	public class VBoxLayout : BoxLayout
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern IntPtr qt_vboxlayout_new (Object thisObject, IntPtr parent);
+		protected static extern IntPtr qt_vboxlayout_new (VBoxLayout thisObject, IntPtr parent);
 
-		protected VBoxLayout (IntPtr raw) : base(raw) {}
+		private VBoxLayout (IntPtr parent) : base(IntPtr.Zero)
+		{
+			if (GetType () != typeof(VBoxLayout))
+				return;
+			Raw = qt_vboxlayout_new (this, parent);
+		}
 
 		public VBoxLayout (Widget parent = null) : base(IntPtr.Zero)
 		{
+			if (GetType () != typeof(VBoxLayout))
+				return;
 			Raw = qt_vboxlayout_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 	}

@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace Qt
 {
-	public partial class Label : Frame
+	public class Label : Frame
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_label_new (Label thisObject, IntPtr parent, WindowType f);
@@ -13,7 +13,12 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_label_new_with_text (Label thisObject, string text, IntPtr parent, WindowType f);
 
-		protected Label (IntPtr raw) : base(raw) {}
+		private Label (IntPtr parent) : base(IntPtr.Zero)
+		{
+			if (GetType () != typeof(Label))
+				return;
+			Raw = qt_label_new (this, parent, 0);
+		}
 
 		public Label () : this(null, 0) {}
 
@@ -21,11 +26,15 @@ namespace Qt
 
 		public Label (Widget parent, string text, WindowType f = 0) : base(IntPtr.Zero)
 		{
+			if (GetType () != typeof(Label))
+				return;
 			Raw = qt_label_new_with_text (this, text, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
 		public Label (Widget parent, WindowType f = 0) : base(IntPtr.Zero)
 		{
+			if (GetType () != typeof(Label))
+				return;
 			Raw = qt_label_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
