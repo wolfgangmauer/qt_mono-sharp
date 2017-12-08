@@ -6,7 +6,7 @@ namespace Qt
 {
 	public class ItemView : ScrollArea
 	{
-		public enum SelectionMode
+		public enum SelectionModeEnum
 		{
 			NoSelection,
 			SingleSelection,
@@ -15,7 +15,7 @@ namespace Qt
 			ContiguousSelection
 		}
 
-		public enum SelectionBehavior
+		public enum SelectionBehaviorEnum
 		{
 			SelectItems,
 			SelectRows,
@@ -98,6 +98,27 @@ namespace Qt
 				qt_itemview_model_set (Handle, value.Handle);
 			}
 		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern SelectionBehaviorEnum qt_itemview_selectctionbehavior_get (IntPtr parent);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_itemview_selectctionbehavior_set (IntPtr parent, SelectionBehaviorEnum selectionBehavior);
+		public SelectionBehaviorEnum SelectionBehavior
+		{
+			get{ return qt_itemview_selectctionbehavior_get (Handle); }
+			set{ qt_itemview_selectctionbehavior_set (Handle, value); }
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern SelectionModeEnum qt_itemview_selectctionmode_get (IntPtr parent);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_itemview_selectctionmode_get (IntPtr parent, SelectionModeEnum selectionBehavior);
+		public SelectionModeEnum SelectionMode
+		{
+			get{ return qt_itemview_selectctionmode_get (Handle); }
+			set{ qt_itemview_selectctionmode_get (Handle, value); }
+		}
+
 
 		void OnPressed (ModelIndex index)
 		{

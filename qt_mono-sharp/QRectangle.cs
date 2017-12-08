@@ -5,60 +5,47 @@ namespace Qt
 {
 	public class Rectangle
 	{
-		IntPtr Raw;
+		IntPtr raw;
 		public Rectangle (IntPtr raw)
 		{
-			Raw = raw;
+			this.raw = raw;
 		}
 
-//		public int X
-//		{
-//			get { return rawX; }
-//			set { rawX = value; }
-//		}
-//		public int Y
-//		{
-//			get { return rawY; }
-//			set { rawY = value; }
-//		}
-//		public int Width
-//		{
-//			get { return rawWidth; }
-//			set { rawWidth = value; }
-//		}
-//		public int Height
-//		{
-//			get { return rawHeight; }
-//			set { rawHeight = value; }
-//		}
-//
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_rectangle_x_get(IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_rectangle_x_set(IntPtr raw, int x);
 		public int X
 		{
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			get;
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			set;
+			get{ return qt_rectangle_x_get (raw); }
+			set{ qt_rectangle_x_set (raw, value); }
 		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_rectangle_y_get(IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_rectangle_y_set(IntPtr raw, int y);
 		public int Y
 		{
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			get;
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			set;
+			get{ return qt_rectangle_y_get (raw); }
+			set{ qt_rectangle_y_set (raw, value); }
 		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_rectangle_width_get(IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_rectangle_width_set(IntPtr raw, int width);
 		public int Width
 		{
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			get;
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			set;
+			get{ return qt_rectangle_width_get (raw); }
+			set{ qt_rectangle_width_set (raw, value); }
 		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_rectangle_height_get(IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_rectangle_height_set(IntPtr raw, int width);
 		public int Height
 		{
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			get;
-			[MethodImpl (MethodImplOptions.InternalCall)]
-			set;
+			get{ return qt_rectangle_height_get (raw); }
+			set{ qt_rectangle_height_set (raw, value); }
 		}
 	}
 }
