@@ -38,12 +38,25 @@
     <OutputPath>..\example\bin\Debug</OutputPath>
     <OutputName>monostub</OutputName>
     <CompileTarget>Bin</CompileTarget>
-    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <DefineSymbols>DEBUG MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
     <Commandlineparameters>/home/wolfgang/Projects/qt_mono-sharp/example/bin/Debug/example.exe</Commandlineparameters>
-    <ExtraCompilerArguments>-m64 -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_UITOOLS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB</ExtraCompilerArguments>
+    <ExtraCompilerArguments>-m64 -pipe -g -Og -std=gnu++11 -Wall -W -fPIC</ExtraCompilerArguments>
     <Externalconsole>true</Externalconsole>
-    <ExtraLinkerArguments>-m64 -Wl,-rpath-link,/usr/lib/x86_64-linux-gnu</ExtraLinkerArguments>
+    <ExtraLinkerArguments>-m64  -g -Og</ExtraLinkerArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\example\bin\Debug</OutputPath>
+    <OutputName>monostub</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+    <DefineSymbols>MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <Commandlineparameters>/home/wolfgang/Projects/qt_mono-sharp/example/bin/Debug/example.exe</Commandlineparameters>
+    <ExtraCompilerArguments>-m64 -pipe -std=gnu++11 -Wall -W -fPIC</ExtraCompilerArguments>
+    <Externalconsole>true</Externalconsole>
+    <ExtraLinkerArguments>-m64</ExtraLinkerArguments>
+    <OptimizationLevel>3</OptimizationLevel>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="main.cpp" />

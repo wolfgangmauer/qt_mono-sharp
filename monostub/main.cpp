@@ -1,6 +1,7 @@
 ﻿#include <glib-2.0/glib.h>
 #include <mono/jit/jit.h>
 #include <mono/metadata/mono-config.h>
+#include <mono/metadata/mono-debug.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/assembly.h>
@@ -20,7 +21,9 @@ static void main_function (MonoDomain *domain, const char *file, int argc, char*
 	 * The return value needs to be looked up from
 	 * System.Environment.ExitCode.
 	 */
-	mono_jit_exec (domain, assembly, argc, argv);
+
+	 mono_jit_exec (domain, assembly, argc, argv);
+
 }
 
 int main(int argc, char* argv[]) {
@@ -34,6 +37,11 @@ int main(int argc, char* argv[]) {
 	}
 	file = argv [1];
 
+	mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+
+	 const char* jit_options[] = {"--soft-breakpoints"};
+	 mono_jit_parse_options(1, (char**)jit_options);
+
 	//MonoAllocatorVTable mem_vtable = {custom_malloc};
 	//mono_set_allocator_vtable (&mem_vtable);
 
@@ -43,11 +51,13 @@ int main(int argc, char* argv[]) {
 	 * system configuration
 	 */
 	mono_config_parse (NULL);
+
 	/*
 	 * mono_jit_init() creates a domain: each assembly is
 	 * loaded and run in a MonoDomain.
 	 */
 	domain = mono_jit_init (file);
+
 	/*
 	 * We add our special internal call, so that C# code
 	 * can call us back.
