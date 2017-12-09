@@ -12,9 +12,11 @@ namespace Qt
 		IntPtr handle;
 		static Dictionary<IntPtr, Object> objects = new Dictionary<IntPtr, Object> ();
 
-		protected delegate object GetManangedObjectCallback ();
-
 		public event EventHandler DisposedEvent;
+
+		protected Object ()
+		{
+		}
 
 		public Object (Object parent)
 		{
@@ -116,6 +118,8 @@ namespace Qt
 
 		public string ObjectName {
 			get {
+				if (Handle == IntPtr.Zero)
+					throw new ArgumentNullException ();
 				return qt_objectname_get (Handle);
 			}
 			set {

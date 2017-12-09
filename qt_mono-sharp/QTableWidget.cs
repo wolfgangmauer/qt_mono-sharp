@@ -9,19 +9,14 @@ namespace Qt
         [MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tablewidget_new(TableWidget thisObject, IntPtr parent);
 
-		protected TableWidget (IntPtr parent) : base(IntPtr.Zero)
-		{
-			if (GetType () != typeof(TableWidget))
-				return;
-			Raw = qt_tablewidget_new (this, parent);
-		}
+		protected TableWidget () { }
 
-		public TableWidget() : this(null) {}
+		protected TableWidget (IntPtr raw) : base(raw) { }
 
-		public TableWidget(Object parent) : base(IntPtr.Zero)
+		public TableWidget(Widget parent)
         {
-			if (GetType () != typeof(TableWidget))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_tablewidget_new(this, parent != null ? parent.Handle : IntPtr.Zero);
         }
 

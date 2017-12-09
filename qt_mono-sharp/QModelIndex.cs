@@ -4,8 +4,13 @@ namespace Qt
 {
 	public class ModelIndex
 	{
-		public ModelIndex ()
+		IntPtr raw;
+
+		public IntPtr Handle { get { return raw; } }
+
+		public ModelIndex (IntPtr raw)
 		{
+			this.raw = raw;
 		}
 	}
 }

@@ -9,10 +9,14 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_boxlayout_new (BoxLayout thisObject, Direction dir, IntPtr parent);
 
+		protected BoxLayout () {}
+
 		protected BoxLayout (IntPtr raw) : base(raw) {}
 
-		public BoxLayout (Direction dir, Widget parent = null) : base(IntPtr.Zero)
+		public BoxLayout (Direction dir, Widget parent)
 		{
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_boxlayout_new (this, dir, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 

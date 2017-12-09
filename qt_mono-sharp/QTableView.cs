@@ -9,21 +9,14 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tableview_new (TableView thisObject, IntPtr parent);
 
-		protected TableView (IntPtr parent) : base(IntPtr.Zero)
-		{
-			if (GetType () != typeof(TableView))
-				return;
-			Raw = qt_tableview_new (this, parent);
-		}
+		protected TableView () { }
 
-		public TableView () : this (null)
-		{
-		}
+		protected TableView (IntPtr raw) : base(raw) { }
 
-		public TableView (Widget parent) : base (IntPtr.Zero)
+		public TableView (Widget parent)
 		{
-			if (GetType () != typeof(TableView))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_tableview_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 
@@ -148,6 +141,13 @@ namespace Qt
 		public void ShowGrid (bool show)
 		{
 			qt_tableview_grid_show (Handle, show);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_tableview_scrollto (IntPtr raw, int row, int col, ScrollHint hint);
+		public void ScrollTo(int row, int col = 0, ScrollHint hint = ScrollHint.EnsureVisible)
+		{
+			qt_tableview_scrollto (Handle, row, col, hint);
 		}
 	}
 }

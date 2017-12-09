@@ -12,24 +12,22 @@ namespace Qt
 
 		protected UiLoader (IntPtr raw) : base(raw) {}
 
-        Widget _parent; 
-		bool firstWidget;
-		public UiLoader (Widget parent) : base(IntPtr.Zero)
+		public UiLoader (Widget parent = null) : base(IntPtr.Zero)
 		{
-            _parent = parent;
 			Raw = qt_uiloader_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 
+		Widget _parentWidget;
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_uiloader_load (IntPtr handle, string uiFile, IntPtr parentWidget);
-		public IntPtr Load(string uiFile)
+		public IntPtr Load(Widget parentWidget, string uiFile)
 		{
-			firstWidget = true;
-			var retVal = qt_uiloader_load (Handle, uiFile, _parent.Handle);
+			_parentWidget = parentWidget;
+			var retVal = qt_uiloader_load (Handle, uiFile, parentWidget.Handle);
 			if (retVal != IntPtr.Zero)
 			{
-				if (_parent != null) {
-					var fields4Loader = _parent.GetType ().GetFields (BindingFlags.NonPublic | BindingFlags.Instance).Where (field => field.IsDefined (typeof(UiLoaderAttribute), false));
+				if (parentWidget != null) {
+					var fields4Loader = parentWidget.GetType ().GetFields (BindingFlags.NonPublic | BindingFlags.Instance).Where (field => field.IsDefined (typeof(UiLoaderAttribute), false));
 					foreach (var field in fields4Loader) {
 						var fieldAttribute = (UiLoaderAttribute)field.GetCustomAttribute (typeof(UiLoaderAttribute));
 						var fieldAttrName = fieldAttribute.FieldName;
@@ -37,7 +35,7 @@ namespace Qt
 							fieldAttrName = field.Name;
 						var rawObject = FindRawObject (retVal, fieldAttrName);
 						if (rawObject != IntPtr.Zero) {
-							field.SetValue (_parent, GetObjectFromRaw (rawObject)); //Activator.CreateInstance (field.FieldType, BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { rawObject }, null));
+							field.SetValue (parentWidget, GetObjectFromRaw (rawObject)); //Activator.CreateInstance (field.FieldType, BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { rawObject }, null));
 						}
 					}
 				}
@@ -51,7 +49,8 @@ namespace Qt
 			var t = Type.GetType ("Qt." + className.Substring (1));
 			if (t == null)
 				return IntPtr.Zero;
-			var obj = Activator.CreateInstance (t, BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { parent }, null) as Object;
+			var parentWidget = GetObjectFromRaw(parent) as Widget;
+			var obj = Activator.CreateInstance (t, BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance, null, new object[] { parentWidget }, null) as Object;
 			obj.ObjectName = objectName;
 			retVal = obj.Handle;
 			return retVal;
@@ -63,14 +62,10 @@ namespace Qt
 			var t = Type.GetType ("Qt." + className.Substring (1));
 			if (t == null)
 				return IntPtr.Zero;
-			Object obj = null;
-			if (firstWidget)
-			{
-				obj = GetObjectFromName (objectName);
-				firstWidget = false;
-			}
-			if (obj == null)
-				obj = Activator.CreateInstance (t, BindingFlags.CreateInstance | BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { parent }, null) as Widget;
+			if (_parentWidget.ObjectName.Equals (objectName))
+				return _parentWidget.Handle;
+			var parentWidget = GetObjectFromRaw(parent) as Widget;
+			var obj = Activator.CreateInstance (t, BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance, null, new object[] { parentWidget }, null) as Widget;
 			obj.ObjectName = objectName;
 			retVal = obj.Handle;
 			return retVal;

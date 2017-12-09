@@ -68,17 +68,14 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_abstractitemview_new (IntPtr parent);
 
-		protected ItemView (IntPtr raw) : base (raw)
-		{
-			if (GetType () != typeof(ItemView))
-				return;
-			Raw = qt_abstractitemview_new (raw);
-		}
+		protected ItemView () {	}
 
-		protected ItemView (Widget parent) : base (IntPtr.Zero)
+		protected ItemView (IntPtr raw) : base (raw) { }
+
+		public ItemView (Widget parent)
 		{
-			if (GetType () != typeof(ItemView))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_abstractitemview_new (parent != null ? parent.Handle : IntPtr.Zero);
 		}
 
@@ -86,12 +83,12 @@ namespace Qt
 		protected static extern IntPtr qt_itemview_model_get (IntPtr parent);
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_itemview_model_set (IntPtr parent, IntPtr item);
-		public ItemModel Model
+		public StandardItemModel Model
 		{
 			get
 			{
 				var model = qt_itemview_model_get (Handle);
-				return GetObjectFromRaw (model) as ItemModel;
+				return GetObjectFromRaw (model) as StandardItemModel;
 			}
 			set
 			{
@@ -118,7 +115,6 @@ namespace Qt
 			get{ return qt_itemview_selectctionmode_get (Handle); }
 			set{ qt_itemview_selectctionmode_get (Handle, value); }
 		}
-
 
 		void OnPressed (ModelIndex index)
 		{

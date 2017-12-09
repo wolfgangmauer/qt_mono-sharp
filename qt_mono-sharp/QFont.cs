@@ -9,18 +9,21 @@ using System.Xml.Serialization;
 
 namespace Qt
 {
-	[Serializable]
-	[XmlRoot("font", Namespace = "", IsNullable = false)]
     public class Font
     {
-		[XmlIgnore]
-        public IntPtr Handle;
+		public IntPtr Handle { get; private set;}
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         protected static extern IntPtr qt_font_new();
         public Font()
         {
 			Handle = qt_font_new();
         }
+
+		public Font(IntPtr raw)
+		{
+			Handle = raw;
+		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_font_new_with_params(string family, int pointSize, int weight, bool italic);
@@ -33,7 +36,6 @@ namespace Qt
 		protected static extern string qt_font_family_get(IntPtr raw);
         [MethodImpl(MethodImplOptions.InternalCall)]
         protected static extern void qt_font_family_set(IntPtr raw, string family);
-		[XmlElement("family")]
         public string Family
         {
             get
@@ -50,7 +52,6 @@ namespace Qt
         protected static extern int qt_font_pointsize_get(IntPtr raw);
         [MethodImpl(MethodImplOptions.InternalCall)]
         protected static extern void qt_font_pointsize_set(IntPtr raw, int pointsize);
-		[XmlElement("pointsize")]
         public int PointSize
         {
             get

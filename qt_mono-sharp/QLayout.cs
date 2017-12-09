@@ -10,12 +10,14 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_layout_new (Object thisObject, IntPtr parent);
 
-		protected Layout (IntPtr raw) : base (raw)
-		{
-		}
+		protected Layout () { }
+
+		protected Layout (IntPtr raw) : base (raw) { }
 
 		public Layout (Object parent = null) : base (IntPtr.Zero)
 		{
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_layout_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 

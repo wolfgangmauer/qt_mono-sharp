@@ -46,21 +46,14 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_frame_new (Frame thisObject, IntPtr parent);
 
-		protected Frame (IntPtr parent) : base(parent)
-		{
-			if (GetType () != typeof(Frame))
-				return;
-			Raw = qt_frame_new (this, parent);
-		}
+		protected Frame () { }
 
-		public Frame () : this (null)
-		{
-		}
+		protected Frame (IntPtr raw) : base(raw) { }
 
-		public Frame (Widget parent = null) : base (IntPtr.Zero)
+		public Frame (Widget parent)
 		{
-			if (GetType () != typeof(Frame))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_frame_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 

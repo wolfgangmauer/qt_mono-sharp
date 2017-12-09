@@ -9,17 +9,14 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_vboxlayout_new (VBoxLayout thisObject, IntPtr parent);
 
-		private VBoxLayout (IntPtr parent) : base(IntPtr.Zero)
-		{
-			if (GetType () != typeof(VBoxLayout))
-				return;
-			Raw = qt_vboxlayout_new (this, parent);
-		}
+		protected VBoxLayout () {}
 
-		public VBoxLayout (Widget parent = null) : base(IntPtr.Zero)
+		protected VBoxLayout (IntPtr raw) : base(raw) {}
+
+		public VBoxLayout (Widget parent = null)
 		{
-			if (GetType () != typeof(VBoxLayout))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_vboxlayout_new (this, parent != null ? parent.Handle : IntPtr.Zero);
 		}
 	}

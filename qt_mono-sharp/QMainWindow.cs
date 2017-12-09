@@ -9,27 +9,27 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_mainwindow_new (MainWindow thisObject, IntPtr parent, WindowType f);
 
-		protected MainWindow (IntPtr parent) : base(IntPtr.Zero)
+		protected MainWindow () { }
+
+		protected MainWindow (IntPtr raw) : base(raw) { }
+
+		public MainWindow (Widget parent) : this(parent, 0) {}
+
+		public MainWindow (Widget parent, WindowType f)
+			: base(IntPtr.Zero)
 		{
-			if (GetType () != typeof(MainWindow))
-				return;
-			Raw = qt_mainwindow_new (this, parent, 0);
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
+			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
 		public MainWindow (Widget parent, string uiFile)
 			: base(IntPtr.Zero)
 		{
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, 0);
-			new UiLoader (this).Load (uiFile);
-		}
-
-		public MainWindow () : this(null, 0) {}
-
-		public MainWindow (Widget parent, WindowType f = 0) : base(IntPtr.Zero)
-		{
-			if (GetType () != typeof(MainWindow))
-				return;
-			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
+			new UiLoader ().Load (this, uiFile);
 		}
 	}
 }

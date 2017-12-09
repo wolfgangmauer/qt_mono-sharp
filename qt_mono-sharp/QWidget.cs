@@ -9,10 +9,13 @@ namespace Qt
 	{
 		public event EventHandler<string> WindowTitleChanged;
 		public event EventHandler<Event> BaseEvent;
+		public event EventHandler<Event> ChangeEvent;
 		public event EventHandler<ShowEvent> ShowEvent;
 		public event EventHandler<HideEvent> HideEvent;
 		public event EventHandler<Event> EnterEvent;
 		public event EventHandler<Event> LeaveEvent;
+		public event EventHandler<FocusEvent> FocusInEvent;
+		public event EventHandler<FocusEvent> FocusOutEvent;
 		public event EventHandler<PaintEvent> PaintEvent;
 		public event EventHandler<CloseEvent> CloseEvent;
 		public event EventHandler<ResizeEvent> ResizeEvent;
@@ -28,16 +31,9 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_new (Widget thisObject, IntPtr parent, uint f);
 
-		protected Widget (IntPtr parent) : base(parent)
-		{
-			if (GetType() != typeof(Widget))
-				return;
-			Raw = qt_widget_new (this, parent, 0);
-		}
+		protected Widget () { }
 
-		public Widget () : this (null)
-		{
-		}
+		protected Widget (IntPtr raw) : base(raw) {	}
 
 		public Widget (Widget parent) : this (parent, 0)
 		{
@@ -45,15 +41,15 @@ namespace Qt
 
 		protected Widget (Widget parent, string uiFile) : base (IntPtr.Zero)
 		{
-			Raw = new UiLoader (this).Load (uiFile);
+			Raw = new UiLoader ().Load (this, uiFile);
 			if (parent != null)
 				Parent = parent;
 		}
 
-		public Widget (Widget parent, WindowType f) : base (IntPtr.Zero)
+		public Widget (Widget parent, WindowType f)
 		{
-			if (GetType() != typeof(Widget))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, (uint)f);
 		}
 
@@ -257,10 +253,10 @@ namespace Qt
 		protected static extern void qt_widget_font_set (IntPtr raw, IntPtr font);
 
 		public Font Font {
-//            get
-//            {
-//                return qt_widget_font_get(Handle);
-//            }
+            get
+            {
+				return new Font(qt_widget_font_get(Handle));
+            }
 			set {
 				qt_widget_font_set (Handle, value != null ? value.Handle : IntPtr.Zero);
 			}
@@ -361,6 +357,13 @@ namespace Qt
 			qt_widget_updategeometry (Handle);
 		}
 
+		private bool OnChange(Event ev)
+		{
+			var tmp = ChangeEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
 		private bool OnShow(ShowEvent ev)
 		{
 			var tmp = ShowEvent;
@@ -385,6 +388,20 @@ namespace Qt
 		private bool OnLeave(Event ev)
 		{
 			var tmp = LeaveEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnFocusIn(FocusEvent ev)
+		{
+			var tmp = FocusInEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnFocusOut(FocusEvent ev)
+		{
+			var tmp = FocusOutEvent;
 			tmp?.Invoke (this, ev);
 			return ev.Accepted;
 		}

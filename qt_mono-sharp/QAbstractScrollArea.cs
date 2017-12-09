@@ -14,18 +14,15 @@ namespace Qt
 
         [MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_abstractscrollarea_new(ScrollArea thisObject, IntPtr parent);
-        
-		protected ScrollArea (IntPtr parent) : base(parent)
-		{
-			if (GetType () != typeof(ScrollArea))
-				return;
-			Raw = qt_abstractscrollarea_new (this, parent);
-		}
 
-		protected ScrollArea(Widget parent) : base(IntPtr.Zero)
+		protected ScrollArea ()	{ }
+
+		protected ScrollArea (IntPtr raw) : base(raw) { }
+
+		public ScrollArea(Widget parent)
         {
-			if (GetType () != typeof(ScrollArea))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_abstractscrollarea_new(this, parent != null ? parent.Handle : IntPtr.Zero);
         }
     }

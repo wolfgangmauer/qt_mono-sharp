@@ -6,6 +6,9 @@ namespace Qt
 	public class Point
 	{
 		IntPtr raw;
+
+		public IntPtr Handle { get { return raw; } }
+
 		public Point (IntPtr raw)
 		{
 			this.raw = raw;
