@@ -12,6 +12,7 @@
 #include "QGlueStandardItemModel.h"
 #include "QGlueTableView.h"
 #include "QGlueTableWidget.h"
+#include "QGlueModelIndex.h"
 
 //Warning: The data referred to by argc and argv must stay valid for the entire lifetime of the QApplication object.
 //In addition, argc must be greater than zero and argv must contain at least one valid character string." 
@@ -139,12 +140,12 @@ void qt_widget_resize(GlueWidget* widget, uint32_t w, uint32_t h)
 	widget->resize(w, h);
 }
 
-void qt_widget_font_set(GlueWidget* widget, GlueFont* font)
+void qt_widget_font_set(QWidget* widget, const QFont& font)
 {
-	widget->setFont(*font);
+	widget->setFont(font);
 }
 
-GlueFont* qt_widget_font_get(GlueWidget* widget)
+QFont qt_widget_font_get(GlueWidget* widget)
 {
 	return widget->font();
 }
@@ -995,139 +996,146 @@ void qt_pointf_y_set(QPointF point, double y)
 	return point.setY(y);
 }
 
-GlueStandardItemModel* qt_itemmodel_new(MonoObject* thisObject, GlueObject* parent)
+GlueStandardItemModel* qt_standarditemmodel_new(MonoObject* thisObject, GlueObject* parent)
 {
 	return new GlueStandardItemModel(thisObject, parent);
 }
 
-void qt_itemmodel_item_row_set(QStandardItemModel* standardItemModel, int row, QStandardItem* item)
+void qt_standarditemmodel_item_row_set(GlueStandardItemModel* standardItemModel, int row, QStandardItem* item)
 {
 	standardItemModel->setItem(row, item);
 }
 
-void qt_itemmodel_item_row_column_set(QStandardItemModel* standardItemModel, int row, int column, QStandardItem* item)
+void qt_standarditemmodel_item_row_column_set(GlueStandardItemModel* standardItemModel, int row, int column, QStandardItem* item)
 {
 	standardItemModel->setItem(row, column, item);
 }
 
-void qt_itemmodel_item_append(QStandardItemModel* standardItemModel, QStandardItem* item)
+void qt_standarditemmodel_item_append(GlueStandardItemModel* standardItemModel, QStandardItem* item)
 {
 	standardItemModel->appendRow(item);
 }
 
-int qt_itemmodel_rowcount_get(QStandardItemModel* standardItemModel)
+int qt_standarditemmodel_rowcount_get(GlueStandardItemModel* standardItemModel)
 {
 	standardItemModel->rowCount();
 }
 
-void qt_itemmodel_rowcount_set(QStandardItemModel* standardItemModel, int rows)
+void qt_standarditemmodel_rowcount_set(GlueStandardItemModel* standardItemModel, int rows)
 {
 	standardItemModel->setRowCount(rows);
 }
 
-int qt_itemmodel_columncount_get(QStandardItemModel* standardItemModel)
+int qt_standarditemmodel_columncount_get(GlueStandardItemModel* standardItemModel)
 {
 	standardItemModel->columnCount();
 }
 
-void qt_itemmodel_columncount_set(QStandardItemModel* standardItemModel, int columns)
+void qt_standarditemmodel_columncount_set(GlueStandardItemModel* standardItemModel, int columns)
 {
 	standardItemModel->setColumnCount(columns);
 }
 
-QAbstractItemModel* qt_itemview_model_get(QAbstractItemView* abstractItemView)
+GlueStandardItemModel* qt_itemview_model_get(GlueTableView* abstractItemView)
 {
-	return abstractItemView->model();
+	return (GlueStandardItemModel*)abstractItemView->model();
 }
 
-void qt_itemview_model_set(QAbstractItemView* abstractItemView, QAbstractItemModel* itemModel)
+void qt_itemview_model_set(GlueTableView* abstractItemView, GlueStandardItemModel* itemModel)
 {
 	abstractItemView->setModel(itemModel);
 }
 
-QAbstractItemView::SelectionBehavior qt_itemview_selectctionbehavior_get(QAbstractItemView* abstractItemView)
+QAbstractItemView::SelectionBehavior qt_itemview_selectctionbehavior_get(GlueTableView* abstractItemView)
 {
 	return abstractItemView->selectionBehavior();
 }
 
-void qt_itemview_selectctionbehavior_set(QAbstractItemView* abstractItemView, QAbstractItemView::SelectionBehavior selectionBehavior)
+void qt_itemview_selectctionbehavior_set(GlueTableView* abstractItemView, QAbstractItemView::SelectionBehavior selectionBehavior)
 {
 	abstractItemView->setSelectionBehavior(selectionBehavior);
 }
 
-QAbstractItemView::SelectionMode qt_itemview_selectctionmode_get(QAbstractItemView* abstractItemView)
+QAbstractItemView::SelectionMode qt_itemview_selectctionmode_get(GlueTableView* abstractItemView)
 {
 	return abstractItemView->selectionMode();
 }
 
-void qt_itemview_selectctionmode_set(QAbstractItemView* abstractItemView, QAbstractItemView::SelectionMode mode)
+void qt_itemview_selectctionmode_set(GlueTableView* abstractItemView, QAbstractItemView::SelectionMode mode)
 {
 	abstractItemView->setSelectionMode(mode);
 }
 
-void qt_tableview_resizerowtocontents(QTableView* tableView, int row)
+void qt_tableview_resizerowtocontents(GlueTableView* tableView, int row)
 {
 	tableView->resizeRowToContents(row);
 }
 
-void qt_tableview_resizerowstocontents(QTableView* tableView)
+void qt_tableview_resizerowstocontents(GlueTableView* tableView)
 {
 	tableView->resizeColumnsToContents();
 }
 
-void qt_tableview_resizecolumntocontents(QTableView* tableView, int column)
+void qt_tableview_resizecolumntocontents(GlueTableView* tableView, int column)
 {
 	tableView->resizeColumnToContents(column);
 }
 
-void qt_tableview_resizecolumnstocontents(QTableView* tableView)
+void qt_tableview_resizecolumnstocontents(GlueTableView* tableView)
 {
 	tableView->resizeColumnsToContents();
 }
 
-void qt_tableview_selectrow(QTableView* tableView, int row)
+void qt_tableview_selectrow(GlueTableView* tableView, int row)
 {
 	tableView->selectRow(row);
 }
 
-void qt_tableview_selectcolumn(QTableView* tableView, int column)
+void qt_tableview_selectcolumn(GlueTableView* tableView, int column)
 {
 	tableView->selectColumn(column);
 }
 
-void qt_tableview_showrow(QTableView* tableView, int row)
+void qt_tableview_showrow(GlueTableView* tableView, int row)
 {
 	tableView->showRow(row);
 }
 
-void qt_tableview_showcolumn(QTableView* tableView, int column)
+void qt_tableview_showcolumn(GlueTableView* tableView, int column)
 {
 	tableView->showColumn(column);
 }
 
-void qt_tableview_hiderow(QTableView* tableView, int row)
+void qt_tableview_hiderow(GlueTableView* tableView, int row)
 {
 	tableView->hideRow(row);
 }
 
-void qt_tableview_hidecolumn(QTableView* tableView, int column)
+void qt_tableview_hidecolumn(GlueTableView* tableView, int column)
 {
 	tableView->hideColumn(column);
 }
 
-void qt_tableview_columnwidth_set(QTableView* tableView, int column, int width)
+void qt_tableview_columnwidth_set(GlueTableView* tableView, int column, int width)
 {
 	tableView->setColumnWidth(column, width);
 }
 
-int qt_tableview_columnwidth_get(QTableView* tableView, int column)
+int qt_tableview_columnwidth_get(GlueTableView* tableView, int column)
 {
 	return tableView->columnWidth(column);
 }
 
-void qt_tableview_grid_show(QTableView* tableView, bool show)
+void qt_tableview_grid_show(GlueTableView* tableView, bool show)
 {
 	tableView->setShowGrid(show);
+}
+
+void qt_tableview_scrollto(GlueTableView* tableView, int row, int col, QAbstractItemView::ScrollHint hint)
+{
+	auto model = tableView->model();
+	QModelIndex indexOfTheCellIWant = model->index(row, col);
+	tableView->scrollTo(indexOfTheCellIWant, hint);
 }
 
 QTableWidgetItem* qt_tablewidgetitem_new(MonoString* text)
@@ -1217,6 +1225,7 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.TableView::qt_tableview_columnwidth_get", reinterpret_cast<void*>(qt_tableview_columnwidth_get));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_columnwidth_set", reinterpret_cast<void*>(qt_tableview_columnwidth_set));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_grid_show", reinterpret_cast<void*>(qt_tableview_grid_show));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_scrollto", reinterpret_cast<void*>(qt_tableview_scrollto));
 
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_new", reinterpret_cast<void*>(qt_tablewidget_new));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_get", reinterpret_cast<void*>(qt_tablewidget_rowcount_get));
@@ -1435,7 +1444,6 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Object::qt_objectname_set", reinterpret_cast<void*>(qt_objectname_set));
 	mono_add_internal_call ("Qt.Object::qt_object_find", reinterpret_cast<void*>(qt_object_find));
 
-
 	mono_add_internal_call ("Qt.Font::qt_font_new", reinterpret_cast<void*>(qt_font_new));
 	mono_add_internal_call ("Qt.Font::qt_font_new_with_params", reinterpret_cast<void*>(qt_font_new_with_params));
 	mono_add_internal_call ("Qt.Font::qt_font_family_get", reinterpret_cast<void*>(qt_font_family_get));
@@ -1443,14 +1451,14 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Font::qt_font_pointsize_get", reinterpret_cast<void*>(qt_font_pointsize_get));
 	mono_add_internal_call ("Qt.Font::qt_font_pointsize_set", reinterpret_cast<void*>(qt_font_pointsize_set));
 
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_new", reinterpret_cast<void*>(qt_itemmodel_new));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_item_row_set", reinterpret_cast<void*>(qt_itemmodel_item_row_set));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_item_row_column_set", reinterpret_cast<void*>(qt_itemmodel_item_row_column_set));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_item_append", reinterpret_cast<void*>(qt_itemmodel_item_append));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_rowcount_get", reinterpret_cast<void*>(qt_itemmodel_rowcount_get));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_rowcount_set", reinterpret_cast<void*>(qt_itemmodel_rowcount_set));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_columncount_get", reinterpret_cast<void*>(qt_itemmodel_columncount_get));
-	mono_add_internal_call ("Qt.ItemModel::qt_itemmodel_columncount_set", reinterpret_cast<void*>(qt_itemmodel_columncount_set));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_new", reinterpret_cast<void*>(qt_standarditemmodel_new));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_set));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_column_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_column_set));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_append", reinterpret_cast<void*>(qt_standarditemmodel_item_append));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_rowcount_get", reinterpret_cast<void*>(qt_standarditemmodel_rowcount_get));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_rowcount_set", reinterpret_cast<void*>(qt_standarditemmodel_rowcount_set));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_columncount_get", reinterpret_cast<void*>(qt_standarditemmodel_columncount_get));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_columncount_set", reinterpret_cast<void*>(qt_standarditemmodel_columncount_set));
 
 	mono_add_internal_call ("Qt.HeaderView::qt_headerview_visible_set", reinterpret_cast<void*>(qt_headerview_visible_set));
 }

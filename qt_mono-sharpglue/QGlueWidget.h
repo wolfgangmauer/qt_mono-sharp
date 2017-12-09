@@ -19,8 +19,8 @@ bool doMouseDoubleClickEvent(MonoObject* thisObject, QMouseEvent* event);
 
 bool dowheelEvent(MonoObject* thisObject, QWheelEvent *event);
 
-void dofocusInEvent(MonoObject* thisObject, QFocusEvent* event);
-void dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event);
+bool dofocusInEvent(MonoObject* thisObject, QFocusEvent* event);
+bool dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event);
 
 bool doenterEvent(MonoObject* thisObject, QEvent* event);
 bool doleaveEvent(MonoObject* thisObject, QEvent* event);
@@ -59,10 +59,8 @@ class GlueWidget : public QWidget
 public:
     GlueWidget(MonoObject* thisObject, QWidget* parent = 0, Qt::WindowFlags f = 0);
 
-	GlueFont* font();
 	GlueSizePolicy* sizePolicy();
 private:
-	QFont glueFont;
 	QSizePolicy glueSizePolicy;
 
 	MonoObject* _thisObject;

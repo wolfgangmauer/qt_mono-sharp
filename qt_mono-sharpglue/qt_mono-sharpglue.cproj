@@ -74,8 +74,8 @@
     <CompileTarget>SharedLibrary</CompileTarget>
     <DefineSymbols>MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_QML_DEBUG QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
-    <ExtraCompilerArguments>-m64 -pipe -std=gnu++11 -W -fPIC </ExtraCompilerArguments>
-    <ExtraLinkerArguments>-m64</ExtraLinkerArguments>
+    <ExtraCompilerArguments>-m64 -pipe -std=gnu++11 -W -fPIC -Os</ExtraCompilerArguments>
+    <ExtraLinkerArguments>-m64 -Os</ExtraLinkerArguments>
     <OptimizationLevel>3</OptimizationLevel>
   </PropertyGroup>
   <ItemGroup>
@@ -97,10 +97,9 @@
     <Compile Include="QGlueWidget.cpp" />
     <Compile Include="monointernal.cpp" />
     <Compile Include="QGlueTableView.cpp" />
-    <Compile Include="moc\moc_frame.cpp" />
-    <Compile Include="moc\moc_label.cpp" />
     <Compile Include="QGlueStandardItemModel.cpp" />
     <Compile Include="QGlueTableWidget.cpp" />
+    <Compile Include="QGlueModelIndex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QGlueApplication.h" />
@@ -138,5 +137,8 @@
     <None Include="moc\moc_widget.cpp" />
     <None Include="QGlueStandardItemModel.h" />
     <None Include="QGlueTableWidget.h" />
+    <None Include="moc\moc_frame.cpp" />
+    <None Include="moc\moc_label.cpp" />
+    <None Include="QGlueModelIndex.h" />
   </ItemGroup>
 </Project>

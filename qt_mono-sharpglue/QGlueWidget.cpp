@@ -16,12 +16,6 @@ GlueWidget::GlueWidget(MonoObject* thisObject, QWidget* parent, Qt::WindowFlags 
 //	*height = rect.height();
 //}
 //
-GlueFont* GlueWidget::font()
-{
-	glueFont = QWidget::font();
-	return reinterpret_cast<GlueFont*>(&glueFont);
-}
-
 GlueSizePolicy* GlueWidget::sizePolicy()
 {
 	glueSizePolicy = QWidget::sizePolicy();
@@ -212,13 +206,13 @@ bool dowheelEvent(MonoObject* thisObject, QWheelEvent* event)
 	}
 	else
 	{
-		printf("Cant find OnEnter\n");
+		printf("Cant find OnWheel\n");
 		fflush(stdout);
 	}
 	return false;
 }
 
-void dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
+bool dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
 {
 	printf("Execute dofocusInEvent\n"); fflush(stdout);//if (!thisObject) return;
 	auto klass = mono_object_get_class (thisObject);
@@ -229,18 +223,15 @@ void dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "FocusEvent");
 		if (eventArgs)
 		{
+			void *args [1];
+			args[0] = &event;
 			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
-			void *args [2];
-			int type = event->type();
-			Qt::FocusReason reason = event->reason();
-			args[0] = &type;
-			args[1] = &reason;
-			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 2);
+			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
 			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
 		}
 		else
 		{
@@ -250,12 +241,13 @@ void dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
 	}
 	else
 	{
-		printf("Cant find OnEnter\n");
+		printf("Cant find OnFocusIn\n");
 		fflush(stdout);
 	}
+	return false;
 }
 
-void dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
+bool dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
 {
 	printf("Execute dofocusOutEvent\n"); fflush(stdout);//if (!thisObject) return;
 	auto klass = mono_object_get_class (thisObject);
@@ -266,18 +258,15 @@ void dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "FocusEvent");
 		if (eventArgs)
 		{
+			void *args [1];
+			args[0] = &event;
 			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
-			void *args [2];
-			int type = event->type();
-			Qt::FocusReason reason = event->reason();
-			args[0] = &type;
-			args[1] = &reason;
-			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 2);
+			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
 			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
 		}
 		else
 		{
@@ -287,9 +276,10 @@ void dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
 	}
 	else
 	{
-		printf("Cant find OnEnter\n");
+		printf("Cant find OnFocusOut\n");
 		fflush(stdout);
 	}
+	return false;
 }
 
 bool doenterEvent(MonoObject* thisObject, QEvent* event)
@@ -426,7 +416,7 @@ bool domoveEvent(MonoObject* thisObject, QMoveEvent* event)
 	}
 	else
 	{
-		printf("Cant find OnEnter\n");
+		printf("Cant find OnMove\n");
 		fflush(stdout);
 	}
 }
@@ -785,7 +775,7 @@ bool dohideEvent(MonoObject* thisObject, QHideEvent *event)
 	printf("Execute dohideEvent\n"); fflush(stdout);//if (!thisObject) return;
 	auto klass = mono_object_get_class (thisObject);
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnHide", 1);
-		if (eventMethod)
+	if (eventMethod)
 	{
 		MonoImage* image = mono_class_get_image(mono_method_get_class(eventMethod));
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "HideEvent");
@@ -865,7 +855,7 @@ bool dochangeEvent(MonoObject* thisObject, QEvent* event)
 			args[0] = &event;
 			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
-			result = mono_runtime_invoke (ctor, result, args, NULL);
+			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
 			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
@@ -879,7 +869,8 @@ bool dochangeEvent(MonoObject* thisObject, QEvent* event)
 	}
 	else
 	{
-		printf("Cant find OnChange\n");
+		printf("Cant find OnShow\n");
 		fflush(stdout);
 	}
+	return false;
 }
