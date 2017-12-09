@@ -31,19 +31,19 @@ namespace TestQtMonoSharp
 //			Font = new Font("Ubuntu Condensed", 30);
 //			WindowOpacity = (0.9);
 //
-//			verticalLayout_2 = VBoxLayout.CreateWithRaw(this);
+//			verticalLayout_2 = new VBoxLayout(this);
 //			verticalLayout_2.ObjectName = "verticalLayout_2";
 //			verticalLayout_2.SetContentsMargins(9, 9, 9, -1);
 //
-//			frame = Frame.CreateWithRaw(this);
+//			frame = new Frame(this);
 //			frame.ObjectName = "frame";
 //			frame.FrameShape = Frame.Shape.Box;
 //
-//			verticalLayout = VBoxLayout.CreateWithRaw(frame);
+//			verticalLayout = new VBoxLayout(frame);
 //			verticalLayout.Spacing = (10);
 //			verticalLayout.ObjectName = "verticalLayout";
 //
-//			label = Label.CreateWithRaw(frame);
+//			label = new Label(frame);
 //			label.ObjectName = "label";
 //			label.Text = "TextLabel";
 //			SizePolicy sizePolicy = new SizePolicy(Policy.Minimum, Policy.Minimum);
@@ -53,7 +53,7 @@ namespace TestQtMonoSharp
 //			label.Alignment = Alignment.AlignCenter;
 //			verticalLayout.AddWidget(label);
 //
-//			progressBar = ProgressBar.CreateWithRaw(frame);
+//			progressBar = new ProgressBar(frame);
 //			progressBar.ObjectName = "progressBar";
 //			progressBar.Value = 0;
 //			verticalLayout.AddWidget(progressBar);
