@@ -22,8 +22,12 @@ namespace TestQtMonoSharp
 			model.SetItem (1, 0, new StandardItem ("LINE_1_0"));
 			model.SetItem (1, 1, new StandardItem ("LINE_1_1"));
 
+			model.SetItem (3, 0, new StandardItem ("LINE_3_0"));
+			model.SetItem (3, 1, new StandardItem ("LINE_3_1"));
+
 			tableView.Model = model;
 
+			tableView.Font = new Font ("Ubuntu Condensed Regular", 30);
 //			tableView.ColumnCount = 5;
 //			tableView.RowCount = 5;
 //			tableView.SetItem (0, 0, new TableWidgetItem ("LINE:0_0"));
@@ -42,9 +46,15 @@ namespace TestQtMonoSharp
 			tableView.SelectionBehavior = ItemView.SelectionBehaviorEnum.SelectRows;
 			tableView.SelectionMode = ItemView.SelectionModeEnum.SingleSelection;
 
-			tableView.SelectRow (3);
-			tableView.ScrollTo (3);
+			tableView.SelectRow (1);
 
+//			HeaderView verticalHeader = tableView.VerticalHeader;
+//			verticalHeader.SetSectionResizeMode(HeaderView.ResizeMode.Fixed);
+//			verticalHeader.DefaultSectionSize = 50;
+
+			tableView.ResizeRowsToContents ();
+
+			tableView.ScrollTo (1, 0);
 		}
 
 		void MyMainWindow_CloseEvent (object sender, Qt.CloseEvent e)

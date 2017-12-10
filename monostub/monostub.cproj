@@ -44,6 +44,7 @@
     <ExtraCompilerArguments>-m64 -pipe -g -Og -std=gnu++11 -Wall -W -fPIC</ExtraCompilerArguments>
     <Externalconsole>true</Externalconsole>
     <ExtraLinkerArguments>-m64  -g -Og</ExtraLinkerArguments>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugSymbols>true</DebugSymbols>
