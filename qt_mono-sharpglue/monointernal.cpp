@@ -306,14 +306,14 @@ void qt_gridlayout_widget_add(GlueGridLayout* gridlayout, GlueWidget* widget)
 	gridlayout->addWidget(widget);
 }
 
-void qt_gridlayout_widget_alignment_add(GlueGridLayout* gridlayout, GlueWidget* widget, int row, int column, Qt::Alignment alignment)
+void qt_gridlayout_widget_alignment_add(GlueGridLayout* gridlayout, GlueWidget* widget, int row, int col, Qt::Alignment alignment)
 {
-	gridlayout->addWidget(widget, row, column, alignment);
+	gridlayout->addWidget(widget, row, col, alignment);
 }
 
-void qt_gridlayout_widget_span_add(GlueGridLayout* gridlayout, GlueWidget* widget, int row, int column, int rowSpan, int columnSpan, Qt::Alignment alignment)
+void qt_gridlayout_widget_span_add(GlueGridLayout* gridlayout, GlueWidget* widget, int row, int col, int rowSpan, int colSpan, Qt::Alignment alignment)
 {
-	gridlayout->addWidget(widget, row, column, rowSpan, columnSpan, alignment);
+	gridlayout->addWidget(widget, row, col, rowSpan, colSpan, alignment);
 }
 
 GlueDialog* qt_dialog_new(MonoObject* thisObject, QWidget* parent, uint32_t f)
@@ -1001,14 +1001,20 @@ GlueStandardItemModel* qt_standarditemmodel_new(MonoObject* thisObject, GlueObje
 	return new GlueStandardItemModel(thisObject, parent);
 }
 
+void qt_standarditemmodel_index_get(QStandardItemModel* standardItemModel, int row, int col, QModelIndex* modelIndex)
+{
+	QModelIndex i = standardItemModel->index(row, col);
+	modelIndex = &i;
+}
+
 void qt_standarditemmodel_item_row_set(GlueStandardItemModel* standardItemModel, int row, QStandardItem* item)
 {
 	standardItemModel->setItem(row, item);
 }
 
-void qt_standarditemmodel_item_row_column_set(GlueStandardItemModel* standardItemModel, int row, int column, QStandardItem* item)
+void qt_standarditemmodel_item_row_col_set(GlueStandardItemModel* standardItemModel, int row, int col, QStandardItem* item)
 {
-	standardItemModel->setItem(row, column, item);
+	standardItemModel->setItem(row, col, item);
 }
 
 void qt_standarditemmodel_item_append(GlueStandardItemModel* standardItemModel, QStandardItem* item)
@@ -1018,7 +1024,7 @@ void qt_standarditemmodel_item_append(GlueStandardItemModel* standardItemModel, 
 
 int qt_standarditemmodel_rowcount_get(GlueStandardItemModel* standardItemModel)
 {
-	standardItemModel->rowCount();
+	return standardItemModel->rowCount();
 }
 
 void qt_standarditemmodel_rowcount_set(GlueStandardItemModel* standardItemModel, int rows)
@@ -1026,14 +1032,14 @@ void qt_standarditemmodel_rowcount_set(GlueStandardItemModel* standardItemModel,
 	standardItemModel->setRowCount(rows);
 }
 
-int qt_standarditemmodel_columncount_get(GlueStandardItemModel* standardItemModel)
+int qt_standarditemmodel_colcount_get(GlueStandardItemModel* standardItemModel)
 {
-	standardItemModel->columnCount();
+	return standardItemModel->columnCount();
 }
 
-void qt_standarditemmodel_columncount_set(GlueStandardItemModel* standardItemModel, int columns)
+void qt_standarditemmodel_colcount_set(GlueStandardItemModel* standardItemModel, int cols)
 {
-	standardItemModel->setColumnCount(columns);
+	standardItemModel->setColumnCount(cols);
 }
 
 GlueStandardItemModel* qt_itemview_model_get(GlueTableView* abstractItemView)
@@ -1073,15 +1079,15 @@ void qt_tableview_resizerowtocontents(GlueTableView* tableView, int row)
 
 void qt_tableview_resizerowstocontents(GlueTableView* tableView)
 {
-	tableView->resizeColumnsToContents();
+	tableView->resizeRowsToContents();
 }
 
-void qt_tableview_resizecolumntocontents(GlueTableView* tableView, int column)
+void qt_tableview_resizecoltocontents(GlueTableView* tableView, int col)
 {
-	tableView->resizeColumnToContents(column);
+	tableView->resizeColumnToContents(col);
 }
 
-void qt_tableview_resizecolumnstocontents(GlueTableView* tableView)
+void qt_tableview_resizecolstocontents(GlueTableView* tableView)
 {
 	tableView->resizeColumnsToContents();
 }
@@ -1091,9 +1097,9 @@ void qt_tableview_selectrow(GlueTableView* tableView, int row)
 	tableView->selectRow(row);
 }
 
-void qt_tableview_selectcolumn(GlueTableView* tableView, int column)
+void qt_tableview_selectcol(GlueTableView* tableView, int col)
 {
-	tableView->selectColumn(column);
+	tableView->selectColumn(col);
 }
 
 void qt_tableview_showrow(GlueTableView* tableView, int row)
@@ -1101,9 +1107,9 @@ void qt_tableview_showrow(GlueTableView* tableView, int row)
 	tableView->showRow(row);
 }
 
-void qt_tableview_showcolumn(GlueTableView* tableView, int column)
+void qt_tableview_showcol(GlueTableView* tableView, int col)
 {
-	tableView->showColumn(column);
+	tableView->showColumn(col);
 }
 
 void qt_tableview_hiderow(GlueTableView* tableView, int row)
@@ -1111,19 +1117,19 @@ void qt_tableview_hiderow(GlueTableView* tableView, int row)
 	tableView->hideRow(row);
 }
 
-void qt_tableview_hidecolumn(GlueTableView* tableView, int column)
+void qt_tableview_hidecol(GlueTableView* tableView, int col)
 {
-	tableView->hideColumn(column);
+	tableView->hideColumn(col);
 }
 
-void qt_tableview_columnwidth_set(GlueTableView* tableView, int column, int width)
+void qt_tableview_colwidth_set(GlueTableView* tableView, int col, int width)
 {
-	tableView->setColumnWidth(column, width);
+	tableView->setColumnWidth(col, width);
 }
 
-int qt_tableview_columnwidth_get(GlueTableView* tableView, int column)
+int qt_tableview_colwidth_get(GlueTableView* tableView, int col)
 {
-	return tableView->columnWidth(column);
+	return tableView->columnWidth(col);
 }
 
 void qt_tableview_grid_show(GlueTableView* tableView, bool show)
@@ -1133,9 +1139,7 @@ void qt_tableview_grid_show(GlueTableView* tableView, bool show)
 
 void qt_tableview_scrollto(GlueTableView* tableView, int row, int col, QAbstractItemView::ScrollHint hint)
 {
-	auto model = tableView->model();
-	QModelIndex indexOfTheCellIWant = model->index(row, col);
-	tableView->scrollTo(indexOfTheCellIWant, hint);
+	tableView->scrollTo(tableView->model()->index(row, col), hint);
 }
 
 QTableWidgetItem* qt_tablewidgetitem_new(MonoString* text)
@@ -1161,6 +1165,41 @@ void qt_headerview_visible_set(QHeaderView* headerView, bool visible)
 	headerView->setVisible(visible);
 }
 
+QHeaderView::ResizeMode qt_headerview_section_resizemode_get(QHeaderView* headerView, int logicalIndex)
+{
+	return headerView->sectionResizeMode(logicalIndex);
+}
+
+void qt_headerview_section_resizemode_index_set(QHeaderView* headerView, int logicalIndex, QHeaderView::ResizeMode mode)
+{
+	headerView->setSectionResizeMode(logicalIndex, mode);
+}
+
+int qt_headerview_sectionsize_get(QHeaderView* headerView)
+{
+	return headerView->defaultSectionSize();
+}
+
+void qt_headerview_sectionsize_set(QHeaderView* headerView, int size)
+{
+	return headerView->setDefaultSectionSize(size);
+}
+
+Qt::Alignment qt_headerview_defaultalignment_get(QHeaderView* headerView)
+{
+	return headerView->defaultAlignment();
+}
+
+void qt_headerview_defaultalignment_set(QHeaderView* headerView, Qt::Alignment alignment)
+{
+	headerView->setDefaultAlignment(alignment);
+}
+
+void qt_headerview_section_resizemode_set(QHeaderView* headerView, QHeaderView::ResizeMode mode)
+{
+	headerView->setSectionResizeMode(mode);
+}
+
 GlueTableWidget* qt_tablewidget_new(MonoObject* thisObject, QWidget* parent)
 {
 	return new GlueTableWidget(thisObject, parent);
@@ -1176,17 +1215,17 @@ void qt_tablewidget_rowcount_set(QTableWidget* tableWidget, int rows)
 	return tableWidget->setRowCount(rows);
 }
 
-int qt_tablewidget_columncount_get(QTableWidget* tableWidget)
+int qt_tablewidget_colcount_get(QTableWidget* tableWidget)
 {
 	return tableWidget->columnCount();
 }
 
-void qt_tablewidget_columncount_set(QTableWidget* tableWidget, int columns)
+void qt_tablewidget_colcount_set(QTableWidget* tableWidget, int cols)
 {
-	return tableWidget->setColumnCount(columns);
+	return tableWidget->setColumnCount(cols);
 }
 
-void qt_tablewidget_row_column_set(QTableWidget* tableWidget, int row, int col, QTableWidgetItem* item)
+void qt_tablewidget_row_col_set(QTableWidget* tableWidget, int row, int col, QTableWidgetItem* item)
 {
 	tableWidget->setItem(row, col, item);
 }
@@ -1214,25 +1253,25 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.TableView::qt_tableview_verticalheader_get", reinterpret_cast<void*>(qt_widget_verticalheader_get));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_resizerowstocontents", reinterpret_cast<void*>(qt_tableview_resizerowstocontents));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_resizerowtocontents", reinterpret_cast<void*>(qt_tableview_resizerowtocontents));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_resizecolumnstocontents", reinterpret_cast<void*>(qt_tableview_resizecolumnstocontents));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_resizecolumntocontents", reinterpret_cast<void*>(qt_tableview_resizecolumntocontents));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_resizecolstocontents", reinterpret_cast<void*>(qt_tableview_resizecolstocontents));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_resizecoltocontents", reinterpret_cast<void*>(qt_tableview_resizecoltocontents));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_selectrow", reinterpret_cast<void*>(qt_tableview_selectrow));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_selectcolumn", reinterpret_cast<void*>(qt_tableview_selectcolumn));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_selectcol", reinterpret_cast<void*>(qt_tableview_selectcol));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_showrow", reinterpret_cast<void*>(qt_tableview_showrow));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_hiderow", reinterpret_cast<void*>(qt_tableview_hiderow));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_showcolumn", reinterpret_cast<void*>(qt_tableview_showcolumn));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_hidecolumn", reinterpret_cast<void*>(qt_tableview_hidecolumn));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_columnwidth_get", reinterpret_cast<void*>(qt_tableview_columnwidth_get));
-	mono_add_internal_call ("Qt.TableView::qt_tableview_columnwidth_set", reinterpret_cast<void*>(qt_tableview_columnwidth_set));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_showcol", reinterpret_cast<void*>(qt_tableview_showcol));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_hidecol", reinterpret_cast<void*>(qt_tableview_hidecol));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_colwidth_get", reinterpret_cast<void*>(qt_tableview_colwidth_get));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_colwidth_set", reinterpret_cast<void*>(qt_tableview_colwidth_set));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_grid_show", reinterpret_cast<void*>(qt_tableview_grid_show));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_scrollto", reinterpret_cast<void*>(qt_tableview_scrollto));
 
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_new", reinterpret_cast<void*>(qt_tablewidget_new));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_get", reinterpret_cast<void*>(qt_tablewidget_rowcount_get));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_set", reinterpret_cast<void*>(qt_tablewidget_rowcount_set));
-	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_columncount_get", reinterpret_cast<void*>(qt_tablewidget_columncount_get));
-	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_columncount_set", reinterpret_cast<void*>(qt_tablewidget_columncount_set));
-	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_column_set", reinterpret_cast<void*>(qt_tablewidget_row_column_set));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_colcount_get", reinterpret_cast<void*>(qt_tablewidget_colcount_get));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_colcount_set", reinterpret_cast<void*>(qt_tablewidget_colcount_set));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_col_set", reinterpret_cast<void*>(qt_tablewidget_row_col_set));
 
 	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_get", reinterpret_cast<void*>(qt_itemview_model_get));
 	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_set", reinterpret_cast<void*>(qt_itemview_model_set));
@@ -1453,12 +1492,19 @@ extern "C" void qt_application_monointernal_init()
 
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_new", reinterpret_cast<void*>(qt_standarditemmodel_new));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_set));
-	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_column_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_column_set));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_col_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_col_set));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_append", reinterpret_cast<void*>(qt_standarditemmodel_item_append));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_rowcount_get", reinterpret_cast<void*>(qt_standarditemmodel_rowcount_get));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_rowcount_set", reinterpret_cast<void*>(qt_standarditemmodel_rowcount_set));
-	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_columncount_get", reinterpret_cast<void*>(qt_standarditemmodel_columncount_get));
-	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_columncount_set", reinterpret_cast<void*>(qt_standarditemmodel_columncount_set));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_colcount_get", reinterpret_cast<void*>(qt_standarditemmodel_colcount_get));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_colcount_set", reinterpret_cast<void*>(qt_standarditemmodel_colcount_set));
 
 	mono_add_internal_call ("Qt.HeaderView::qt_headerview_visible_set", reinterpret_cast<void*>(qt_headerview_visible_set));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_section_resizemode_get", reinterpret_cast<void*>(qt_headerview_section_resizemode_get));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_section_resizemode_set", reinterpret_cast<void*>(qt_headerview_section_resizemode_set));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_section_resizemode_index_set", reinterpret_cast<void*>(qt_headerview_section_resizemode_index_set));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_sectionsize_get", reinterpret_cast<void*>(qt_headerview_sectionsize_get));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_sectionsize_set", reinterpret_cast<void*>(qt_headerview_sectionsize_set));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_defaultalignment_get", reinterpret_cast<void*>(qt_headerview_defaultalignment_get));
+	mono_add_internal_call ("Qt.HeaderView::qt_headerview_defaultalignment_set", reinterpret_cast<void*>(qt_headerview_defaultalignment_set));
 }

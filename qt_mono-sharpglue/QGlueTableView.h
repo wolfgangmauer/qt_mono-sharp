@@ -10,6 +10,9 @@ public:
     explicit GlueTableView(MonoObject* thisObject, QWidget *parent=0);
 
 private:
+	void onpressed(const QModelIndex &index);
+
+private:
     MonoObject* _thisObject;
 };
 

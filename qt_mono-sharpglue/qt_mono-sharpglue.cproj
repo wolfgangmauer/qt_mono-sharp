@@ -65,8 +65,9 @@
     <CompileTarget>SharedLibrary</CompileTarget>
     <DefineSymbols>DEBUG MONODEVELOP _REENTRANT QT_DEPRECATED_WARNINGS QT_QML_DEBUG QT_UITOOLS_LIB QT_WIDGETS_LIB QT_GUI_LIB QT_CORE_LIB</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
-    <ExtraCompilerArguments>-m64 -pipe -g -Og -std=gnu++11 -W -fPIC </ExtraCompilerArguments>
+    <ExtraCompilerArguments>-m64 -pipe -g -Og -std=gnu++11 -fPIC </ExtraCompilerArguments>
     <ExtraLinkerArguments>-m64 -g -Og</ExtraLinkerArguments>
+    <WarningLevel>All</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <OutputPath>..\example\bin\Release</OutputPath>

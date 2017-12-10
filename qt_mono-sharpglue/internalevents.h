@@ -4,7 +4,13 @@
 	{
 		auto nameSpace = mono_class_get_namespace(mono_object_get_class (_thisObject));
 		if (strcmp(nameSpace, "Qt"))
-			doMousePressEvent(_thisObject, event);
+		{
+			if (doMousePressEvent(_thisObject, event))
+				BaseClass::mousePressEvent(event);
+			else
+				event->ignore();
+			return;
+		}
 		BaseClass::mousePressEvent(event);
 	}
 	void mouseReleaseEvent(QMouseEvent *event) override

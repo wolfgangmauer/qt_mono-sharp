@@ -419,6 +419,7 @@ bool domoveEvent(MonoObject* thisObject, QMoveEvent* event)
 		printf("Cant find OnMove\n");
 		fflush(stdout);
 	}
+	return false;
 }
 
 bool doresizeEvent(MonoObject* thisObject, QResizeEvent* event)
