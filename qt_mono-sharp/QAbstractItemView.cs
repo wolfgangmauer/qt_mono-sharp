@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-	public class ItemView : ScrollArea
+	public abstract class ItemView : ScrollArea
 	{
 		public enum SelectionModeEnum
 		{
@@ -65,19 +65,19 @@ namespace Qt
 		public event EventHandler ViewportEntered;
 		public event EventHandler<Size> IconSizeChanged;
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern IntPtr qt_abstractitemview_new (IntPtr parent);
-
-		protected ItemView () {	}
-
+//		[MethodImpl (MethodImplOptions.InternalCall)]
+//		protected static extern IntPtr qt_abstractitemview_new (IntPtr parent);
+//
+//		protected ItemView () {	}
+//
 		protected ItemView (IntPtr raw) : base (raw) { }
-
-		public ItemView (Widget parent)
-		{
-			if (Raw != IntPtr.Zero)
-				throw new ArgumentException ("Raw not null!");
-			Raw = qt_abstractitemview_new (parent != null ? parent.Handle : IntPtr.Zero);
-		}
+//
+//		public ItemView (Widget parent)
+//		{
+//			if (Raw != IntPtr.Zero)
+//				throw new ArgumentException ("Raw not null!");
+//			Raw = qt_abstractitemview_new (parent != null ? parent.Handle : IntPtr.Zero);
+//		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_itemview_model_get (IntPtr parent);
@@ -118,8 +118,8 @@ namespace Qt
 
 		void OnPressed (ModelIndex index)
 		{
-			var tmp = Pressed;
-			tmp?.Invoke (this, index);
+//			var tmp = Pressed;
+//			tmp?.Invoke (this, index);
 		}
 
 		void OnClicked (ModelIndex index)

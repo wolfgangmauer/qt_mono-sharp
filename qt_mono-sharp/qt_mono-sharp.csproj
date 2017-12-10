@@ -92,7 +92,6 @@
     <Compile Include="QLine.cs" />
     <Compile Include="QUiLoader.cs" />
     <Compile Include="QUiLoaderAttribute.cs" />
-    <Compile Include="QModelIndex.cs" />
     <Compile Include="QIcon.cs" />
     <Compile Include="QEvents.cs" />
     <Compile Include="QAction.cs" />
@@ -104,6 +103,7 @@
     <Compile Include="QItemModel.cs" />
     <Compile Include="QStandardItem.cs" />
     <Compile Include="QTableWidgetItem.cs" />
+    <Compile Include="QModelIndex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

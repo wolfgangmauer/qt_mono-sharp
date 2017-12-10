@@ -9,11 +9,11 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tableview_new (TableView thisObject, IntPtr parent);
 
-		protected TableView () { }
+		protected TableView () : base(IntPtr.Zero) { }
 
 		protected TableView (IntPtr raw) : base(raw) { }
 
-		public TableView (Widget parent)
+		public TableView (Widget parent)  : base(IntPtr.Zero)
 		{
 			if (Raw != IntPtr.Zero)
 				throw new ArgumentException ("Raw not null!");
@@ -55,53 +55,53 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern int qt_tableview_columnwidth_get (IntPtr raw, int column);
-		public int GetColumnWidth(int column)
+		protected static extern int qt_tableview_colwidth_get (IntPtr raw, int col);
+		public int GetColumnWidth(int col)
 		{
-			return qt_tableview_columnwidth_get (Handle, column);
+			return qt_tableview_colwidth_get (Handle, col);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_columnwidth_set (IntPtr raw, int column, int width);
-		public void SetColumnWidth(int column, int width)
+		protected static extern void qt_tableview_colwidth_set (IntPtr raw, int col, int width);
+		public void SetColumnWidth(int col, int width)
 		{
-			qt_tableview_columnwidth_set (Handle, column, width);
+			qt_tableview_colwidth_set (Handle, col, width);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_selectcolumn (IntPtr raw, int column);
-		public void SelectColumn (int column)
+		protected static extern void qt_tableview_selectcol (IntPtr raw, int col);
+		public void SelectColumn (int col)
 		{
-			qt_tableview_selectcolumn (Handle, column);
+			qt_tableview_selectcol (Handle, col);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_hiderow (IntPtr raw, int column);
+		protected static extern void qt_tableview_hiderow (IntPtr raw, int col);
 		public void HideRow (int row)
 		{
 			qt_tableview_hiderow (Handle, row);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_showrow (IntPtr raw, int column);
+		protected static extern void qt_tableview_showrow (IntPtr raw, int col);
 		public void ShowRow (int row)
 		{
 			qt_tableview_showrow (Handle, row);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_hidecolumn (IntPtr raw, int column);
-		public void HideColumn (int column)
+		protected static extern void qt_tableview_hidecol (IntPtr raw, int col);
+		public void HideColumn (int col)
 		{
-			qt_tableview_hidecolumn (Handle, column);
+			qt_tableview_hidecol (Handle, col);
 		}
 
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_showcolumn (IntPtr raw, int column);
-		public void ShowColumn (int column)
+		protected static extern void qt_tableview_showcol (IntPtr raw, int col);
+		public void ShowColumn (int col)
 		{
-			qt_tableview_showcolumn (Handle, column);
+			qt_tableview_showcol (Handle, col);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -119,20 +119,20 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_resizecolumntocontents (IntPtr raw, int column);
-		public void ResizeColumnToContents (int column)
+		protected static extern void qt_tableview_resizecoltocontents (IntPtr raw, int col);
+		public void ResizeColumnToContents (int col)
 		{
-			qt_tableview_resizecolumntocontents (Handle, column);
+			qt_tableview_resizecoltocontents (Handle, col);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tableview_resizecolumnstocontents (IntPtr raw);
+		protected static extern void qt_tableview_resizecolstocontents (IntPtr raw);
 		public void ResizeColumnsToContents ()
 		{
-			qt_tableview_resizecolumnstocontents (Handle);
+			qt_tableview_resizecolstocontents (Handle);
 		}
 
-		public void SortByColumn (int column)
+		public void SortByColumn (int col)
 		{
 		}
 
@@ -145,7 +145,7 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_tableview_scrollto (IntPtr raw, int row, int col, ScrollHint hint);
-		public void ScrollTo(int row, int col = 0, ScrollHint hint = ScrollHint.EnsureVisible)
+		public void ScrollTo(int row, int col, ScrollHint hint = ScrollHint.EnsureVisible)
 		{
 			qt_tableview_scrollto (Handle, row, col, hint);
 		}

@@ -28,17 +28,17 @@ namespace Qt
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern void qt_gridlayout_widget_alignment_add (IntPtr raw, IntPtr widget, int row, int column, Alignment alignment);
-		public void AddWidget(Widget widget, int row, int column, Alignment alignment = (Alignment)0)
+		protected static extern void qt_gridlayout_widget_alignment_add (IntPtr raw, IntPtr widget, int row, int col, Alignment alignment);
+		public void AddWidget(Widget widget, int row, int col, Alignment alignment = (Alignment)0)
 		{
-			qt_gridlayout_widget_alignment_add (Handle, widget.Handle, row, column, alignment);
+			qt_gridlayout_widget_alignment_add (Handle, widget.Handle, row, col, alignment);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern void qt_gridlayout_widget_span_add (IntPtr raw, IntPtr widget, int row, int column, int rowSpan, int columnSpan, Alignment alignment);
-		public void AddWidget(Widget widget, int row, int column, int rowSpan, int columnSpan, Alignment alignment = (Alignment)0)
+		protected static extern void qt_gridlayout_widget_span_add (IntPtr raw, IntPtr widget, int row, int col, int rowSpan, int colSpan, Alignment alignment);
+		public void AddWidget(Widget widget, int row, int col, int rowSpan, int colSpan, Alignment alignment = (Alignment)0)
 		{
-			qt_gridlayout_widget_span_add (Handle, widget.Handle, row, column, rowSpan, columnSpan, alignment);
+			qt_gridlayout_widget_span_add (Handle, widget.Handle, row, col, rowSpan, colSpan, alignment);
 		}
 	}
 }

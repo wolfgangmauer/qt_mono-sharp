@@ -24,13 +24,13 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern int qt_standarditemmodel_columncount_get (IntPtr handle);
+		protected static extern int qt_standarditemmodel_colcount_get (IntPtr handle);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_standarditemmodel_columncount_set (IntPtr handle, int columns);
+		protected static extern void qt_standarditemmodel_colcount_set (IntPtr handle, int cols);
 		public int ColumnCount
 		{
-			get{ return qt_standarditemmodel_columncount_get (Handle); }
-			set{ qt_standarditemmodel_columncount_set (Handle, value); }
+			get{ return qt_standarditemmodel_colcount_get (Handle); }
+			set{ qt_standarditemmodel_colcount_set (Handle, value); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -41,10 +41,10 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_standarditemmodel_item_row_column_set (IntPtr handle, int row, int col, IntPtr item);
+		protected static extern void qt_standarditemmodel_item_row_col_set (IntPtr handle, int row, int col, IntPtr item);
 		public void SetItem(int row, int col, StandardItem item)
 		{
-			qt_standarditemmodel_item_row_column_set (Handle, row, col, item.Handle);
+			qt_standarditemmodel_item_row_col_set (Handle, row, col, item.Handle);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]

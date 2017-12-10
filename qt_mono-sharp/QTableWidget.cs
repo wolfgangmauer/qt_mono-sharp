@@ -31,20 +31,20 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern int qt_tablewidget_columncount_get (IntPtr parent);
+		protected static extern int qt_tablewidget_colcount_get (IntPtr parent);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tablewidget_columncount_set (IntPtr parent, int columns);
+		protected static extern void qt_tablewidget_colcount_set (IntPtr parent, int cols);
 		public int ColumnCount
 		{
-			get{ return qt_tablewidget_columncount_get (Handle); }
-			set{ qt_tablewidget_columncount_set (Handle, value); }
+			get{ return qt_tablewidget_colcount_get (Handle); }
+			set{ qt_tablewidget_colcount_set (Handle, value); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_tablewidget_row_column_set (IntPtr handle, int row, int column, IntPtr item);
-		public void SetItem(int row, int column, TableWidgetItem item)
+		protected static extern void qt_tablewidget_row_col_set (IntPtr handle, int row, int col, IntPtr item);
+		public void SetItem(int row, int col, TableWidgetItem item)
 		{
-			qt_tablewidget_row_column_set (Handle, row, column, item.Handle);
+			qt_tablewidget_row_col_set (Handle, row, col, item.Handle);
 		}
     }
 }
