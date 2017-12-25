@@ -9,12 +9,19 @@ using a C-Bridge (glue) to wrap the Qt C++ functions using "mono embedded".
 ### Namespace Qt
 
   Rect
+  
   Size
+  
   SizePolicy
+  
   Style
+  
   Menu
+  
   Font
+  
   Action
+  
   Application
   
   GuiApplication
