@@ -2,6 +2,7 @@
 Mono C# bindings for Qt
 
 Like gtk-sharp, this project using a C-Bridge (glue) to wrap the Qt C++ functions using "mono embedded".
+
 More Widgets/Functions can be implemented as needed.
 
 ## Minimal working classes:
