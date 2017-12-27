@@ -83,7 +83,6 @@
     <Compile Include="QGlueApplication.cpp" />
     <Compile Include="QGlueBoxLayout.cpp" />
     <Compile Include="QGlueDialog.cpp" />
-    <Compile Include="QGlueFont.cpp" />
     <Compile Include="QGlueFrame.cpp" />
     <Compile Include="QGlueGridLayout.cpp" />
     <Compile Include="QGlueHBoxLayout.cpp" />
@@ -92,7 +91,6 @@
     <Compile Include="QGlueMainWindow.cpp" />
     <Compile Include="QGlueObject.cpp" />
     <Compile Include="QGlueProgressBar.cpp" />
-    <Compile Include="QGlueSizePolicy.cpp" />
     <Compile Include="QGlueUiLoader.cpp" />
     <Compile Include="QGlueVBoxLayout.cpp" />
     <Compile Include="QGlueWidget.cpp" />
@@ -101,12 +99,16 @@
     <Compile Include="QGlueStandardItemModel.cpp" />
     <Compile Include="QGlueTableWidget.cpp" />
     <Compile Include="QGlueModelIndex.cpp" />
+    <Compile Include="QGlueMenu.cpp" />
+    <Compile Include="QGlueAction.cpp" />
+    <Compile Include="QGlueListView.cpp" />
+    <Compile Include="QGlueListWidget.cpp" />
+    <Compile Include="QGlueScrollArea.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QGlueApplication.h" />
     <None Include="QGlueBoxLayout.h" />
     <None Include="QGlueDialog.h" />
-    <None Include="QGlueFont.h" />
     <None Include="QGlueFrame.h" />
     <None Include="QGlueGridLayout.h" />
     <None Include="QGlueHBoxLayout.h" />
@@ -115,7 +117,6 @@
     <None Include="QGlueMainWindow.h" />
     <None Include="QGlueObject.h" />
     <None Include="QGlueProgressBar.h" />
-    <None Include="QGlueSizePolicy.h" />
     <None Include="QGlueUiLoader.h" />
     <None Include="QGlueVBoxLayout.h" />
     <None Include="QGlueWidget.h" />
@@ -141,5 +142,10 @@
     <None Include="moc\moc_frame.cpp" />
     <None Include="moc\moc_label.cpp" />
     <None Include="QGlueModelIndex.h" />
+    <None Include="QGlueAction.h" />
+    <None Include="QGlueMenu.h" />
+    <None Include="QGlueListView.h" />
+    <None Include="QGlueListWidget.h" />
+    <None Include="QGlueScrollArea.h" />
   </ItemGroup>
 </Project>

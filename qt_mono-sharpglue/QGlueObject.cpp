@@ -5,7 +5,7 @@
 //
 GlueObject::GlueObject(MonoObject* thisObject, GlueObject* parent) : QObject(parent)
 {
-	_thisObject = thisObject;
+	_thisObject = mono_gchandle_new(thisObject, TRUE);
 }
 
 void GlueObject::setObjectName(MonoString* name)

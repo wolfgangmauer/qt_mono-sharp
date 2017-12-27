@@ -9,5 +9,5 @@ public:
     GlueStandardItemModel(MonoObject* thisObject, int rows, int cols, GlueObject* parent=0);
 
 private:
-    MonoObject* _thisObject;
+    guint32 _thisObject;
 };

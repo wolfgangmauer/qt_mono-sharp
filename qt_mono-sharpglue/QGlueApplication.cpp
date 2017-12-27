@@ -12,14 +12,15 @@
 #include "QGlueApplication.h"
 #include "QGlueLabel.h"
 #include "QGlueFrame.h"
-#include "QGlueSizePolicy.h"
 #include "QGlueBoxLayout.h"
 
 GlueApplication::GlueApplication(MonoObject* thisObject, int &argc, char**argv) : QApplication(argc, argv)
 {
-	_thisObject = thisObject;
-//	_klass = mono_object_get_class (_thisObject);
-//	_keyPressEventMethod = mono_class_get_method_from_name_recursive(_klass, (char*)"KeyPress", 1);
-//	_keyReleaseEventMethod = mono_class_get_method_from_name_recursive(_klass, (char*)"KeyRelease", 1);
-//	MonoImageOpenStatus *status;
+	_thisObject = mono_gchandle_new(thisObject, TRUE);
+}
+
+GlueApplication::~GlueApplication()
+{
+	doOnRawDispose(_thisObject);
+	mono_gchandle_free (_thisObject); 
 }

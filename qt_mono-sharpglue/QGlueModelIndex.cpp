@@ -3,5 +3,5 @@
 GlueModelIndex::GlueModelIndex(MonoObject* thisObject)
 	: QModelIndex()
 {
-	_thisObject = thisObject;
+	_thisObject = mono_gchandle_new(thisObject, TRUE);
 }

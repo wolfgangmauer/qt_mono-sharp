@@ -10,7 +10,13 @@
 
 GlueUiLoader::GlueUiLoader(MonoObject* thisObject, QObject* parent) : QUiLoader(parent)
 {
-	_thisObject = thisObject;
+	_thisObject = mono_gchandle_new(thisObject, TRUE);
+}
+
+GlueUiLoader::~GlueUiLoader()
+{
+	doOnRawDispose(_thisObject);
+	mono_gchandle_free (_thisObject); 
 }
 
 QWidget* GlueUiLoader::loadFile(QFile* uiFile, QWidget* parentWidget)
@@ -21,17 +27,18 @@ QWidget* GlueUiLoader::loadFile(QFile* uiFile, QWidget* parentWidget)
 QLayout* GlueUiLoader::createLayout(const QString& className, QObject* parent, const QString& name)
 {
 	QLayout* retVal = NULL;
-	auto klass = mono_object_get_class (_thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnCreateLayout", 3);
 	if (eventMethod)
 	{
 		void *args [3];
-		MonoString* klassName = mono_string_new(mono_object_get_domain (_thisObject), className.toStdString().c_str());
-		MonoString* objectName = mono_string_new(mono_object_get_domain (_thisObject), name.toStdString().c_str());
+		MonoString* klassName = mono_string_new(mono_object_get_domain (mono_gchandle_get_target(_thisObject)), className.toStdString().c_str());
+		MonoString* objectName = mono_string_new(mono_object_get_domain (mono_gchandle_get_target(_thisObject)), name.toStdString().c_str());
 		args[0] = klassName;
 		args[1] = &parent;
 		args[2] = objectName;
-		MonoObject* result = mono_runtime_invoke(eventMethod, _thisObject, args, NULL);
+		mono_thread_attach (mono_get_root_domain ());
+		MonoObject* result = mono_runtime_invoke(eventMethod, mono_gchandle_get_target(_thisObject), args, NULL);
 		retVal = *(QLayout**)mono_object_unbox(result);
 	}
 	if (!retVal)
@@ -46,24 +53,18 @@ QLayout* GlueUiLoader::createLayout(const QString& className, QObject* parent, c
 QWidget* GlueUiLoader::createWidget(const QString& className, QWidget* parent, const QString& name)
 {
 	QWidget* retVal = NULL;
-
-//	if (className == "QDialog")
-//		retVal = new GlueDialog(_thisObject, parent);
-//	else if (className == "QFrame")
-//		retVal = new GlueFrame(_thisObject, parent);
-//	else if (className == "QLabel")
-//		retVal = new GlueLabel(_thisObject, parent);
-	auto klass = mono_object_get_class (_thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnCreateWidget", 3);
 	if (eventMethod)
 	{
 		void *args [3];
-		MonoString* klassName = mono_string_new(mono_object_get_domain (_thisObject), className.toStdString().c_str());
-		MonoString* objectName = mono_string_new(mono_object_get_domain (_thisObject), name.toStdString().c_str());
+		MonoString* klassName = mono_string_new(mono_object_get_domain (mono_gchandle_get_target(_thisObject)), className.toStdString().c_str());
+		MonoString* objectName = mono_string_new(mono_object_get_domain (mono_gchandle_get_target(_thisObject)), name.toStdString().c_str());
 		args[0] = klassName;
 		args[1] = &parent;
 		args[2] = objectName;
-		MonoObject* result = mono_runtime_invoke(eventMethod, _thisObject, args, NULL);
+		mono_thread_attach (mono_get_root_domain ());
+		MonoObject* result = mono_runtime_invoke(eventMethod, mono_gchandle_get_target(_thisObject), args, NULL);
 		retVal = *(QWidget**)mono_object_unbox(result);
 	}
 	if (!retVal)

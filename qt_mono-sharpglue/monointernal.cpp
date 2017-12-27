@@ -1,7 +1,8 @@
-﻿#include "QGlueApplication.h"
+﻿#include <QScreen>
+
+#include "QGlueApplication.h"
 #include "QGlueLabel.h"
 #include "QGlueFrame.h"
-#include "QGlueSizePolicy.h"
 #include "QGlueBoxLayout.h"
 #include "QGlueGridLayout.h"
 #include "QGlueHBoxLayout.h"
@@ -10,9 +11,15 @@
 #include "QGlueUiLoader.h"
 #include "QGlueProgressBar.h"
 #include "QGlueStandardItemModel.h"
+#include "QGlueModelIndex.h"
 #include "QGlueTableView.h"
 #include "QGlueTableWidget.h"
-#include "QGlueModelIndex.h"
+#include "QGlueListView.h"
+#include "QGlueListWidget.h"
+#include "QGlueAction.h"
+#include "QGlueMenu.h"
+
+#include <QtPlatformHeaders/qeglfsfunctions.h>
 
 //Warning: The data referred to by argc and argv must stay valid for the entire lifetime of the QApplication object.
 //In addition, argc must be greater than zero and argv must contain at least one valid character string." 
@@ -34,9 +41,41 @@ int qt_application_exec(GlueApplication* application)
 	return application->exec();
 }
 
+void qt_coreapplication_quit()
+{
+	QCoreApplication::quit();
+}
+
+void qt_eglfs_loadkeymap(MonoString* keymap)
+{
+	char* p = mono_string_to_utf8(keymap);
+	QEglFSFunctions::loadKeymap(p);
+	g_free(p);
+}
+
+QWidget* qt_application_activewindow_get()
+{
+	return QApplication::activeWindow();
+}
+
+void qt_application_postevent(QObject* receiver, QEvent* event, int priority)
+{
+	QCoreApplication::postEvent(receiver, event, priority);
+}
+
+void qt_application_events_process(QEventLoop::ProcessEventsFlags flags)
+{
+	QCoreApplication::processEvents(flags);
+}
+
 void qt_application_attribute_set(Qt::ApplicationAttribute attribute)
 {
 	GlueApplication::setAttribute(attribute);
+}
+
+QScreen* qt_guiapplication_primaryscreen_get()
+{
+	return QGuiApplication::primaryScreen();
 }
 
 MonoString* qt_objectname_get(GlueObject* obj)
@@ -76,197 +115,273 @@ GlueWidget* qt_widget_new(MonoObject* obj, QWidget* parent, Qt::WindowFlags f)
 	return new GlueWidget(obj, parent, f);
 }
 
-MonoString* qt_widget_windowtitle_get(GlueWidget* widget)
+MonoString* qt_widget_windowtitle_get(QWidget* widget)
 {
 	return mono_string_new(mono_domain_get (), widget->windowTitle().toLatin1().data());
 }
 
-void qt_widget_windowtitle_set(GlueWidget* widget, MonoString* windowtitle)
+void qt_widget_windowtitle_set(QWidget* widget, MonoString* windowtitle)
 {
 	char* p = mono_string_to_utf8(windowtitle);
 	widget->setWindowTitle(p);
 	g_free(p);
 }
 
-GlueWidget* qt_widget_parent_get(GlueWidget* widget)
+QWidget* qt_widget_parent_get(QWidget* widget)
 {
-	return reinterpret_cast<GlueWidget*>(widget->parentWidget());
+	return (QWidget*)widget->parentWidget();
 }
 
-void qt_widget_parent_set(GlueWidget* widget, QWidget* parent)
+void qt_widget_parent_set(QWidget* widget, QWidget* parent)
 {
 	widget->setParent(parent);
 }
 
-void qt_widget_show(GlueWidget* widget)
+void qt_widget_show(QWidget* widget)
 {
 	widget->show();
 }
 
-void qt_widget_hide(GlueWidget* widget)
+void qt_widget_fullscreen_show(QWidget* widget)
+{
+	widget->showFullScreen();
+}
+
+void qt_widget_hide(QWidget* widget)
 {
 	widget->hide();
 }
 
-void qt_widget_attribute_set(GlueWidget* widget, Qt::WidgetAttribute attribute)
+void qt_widget_update(QWidget* widget)
+{
+	widget->update();
+}
+
+void qt_widget_move(QWidget* widget, int x, int y)
+{
+	widget->move(x, y);
+}
+
+void qt_widget_attribute_set(QWidget* widget, Qt::WidgetAttribute attribute)
 {
 	widget->setAttribute(attribute);
 }
 
-Qt::WindowFlags qt_widget_windowflags_get(GlueWidget* widget)
+Qt::WindowFlags qt_widget_windowflags_get(QWidget* widget)
 {
 	return widget->windowFlags();
 }
 
-void qt_widget_windowflags_set(GlueWidget* widget, Qt::WindowFlags type)
+void qt_widget_windowflags_set(QWidget* widget, Qt::WindowFlags type)
 {
 	widget->setWindowFlags(type);
 }
 
-void qt_widget_stylesheet_set(GlueWidget* widget, MonoString* stylesheet)
+void qt_widget_stylesheet_set(QWidget* widget, MonoString* stylesheet)
 {
 	char* p = mono_string_to_utf8(stylesheet);
 	widget->setStyleSheet(p);
 	g_free(p);
 }
 
-void qt_widget_fixedsize_set(GlueWidget* widget, uint32_t w, uint32_t h)
+void qt_widget_fixedsize_set(QWidget* widget, uint32_t w, uint32_t h)
 {
 	widget->setFixedSize(w, h);
 }
 
-void qt_widget_resize(GlueWidget* widget, uint32_t w, uint32_t h)
+void qt_widget_resize(QWidget* widget, uint32_t w, uint32_t h)
 {
 	widget->resize(w, h);
 }
 
-void qt_widget_font_set(QWidget* widget, const QFont& font)
+QSize* qt_widget_size_get(QWidget* widget)
 {
-	widget->setFont(font);
+	return new QSize(widget->size());
 }
 
-QFont qt_widget_font_get(GlueWidget* widget)
+void qt_widget_size_set(QWidget* widget, QSize* size)
 {
-	return widget->font();
+	widget->resize(*size);
 }
 
-double qt_widget_windowopacity_get(GlueWidget* widget)
+QSize* qt_widget_sizehint_get(QWidget* widget)
+{
+	return new QSize(widget->sizeHint());
+}
+
+int qt_widget_width_get(QWidget* widget)
+{
+	return widget->width();
+}
+
+int qt_widget_height_get(QWidget* widget)
+{
+	return widget->height();
+}
+
+void qt_widget_font_set(QWidget* widget, QFont* font)
+{
+	widget->setFont(*font);
+}
+
+QFont* qt_widget_font_get(QWidget* widget)
+{
+	return new QFont(widget->font());
+}
+
+double qt_widget_windowopacity_get(QWidget* widget)
 {
 	return widget->windowOpacity();
 }
 
-void qt_widget_windowopacity_set(GlueWidget* widget, double windowopacity)
+void qt_widget_windowopacity_set(QWidget* widget, double windowopacity)
 {
 	widget->setWindowOpacity(windowopacity);
 }
 
-QSizePolicy* qt_widget_sizepolicy_get(GlueWidget* widget)
+QSizePolicy* qt_widget_sizepolicy_get(QWidget* widget)
 {
-	return widget->sizePolicy();
+	return new QSizePolicy(widget->sizePolicy());
 }
 
-void qt_widget_sizepolicy_set(GlueWidget* widget, QSizePolicy* sizePolicy)
+void qt_widget_sizepolicy_set(QWidget* widget, QSizePolicy* sizePolicy)
 {
 	widget->setSizePolicy(*sizePolicy);
 }
 
-void qt_widget_sizepolicyhv_set(GlueWidget* widget, uint32_t horizontal, uint32_t vertical)
+void qt_widget_sizepolicyhv_set(QWidget* widget, uint32_t horizontal, uint32_t vertical)
 {
 	widget->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
 }
 
-void qt_widget_minimumsize_get(GlueWidget* widget, uint32_t* w, uint32_t* h)
+QSize* qt_widget_minimumsize_get(QWidget* widget)
 {
-	QSize s = widget->minimumSize();
-	*w = s.width();
-	*h = s.height();
+	return new QSize(widget->minimumSize());
 }
 
-void qt_widget_minimumsize_set(GlueWidget* widget, uint32_t w, uint32_t h)
+void qt_widget_minimumsize_set(QWidget* widget, uint32_t w, uint32_t h)
 {
 	QSize s(w, h);
 	widget->setMinimumSize(s);
 }
 
-void qt_widget_maximumsize_get(GlueWidget* widget, uint32_t* w, uint32_t* h)
+QSize* qt_widget_maximumsize_get(QWidget* widget)
 {
-	QSize s = widget->maximumSize();
-	*w = s.width();
-	*h = s.height();
+	return new QSize(widget->maximumSize());
 }
 
-void qt_widget_maximumsize_set(GlueWidget* widget, uint32_t w, uint32_t h)
+void qt_widget_maximumsize_set(QWidget* widget, uint32_t w, uint32_t h)
 {
 	QSize s(w, h);
 	widget->setMaximumSize(s);
 }
 
-uint32_t qt_widget_windowmodality_get(GlueWidget* widget)
+int qt_widget_minimumwidth_get(QWidget* widget)
+{
+	return widget->minimumWidth();
+}
+
+void qt_widget_minimumwidth_set(QWidget* widget, int min)
+{
+	return widget->setMinimumWidth(min);
+}
+
+int qt_widget_maximumwidth_get(QWidget* widget)
+{
+	return widget->maximumWidth();
+}
+
+void qt_widget_maximumwidth_set(QWidget* widget, int max)
+{
+	return widget->setMaximumWidth(max);
+}
+
+int qt_widget_minimumheight_get(QWidget* widget)
+{
+	return widget->minimumHeight();
+}
+
+void qt_widget_minimumheight_set(QWidget* widget, int min)
+{
+	return widget->setMinimumHeight(min);
+}
+
+int qt_widget_maximumheight_get(QWidget* widget)
+{
+	return widget->maximumHeight();
+}
+
+void qt_widget_maximumheight_set(QWidget* widget, int max)
+{
+	return widget->setMaximumHeight(max);
+}
+
+uint32_t qt_widget_windowmodality_get(QWidget* widget)
 {
 	return (uint32_t)widget->windowModality();
 }
 
-void qt_widget_windowmodality_set(GlueWidget* widget, uint32_t windowModality)
+void qt_widget_windowmodality_set(QWidget* widget, uint32_t windowModality)
 {
 	widget->setWindowModality((Qt::WindowModality)windowModality);
 }
 
-uint32_t qt_widget_focuspolicy_get(GlueWidget* widget)
+uint32_t qt_widget_focuspolicy_get(QWidget* widget)
 {
 	return (uint32_t)widget->focusPolicy();
 }
 
-void qt_widget_focuspolicy_set(GlueWidget* widget, uint32_t focusPolicy)
+void qt_widget_focuspolicy_set(QWidget* widget, uint32_t focusPolicy)
 {
 	widget->setFocusPolicy((Qt::FocusPolicy)focusPolicy);
 }
 
-uint qt_widget_contextmenupolicy_get(GlueWidget* widget)
+uint qt_widget_contextmenupolicy_get(QWidget* widget)
 {
 	return (uint32_t)widget->contextMenuPolicy();
 }
 
-void qt_widget_contextmenupolicy_set(GlueWidget* widget, uint32_t contextMenuPolicy)
+void qt_widget_contextmenupolicy_set(QWidget* widget, uint32_t contextMenuPolicy)
 {
 	widget->setContextMenuPolicy((Qt::ContextMenuPolicy)contextMenuPolicy);
 }
 
-bool qt_widget_autofillbackground_get(GlueWidget* widget)
+bool qt_widget_autofillbackground_get(QWidget* widget)
 {
 	return widget->autoFillBackground();
 }
 
-void qt_widget_autofillbackground_set(GlueWidget* widget, bool autofillbackground)
+void qt_widget_autofillbackground_set(QWidget* widget, bool autofillbackground)
 {
 	widget->setAutoFillBackground(autofillbackground);
 }
 
-QLayout* qt_widget_layout_get(GlueWidget* widget)
+QLayout* qt_widget_layout_get(QWidget* widget)
 {
 	return widget->layout();
 }
 
-void qt_widget_layout_set(GlueWidget* widget, QLayout* layout)
+void qt_widget_layout_set(QWidget* widget, QLayout* layout)
 {
 	return widget->setLayout(layout);
 }
 
-void qt_widget_adjustsize(GlueWidget* widget)
+void qt_widget_adjustsize(QWidget* widget)
 {
 	widget->adjustSize();
 }
 
-const QRect qt_widget_geometry_get(GlueWidget* widget)
+QRect* qt_widget_geometry_get(QWidget* widget)
 {
-	return widget->geometry();
+	return new QRect(widget->geometry());
 }
 
-void qt_widget_geometry_set(GlueWidget* widget, const QRect& rect)
+void qt_widget_geometry_set(QWidget* widget, QRect* rect)
 {
-	widget->setGeometry(rect);
+	widget->setGeometry(*rect);
 }
 
-void qt_widget_updategeometry(GlueWidget* widget)
+void qt_widget_updategeometry(QWidget* widget)
 {
 	widget->updateGeometry();
 }
@@ -276,7 +391,7 @@ GlueBoxLayout* qt_boxlayout_new(MonoObject* thisObject, QBoxLayout::Direction di
 	return new GlueBoxLayout(thisObject, dir, parent);
 }
 
-void qt_boxlayout_widget_add(GlueBoxLayout* layout, GlueWidget* widget, int stretch, Qt::Alignment alignment)
+void qt_boxlayout_widget_add(GlueBoxLayout* layout, QWidget* widget, int stretch, Qt::Alignment alignment)
 {
 	layout->addWidget(widget, stretch, alignment);
 }
@@ -301,17 +416,17 @@ GlueGridLayout* qt_gridlayout_new(MonoObject* thisObject, QWidget* parent)
 	return new GlueGridLayout(thisObject, parent);
 }
 
-void qt_gridlayout_widget_add(GlueGridLayout* gridlayout, GlueWidget* widget)
+void qt_gridlayout_widget_add(GlueGridLayout* gridlayout, QWidget* widget)
 {
 	gridlayout->addWidget(widget);
 }
 
-void qt_gridlayout_widget_alignment_add(GlueGridLayout* gridlayout, GlueWidget* widget, int row, int col, Qt::Alignment alignment)
+void qt_gridlayout_widget_alignment_add(GlueGridLayout* gridlayout, QWidget* widget, int row, int col, Qt::Alignment alignment)
 {
 	gridlayout->addWidget(widget, row, col, alignment);
 }
 
-void qt_gridlayout_widget_span_add(GlueGridLayout* gridlayout, GlueWidget* widget, int row, int col, int rowSpan, int colSpan, Qt::Alignment alignment)
+void qt_gridlayout_widget_span_add(GlueGridLayout* gridlayout, QWidget* widget, int row, int col, int rowSpan, int colSpan, Qt::Alignment alignment)
 {
 	gridlayout->addWidget(widget, row, col, rowSpan, colSpan, alignment);
 }
@@ -321,9 +436,24 @@ GlueDialog* qt_dialog_new(MonoObject* thisObject, QWidget* parent, uint32_t f)
 	return new GlueDialog(thisObject, parent, (Qt::WindowFlags)f);
 }
 
+void qt_dialog_delete(GlueDialog* dialog)
+{
+	delete dialog;
+}
+
 int qt_dialog_exec(GlueDialog* dialog)
 {
 	return dialog->exec();
+}
+
+void qt_dialog_accept(GlueDialog* dialog)
+{
+	dialog->accept();
+}
+
+void qt_dialog_reject(GlueDialog* dialog)
+{
+	dialog->reject();
 }
 
 bool qt_dialog_modal_get(GlueDialog* dialog)
@@ -371,6 +501,11 @@ void qt_frame_shadow_set(GlueFrame* widget, QFrame::Shadow shadow)
 	widget->setFrameShadow(shadow);
 }
 
+int qt_frame_width_get(GlueFrame* widget)
+{
+	return widget->frameWidth();
+}
+
 int qt_frame_linewidth_get(GlueFrame* widget)
 {
 	return widget->lineWidth();
@@ -411,6 +546,11 @@ void qt_progressbar_maximum_set(GlueProgressBar* widget, int value)
 	widget->setMaximum(value);
 }
 
+void qt_progressbar_range_set(GlueProgressBar* widget, int min, int max)
+{
+	widget->setRange(min, max);
+}
+
 GlueLabel* qt_label_new(MonoObject* thisObject, QWidget* parent, Qt::WindowFlags f)
 {
 	return new GlueLabel(thisObject, parent, f);
@@ -432,7 +572,19 @@ MonoString* qt_label_text_get(GlueLabel* label)
 
 void qt_label_text_set(GlueLabel* label, MonoString* text)
 {
-	label->setText(text);
+	char* p = mono_string_to_utf8(text);
+	label->setText(p);
+	g_free(p);
+}
+
+const QPixmap* qt_label_pixmap_get(GlueLabel* label)
+{
+	return label->pixmap();
+}
+
+void qt_label_pixmap_set(GlueLabel* label, QPixmap* pixmap)
+{
+	label->setPixmap(*pixmap);
 }
 
 Qt::Alignment qt_label_alignment_get(GlueLabel* label)
@@ -480,7 +632,7 @@ GlueProgressBar* qt_progressbar_new(MonoObject* thisObject, QWidget* parent)
 	return new GlueProgressBar(thisObject, parent);
 }
 
-void qt_layout_widget_add(GlueLayout* layout, GlueWidget* widget)
+void qt_layout_widget_add(GlueLayout* layout, QWidget* widget)
 {
 	layout->addWidget(widget);
 }
@@ -530,48 +682,48 @@ void qt_layout_sizeconstraint_set(QLayout* layout, QLayout::SizeConstraint sizeC
 	return layout->setSizeConstraint(sizeConstraint);
 }
 
-const QRect qt_layout_geometry_get(QLayout* layout)
+QRect* qt_layout_geometry_get(QLayout* layout)
 {
-	return layout->geometry();
+	return new QRect(layout->geometry());
 }
 
-void qt_layout_geometry_set(GlueLayout* layout, const QRect& rect)
+void qt_layout_geometry_set(GlueLayout* layout, QRect* rect)
 {
-	layout->setGeometry(rect);
+	layout->setGeometry(*rect);
 }
 
-GlueFont* qt_font_new()
+QFont* qt_font_new()
 {
-	return new GlueFont();
+	return new QFont();
 }
 
-GlueFont* qt_font_new_with_params(MonoString* fontfamily, int pointSize, int weight, bool italic)
+QFont* qt_font_new_with_params(MonoString* fontfamily, int pointSize, int weight, bool italic)
 {
-	GlueFont* retVal;
+	QFont* retVal;
 	char* p = mono_string_to_utf8(fontfamily);
-	retVal = new GlueFont(p, pointSize, weight, italic);
+	retVal = new QFont(QLatin1String(p), pointSize, weight, italic);
 	g_free(p);
 	return retVal;
 }
 
-MonoString* qt_font_family_get(GlueFont* font)
+MonoString* qt_font_family_get(QFont* font)
 {
 	return mono_string_new(mono_domain_get (), font->family().toLatin1().data());
 }
 
-void qt_font_family_set(GlueFont* obj, MonoString* fontfamily)
+void qt_font_family_set(QFont* obj, MonoString* fontfamily)
 {
 	char* p = mono_string_to_utf8(fontfamily);
 	obj->setFamily(p);
 	g_free(p);
 }
 
-int qt_font_pointsize_get(GlueFont* obj)
+int qt_font_pointsize_get(QFont* obj)
 {
 	return obj->pointSize();
 }
 
-void qt_font_pointsize_set(GlueFont* obj, int pointsize)
+void qt_font_pointsize_set(QFont* obj, int pointsize)
 {
 	obj->setPointSize(pointsize);
 }
@@ -581,19 +733,19 @@ GlueMainWindow* qt_mainwindow_new(MonoObject* obj, QWidget* parent, Qt::WindowFl
 	return new GlueMainWindow(obj, parent, f);
 }
 
-GlueSizePolicy* qt_sizepolicy_new ()
+QSizePolicy* qt_sizepolicy_new ()
 {
-	return new GlueSizePolicy();
+	return new QSizePolicy();
 }
 
-GlueSizePolicy* qt_sizepolicy_new_with_policy (QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)
+QSizePolicy* qt_sizepolicy_new_with_policy (QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)
 {
-	return new GlueSizePolicy(horizontal, vertical);
+	return new QSizePolicy(horizontal, vertical);
 }
 
-GlueSizePolicy* qt_sizepolicy_new_with_controltype (QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical, QSizePolicy::ControlType type)
+QSizePolicy* qt_sizepolicy_new_with_controltype (QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical, QSizePolicy::ControlType type)
 {
-	return new GlueSizePolicy(horizontal, vertical, type);
+	return new QSizePolicy(horizontal, vertical, type);
 }
 
 QSizePolicy::Policy qt_sizepolicy_horizontal_get(QSizePolicy* policy)
@@ -601,72 +753,72 @@ QSizePolicy::Policy qt_sizepolicy_horizontal_get(QSizePolicy* policy)
 	return policy->horizontalPolicy();
 }
 
-void qt_sizepolicy_horizontal_set(GlueSizePolicy* policy, QSizePolicy::Policy horizontal)
+void qt_sizepolicy_horizontal_set(QSizePolicy* policy, QSizePolicy::Policy horizontal)
 {
 	policy->setHorizontalPolicy(horizontal);
 }
 
-QSizePolicy::Policy qt_sizepolicy_vertical_get(GlueSizePolicy* policy)
+QSizePolicy::Policy qt_sizepolicy_vertical_get(QSizePolicy* policy)
 {
 	return policy->verticalPolicy();
 }
 
-void qt_sizepolicy_vertical_set(GlueSizePolicy* policy, QSizePolicy::Policy vertical)
+void qt_sizepolicy_vertical_set(QSizePolicy* policy, QSizePolicy::Policy vertical)
 {
 	policy->setVerticalPolicy(vertical);
 }
 
-QSizePolicy::ControlType qt_sizepolicy_controltype_get(GlueSizePolicy* policy)
+QSizePolicy::ControlType qt_sizepolicy_controltype_get(QSizePolicy* policy)
 {
 	return policy->controlType();
 }
 
-void qt_sizepolicy_controltype_set(GlueSizePolicy* policy, QSizePolicy::ControlType controlType)
+void qt_sizepolicy_controltype_set(QSizePolicy* policy, QSizePolicy::ControlType controlType)
 {
 	policy->setControlType(controlType);
 }
 
-Qt::Orientations qt_sizepolicy_expanding_directions(GlueSizePolicy* policy)
+Qt::Orientations qt_sizepolicy_expanding_directions(QSizePolicy* policy)
 {
 	return policy->expandingDirections();
 }
 
-bool qt_sizepolicy_heightforwidth_get(GlueSizePolicy* policy)
+bool qt_sizepolicy_heightforwidth_get(QSizePolicy* policy)
 {
 	return policy->hasHeightForWidth();
 }
 
-void qt_sizepolicy_heightforwidth_set(GlueSizePolicy* policy, bool heightForWidth)
+void qt_sizepolicy_heightforwidth_set(QSizePolicy* policy, bool heightForWidth)
 {
 	policy->setHeightForWidth(heightForWidth);
 }
 
-bool qt_sizepolicy_widthforheight_get(GlueSizePolicy* policy)
+bool qt_sizepolicy_widthforheight_get(QSizePolicy* policy)
 {
 	return policy->hasHeightForWidth();
 }
 
-void qt_sizepolicy_widthforheight_set(GlueSizePolicy* policy, bool widthForHeight)
+void qt_sizepolicy_widthforheight_set(QSizePolicy* policy, bool widthForHeight)
 {
 	policy->setHeightForWidth(widthForHeight);
 }
 
-int qt_sizepolicy_horizontalstretch_get(GlueSizePolicy* policy)
+int qt_sizepolicy_horizontalstretch_get(QSizePolicy* policy)
 {
 	return policy->horizontalStretch();
 }
 
-void qt_sizepolicy_horizontalstretch_set(GlueSizePolicy* policy, int horizontalStretch)
+void qt_sizepolicy_horizontalstretch_set(QSizePolicy* policy, int horizontalStretch)
 {
 	policy->setHorizontalStretch((unsigned char)horizontalStretch);
 }
 
-bool qt_sizepolicy_verticalstretch_get(GlueSizePolicy* policy)
+bool qt_sizepolicy_verticalstretch_get(QSizePolicy* policy)
 {
 	return policy->verticalStretch();
 }
 
-void qt_sizepolicy_verticalstretch_set(GlueSizePolicy* policy, int verticalStretch)
+void qt_sizepolicy_verticalstretch_set(QSizePolicy* policy, int verticalStretch)
 {
 	policy->setVerticalStretch((unsigned char)verticalStretch);
 }
@@ -731,19 +883,19 @@ QContextMenuEvent::Reason qt_contextmenuevent_reason_get(QContextMenuEvent* even
 	return event->reason();
 }
 
-const QPoint qt_contextmenuevent_pos_get(QContextMenuEvent* event)
+QPoint* qt_contextmenuevent_pos_get(QContextMenuEvent* event)
 {
-	return event->pos();
+	return new QPoint(event->pos());
 }
 
-const QPoint qt_contextmenuevent_globalpos_get(QContextMenuEvent* event)
+QPoint* qt_contextmenuevent_globalpos_get(QContextMenuEvent* event)
 {
-	return event->globalPos();
+	return new QPoint(event->globalPos());
 }
 
-const QRect qt_paintevent_rect_get(QPaintEvent* event)
+QRect* qt_paintevent_rect_get(QPaintEvent* event)
 {
-	return event->rect();
+	return new QRect(event->rect());
 }
 
 Qt::FocusReason qt_focusevent_reason_get(QFocusEvent* event)
@@ -771,14 +923,14 @@ Qt::MouseButtons qt_wheelevent_buttons_get(QWheelEvent* event)
 	return event->buttons();
 }
 
-QPointF qt_wheelevent_globalposf_get(QWheelEvent* event)
+QPointF* qt_wheelevent_globalposf_get(QWheelEvent* event)
 {
-	return event->globalPosF();
+	return new QPointF(event->globalPosF());
 }
 
-QPointF qt_wheelevent_posf_get(QWheelEvent* event)
+QPointF* qt_wheelevent_posf_get(QWheelEvent* event)
 {
-	return event->posF();
+	return new QPointF(event->posF());
 }
 
 Qt::Orientation qt_wheelevent_orientation_get(QWheelEvent* event)
@@ -791,14 +943,14 @@ int qt_wheelevent_delta_get(QWheelEvent* event)
 	return event->delta();
 }
 
-QPoint qt_wheelevent_angledelta_get(QWheelEvent* event)
+QPoint* qt_wheelevent_angledelta_get(QWheelEvent* event)
 {
-	return event->angleDelta();
+	return new QPoint(event->angleDelta());
 }
 
-QPoint qt_wheelevent_pixeldelta_get(QWheelEvent* event)
+QPoint* qt_wheelevent_pixeldelta_get(QWheelEvent* event)
 {
-	return event->pixelDelta();
+	return new QPoint(event->pixelDelta());
 }
 
 Qt::MouseEventSource qt_mouseevent_source_get(QMouseEvent* event)
@@ -821,19 +973,37 @@ Qt::MouseButtons qt_mouseevent_buttons_get(QMouseEvent* event)
 	return event->buttons();
 }
 
-QPointF qt_mouseevent_localpos_get(QMouseEvent* event)
+QPointF* qt_mouseevent_localpos_get(QMouseEvent* event)
 {
-	return event->localPos();
+	return new QPointF(event->localPos());
 }
 
-QPointF qt_mouseevent_windowpos_get(QMouseEvent* event)
+QPointF* qt_mouseevent_windowpos_get(QMouseEvent* event)
 {
-	return event->windowPos();
+	return new QPointF(event->windowPos());
 }
 
-QPointF qt_mouseevent_screenpos_get(QMouseEvent* event)
+QPointF* qt_mouseevent_screenpos_get(QMouseEvent* event)
 {
-	return event->screenPos();
+	return new QPointF(event->screenPos());
+}
+
+QKeyEvent* qt_keyevent_new(QEvent::Type type, int key, Qt::KeyboardModifiers modifiers, MonoString* text, bool autorep, ushort count)
+{
+	QKeyEvent* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new QKeyEvent(type, key, modifiers, p, autorep, count);
+	g_free(p);
+	return retVal;
+}
+
+QKeyEvent* qt_keyevent_native_new(QEvent::Type type, int key, Qt::KeyboardModifiers modifiers, quint32 nativeScanCode, quint32 nativeVirtualKey, quint32 nativeModifiers, MonoString* text, bool autorep, ushort count)
+{
+	QKeyEvent* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new QKeyEvent(type, key, modifiers, nativeScanCode, nativeVirtualKey, nativeModifiers, p, autorep, count);
+	g_free(p);
+	return retVal;
 }
 
 uint32_t qt_keyevent_nativescancode_get(QKeyEvent* event)
@@ -876,124 +1046,134 @@ int qt_keyevent_key_get(QKeyEvent* event)
 	return event->key();
 }
 
-const QPoint qt_moveevent_pos_get(QMoveEvent* event)
+QPoint* qt_moveevent_pos_get(QMoveEvent* event)
 {
-	return event->pos();
+	return new QPoint(event->pos());
 }
 
-const QPoint qt_moveevent_oldpos_get(QMoveEvent* event)
+QPoint* qt_moveevent_oldpos_get(QMoveEvent* event)
 {
-	return event->oldPos();
+	return new QPoint(event->oldPos());
 }
 
-const QSize qt_resizeevent_size_get(QResizeEvent* event)
+QSize* qt_resizeevent_size_get(QResizeEvent* event)
 {
-	return event->size();
+	return new QSize(event->size());
 }
 
-const QSize qt_resizeevent_oldsize_get(QResizeEvent* event)
+QSize* qt_resizeevent_oldsize_get(QResizeEvent* event)
 {
-	return event->oldSize();
+	return new QSize(event->oldSize());
 }
 
-int qt_size_width_get(QSize size)
+QSize* qt_size_new(int width, int height)
 {
-	return size.width();
+	return new QSize(width, height);
 }
 
-void qt_size_width_set(QSize size, int width)
+int qt_size_width_get(QSize* size)
 {
-	return size.setWidth(width);
+	return size->width();
 }
 
-int qt_size_height_get(QSize size)
+void qt_size_width_set(QSize* size, int width)
 {
-	return size.height();
+	return size->setWidth(width);
 }
 
-void qt_size_height_set(QSize size, int height)
+int qt_size_height_get(QSize* size)
 {
-	return size.setHeight(height);
+	return size->height();
 }
 
-int qt_rectangle_x_get(QRect rect)
+void qt_size_height_set(QSize* size, int height)
 {
-	return rect.x();
+	return size->setHeight(height);
 }
 
-void qt_rectangle_x_set(QRect rect, int x)
+int qt_rectangle_x_get(QRect* rect)
 {
-	return rect.setX(x);
+	return rect->x();
 }
 
-int qt_rectangle_y_get(QRect rect)
+void qt_rectangle_x_set(QRect* rect, int x)
 {
-	return rect.y();
+	return rect->setX(x);
 }
 
-void qt_rectangle_y_set(QRect rect, int y)
+int qt_rectangle_y_get(QRect* rect)
 {
-	return rect.setY(y);
+	return rect->y();
 }
 
-int qt_rectangle_width_get(QRect rect)
+void qt_rectangle_y_set(QRect* rect, int y)
 {
-	return rect.width();
+	return rect->setY(y);
 }
 
-void qt_rectangle_width_set(QRect rect, int width)
+int qt_rectangle_width_get(QRect* rect)
 {
-	return rect.setWidth(width);
+	return rect->width();
 }
 
-int qt_rectangle_height_get(QRect rect)
+void qt_rectangle_width_set(QRect* rect, int width)
 {
-	return rect.height();
+	return rect->setWidth(width);
 }
 
-void qt_rectangle_height_set(QRect rect, int height)
+int qt_rectangle_height_get(QRect* rect)
 {
-	return rect.setHeight(height);
+	return rect->height();
 }
 
-int qt_point_x_get(QPoint point)
+void qt_rectangle_height_set(QRect* rect, int height)
 {
-	return point.x();
+	return rect->setHeight(height);
 }
 
-void qt_point_x_set(QPoint point, int x)
+QPoint* qt_point_new(int x, int y)
 {
-	return point.setX(x);
+	return new QPoint(x, y);
 }
 
-int qt_point_y_get(QPoint point)
+int qt_point_x_get(QPoint* point)
 {
-	return point.y();
+	return point->x();
 }
 
-void qt_point_y_set(QPoint point, int y)
+void qt_point_x_set(QPoint* point, int x)
 {
-	return point.setY(y);
+	return point->setX(x);
 }
 
-double qt_pointf_x_get(QPointF point)
+int qt_point_y_get(QPoint* point)
 {
-	return point.x();
+	return point->y();
 }
 
-void qt_pointf_x_set(QPointF point, double x)
+void qt_point_y_set(QPoint* point, int y)
 {
-	return point.setX(x);
+	return point->setY(y);
 }
 
-double qt_pointf_y_get(QPointF point)
+double qt_pointf_x_get(QPointF* point)
 {
-	return point.y();
+	return point->x();
 }
 
-void qt_pointf_y_set(QPointF point, double y)
+void qt_pointf_x_set(QPointF* point, double x)
 {
-	return point.setY(y);
+	return point->setX(x);
+}
+
+double qt_pointf_y_get(QPointF* point)
+{
+	return point->y();
+}
+
+void qt_pointf_y_set(QPointF* point, double y)
+{
+	return point->setY(y);
 }
 
 GlueStandardItemModel* qt_standarditemmodel_new(MonoObject* thisObject, GlueObject* parent)
@@ -1001,10 +1181,9 @@ GlueStandardItemModel* qt_standarditemmodel_new(MonoObject* thisObject, GlueObje
 	return new GlueStandardItemModel(thisObject, parent);
 }
 
-void qt_standarditemmodel_index_get(QStandardItemModel* standardItemModel, int row, int col, QModelIndex* modelIndex)
+QModelIndex* qt_standarditemmodel_index_get(QStandardItemModel* standardItemModel, int row, int col)
 {
-	QModelIndex i = standardItemModel->index(row, col);
-	modelIndex = &i;
+	return new QModelIndex(standardItemModel->index(row, col));
 }
 
 void qt_standarditemmodel_item_row_set(GlueStandardItemModel* standardItemModel, int row, QStandardItem* item)
@@ -1042,34 +1221,44 @@ void qt_standarditemmodel_colcount_set(GlueStandardItemModel* standardItemModel,
 	standardItemModel->setColumnCount(cols);
 }
 
-GlueStandardItemModel* qt_itemview_model_get(GlueTableView* abstractItemView)
+GlueStandardItemModel* qt_itemview_model_get(QAbstractItemView* abstractItemView)
 {
 	return (GlueStandardItemModel*)abstractItemView->model();
 }
 
-void qt_itemview_model_set(GlueTableView* abstractItemView, GlueStandardItemModel* itemModel)
+void qt_itemview_model_set(QAbstractItemView* abstractItemView, GlueStandardItemModel* itemModel)
 {
 	abstractItemView->setModel(itemModel);
 }
 
-QAbstractItemView::SelectionBehavior qt_itemview_selectctionbehavior_get(GlueTableView* abstractItemView)
+QAbstractItemView::SelectionBehavior qt_itemview_selectctionbehavior_get(QAbstractItemView* abstractItemView)
 {
 	return abstractItemView->selectionBehavior();
 }
 
-void qt_itemview_selectctionbehavior_set(GlueTableView* abstractItemView, QAbstractItemView::SelectionBehavior selectionBehavior)
+void qt_itemview_selectctionbehavior_set(QAbstractItemView* abstractItemView, QAbstractItemView::SelectionBehavior selectionBehavior)
 {
 	abstractItemView->setSelectionBehavior(selectionBehavior);
 }
 
-QAbstractItemView::SelectionMode qt_itemview_selectctionmode_get(GlueTableView* abstractItemView)
+QAbstractItemView::SelectionMode qt_itemview_selectctionmode_get(QAbstractItemView* abstractItemView)
 {
 	return abstractItemView->selectionMode();
 }
 
-void qt_itemview_selectctionmode_set(GlueTableView* abstractItemView, QAbstractItemView::SelectionMode mode)
+void qt_itemview_selectctionmode_set(QAbstractItemView* abstractItemView, QAbstractItemView::SelectionMode mode)
 {
 	abstractItemView->setSelectionMode(mode);
+}
+
+int qt_itemview_autoscrollmargin_get(QAbstractItemView* abstractItemView)
+{
+	return abstractItemView->autoScrollMargin();
+}
+
+void qt_itemview_autoscrollmargin_set(QAbstractItemView* abstractItemView, int margin)
+{
+	return abstractItemView->setAutoScrollMargin(margin);
 }
 
 void qt_tableview_resizerowtocontents(GlueTableView* tableView, int row)
@@ -1142,6 +1331,16 @@ void qt_tableview_scrollto(GlueTableView* tableView, int row, int col, QAbstract
 	tableView->scrollTo(tableView->model()->index(row, col), hint);
 }
 
+int qt_tableview_rowheight_get(GlueTableView* tableView, int row)
+{
+	return tableView->rowHeight(row);
+}
+
+void qt_tableview_rowheight_set(GlueTableView* tableView, int row, int height)
+{
+	tableView->setRowHeight(row, height);
+}
+
 QTableWidgetItem* qt_tablewidgetitem_new(MonoString* text)
 {
 	QTableWidgetItem* retVal = NULL;
@@ -1149,6 +1348,18 @@ QTableWidgetItem* qt_tablewidgetitem_new(MonoString* text)
 	retVal = new QTableWidgetItem(p);
 	g_free(p);
 	return retVal;
+}
+
+MonoString* qt_tablewidgetitem_text_get(QTableWidgetItem* item)
+{
+	return mono_string_new(mono_domain_get (), item->text().toStdString().c_str());
+}
+
+void qt_tablewidgetitem_text_set(QTableWidgetItem* item, MonoString* text)
+{
+	char* p = mono_string_to_utf8(text);
+	item->setText(p);
+	g_free(p);
 }
 
 QStandardItem* qt_standarditem_new(MonoString* text)
@@ -1225,16 +1436,238 @@ void qt_tablewidget_colcount_set(QTableWidget* tableWidget, int cols)
 	return tableWidget->setColumnCount(cols);
 }
 
+QTableWidgetItem* qt_tablewidget_row_col_get(QTableWidget* tableWidget, int row, int col)
+{
+	return tableWidget->item(row, col);
+}
+
 void qt_tablewidget_row_col_set(QTableWidget* tableWidget, int row, int col, QTableWidgetItem* item)
 {
 	tableWidget->setItem(row, col, item);
+}
+
+GlueListWidget* qt_listwidget_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueListWidget(thisObject, parent);
+}
+
+void qt_listwidget_item_add(GlueListWidget* listWidget, QListWidgetItem *item)
+{
+	listWidget->addItem(item);
+}
+
+QListWidgetItem* qt_listwidgetitem_new (QIcon* icon, MonoString* text, QListWidget* view, int type)
+{
+	QListWidgetItem* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new QListWidgetItem(*icon, p, view, type);
+	g_free(p);
+	return retVal;
+}
+
+GlueModelIndex* qt_modelindex_new(MonoObject* thisObject)
+{
+	return new GlueModelIndex(thisObject);
+}
+
+int qt_modelindex_row_get(QModelIndex* index)
+{
+	return index->row();
+}
+
+int qt_modelindex_col_get(QModelIndex* index)
+{
+	return index->column();
+}
+
+uint32_t qt_modelindex_flags_get(QModelIndex* index)
+{
+	return index->flags();
+}
+
+QIcon* qt_icon_new(MonoString* filename)
+{
+	QIcon* retVal;
+	char* p = mono_string_to_utf8(filename);
+	retVal = new QIcon(p);
+	g_free(p);
+	return retVal;
+}
+
+void qt_icon_delete(QIcon* icon)
+{
+	delete icon;
+}
+
+QIcon* qt_icon_from_pixmap_new(QPixmap* pixmap)
+{
+	return new QIcon(*pixmap);
+}
+
+QPixmap* qt_pixmap_new(MonoString* filename, MonoString* format, Qt::ImageConversionFlag flags)
+{
+	QPixmap* retVal;
+	char* p = mono_string_to_utf8(filename);
+	char* p1 = mono_string_to_utf8(format);
+	retVal = new QPixmap(p, p1, flags);
+	g_free(p1);
+	g_free(p);
+	return retVal;
+}
+
+void qt_pixmap_delete(QPixmap* pixmap)
+{
+	delete pixmap;
+}
+
+bool qt_pixmap_save(QPixmap* pixmap, MonoString* fileName, MonoString* format, int quality)
+{
+	bool retVal;
+	char* p = mono_string_to_utf8(fileName);
+	char* p1 = mono_string_to_utf8(format);
+	retVal = pixmap->save(p, p1, quality);
+	g_free(p1);
+	g_free(p);
+	return retVal;
+}
+
+QPixmap* qt_pixmap_data_new(MonoArray* data, int len, MonoString* format)
+{
+	QPixmap* retVal = new QPixmap();
+	const unsigned char* p = 12 + (const unsigned char*)data;
+	char* p1 = mono_string_to_utf8(format);
+	retVal->loadFromData(p, len, p1);
+	g_free(p1);
+	return retVal;
+}
+
+QPixmap* qt_pixmap_scaled(QPixmap* pixmap, QSize* size, Qt::AspectRatioMode aspectMode, Qt::TransformationMode mode)
+{
+	return new QPixmap(pixmap->scaled(*size, aspectMode, mode));
+}
+
+QPixmap* qt_pixmap_rotate(QPixmap* pixmap, qreal deg)
+{
+	QTransform transform;
+	QTransform trans = transform.rotate(deg);
+	return new QPixmap(pixmap->transformed(trans));
+}
+
+QPainter* qt_painter_new(MonoObject* thisObject, QPixmap* pixmap)
+{
+	return new QPainter(pixmap);
+}
+
+void qt_painter_pixmap_draw(QPainter* painter, int x, int y, QPixmap* pixmap)
+{
+	painter->drawPixmap(x, y, *pixmap);
+}
+
+QPixmap* qt_screen_window_grab(QScreen* screen, WId window, int x, int y, int w, int h)
+{
+	return new QPixmap(screen->grabWindow(window, x, y, w, h));
+}
+
+QRect* qt_style_alignrect_get(Qt::LayoutDirection direction, Qt::Alignment alignment, QSize* size, QRect* rectangle)
+{
+	return new QRect(QStyle::alignedRect(direction, alignment, *size, *rectangle));
+}
+
+QDesktopWidget* qt_application_desktop_get()
+{
+	return QApplication::desktop();
+}
+
+QRect* qt_desktopwidget_availablegeometry_get(QDesktopWidget* desktopwidget, int screen)
+{
+	return new QRect(desktopwidget->screenGeometry(screen));
+}
+
+QMenu* qt_menu_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueMenu(thisObject, parent);
+}
+
+QMenu* qt_menu_title_new(MonoObject* thisObject, MonoString* title, QWidget* parent)
+{
+	GlueMenu* retVal;
+	char* p = mono_string_to_utf8(title);
+	retVal = new GlueMenu(thisObject, p, parent);
+	g_free(p);
+	return retVal;
+}
+
+void qt_menu_delete(GlueMenu* menu)
+{
+	delete menu;
+}
+
+QAction* qt_menu_exec(GlueMenu* menu, QPoint* pos, GlueAction* action)
+{
+	return menu->exec(*pos, action);
+}
+
+QAction* qt_menu_seperator_add(GlueMenu* menu)
+{
+	return menu->addSeparator();
+}
+
+void qt_menu_action_add(GlueMenu* menu, QAction* action)
+{
+	menu->addAction(action);
+}
+
+QAction* qt_menu_activeaction_get(GlueMenu* menu)
+{
+	return menu->activeAction();
+}
+
+void qt_menu_activeaction_set(GlueMenu* menu, QAction* action)
+{
+	return menu->setActiveAction(action);
+}
+
+GlueAction* qt_action_new(MonoObject* thisObject, QObject* parent)
+{
+	return new GlueAction(thisObject, parent);
+}
+
+GlueAction* qt_action_text_new(MonoObject* thisObject, MonoString* text, QObject* parent)
+{
+	GlueAction* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new GlueAction(thisObject, p, parent);
+	g_free(p);
+	return retVal;
+}
+
+MonoString* qt_action_text_get(GlueAction* action)
+{
+	return mono_string_new(mono_domain_get (), action->text().toStdString().c_str());
+}
+
+void qt_action_text_set(GlueAction* action, MonoString* text)
+{
+	char* p = mono_string_to_utf8(text);
+	action->setText(p);
+	g_free(p);
 }
 
 extern "C" void qt_application_monointernal_init()
 {
 	mono_add_internal_call ("Qt.Application::qt_application_new", reinterpret_cast<void*>(qt_application_new));
 	mono_add_internal_call ("Qt.Application::qt_application_exec", reinterpret_cast<void*>(qt_application_exec));
+	mono_add_internal_call ("Qt.Application::qt_application_postevent", reinterpret_cast<void*>(qt_application_postevent));
+	mono_add_internal_call ("Qt.Application::qt_application_events_process", reinterpret_cast<void*>(qt_application_events_process));
+	mono_add_internal_call ("Qt.Application::qt_application_desktop_get", reinterpret_cast<void*>(qt_application_desktop_get));
+	mono_add_internal_call ("Qt.Application::qt_application_activewindow_get", reinterpret_cast<void*>(qt_application_activewindow_get));
+
+	mono_add_internal_call ("Qt.GuiApplication::qt_guiapplication_primaryscreen_get", reinterpret_cast<void*>(qt_guiapplication_primaryscreen_get));
+
 	mono_add_internal_call ("Qt.CoreApplication::qt_application_attribute_set", reinterpret_cast<void*>(qt_application_attribute_set));
+	mono_add_internal_call ("Qt.CoreApplication::qt_coreapplication_quit", reinterpret_cast<void*>(qt_coreapplication_quit));
+
+	mono_add_internal_call ("Qt.EglFSFunctions::qt_eglfs_loadkeymap", reinterpret_cast<void*>(qt_eglfs_loadkeymap));
 
 	mono_add_internal_call ("Qt.UiLoader::qt_uiloader_new", reinterpret_cast<void*>(qt_uiloader_new));
 	mono_add_internal_call ("Qt.UiLoader::qt_uiloader_load", reinterpret_cast<void*>(qt_uiloader_load));
@@ -1242,11 +1675,12 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.MainWindow::qt_mainwindow_new", reinterpret_cast<void*>(qt_mainwindow_new));
 
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_new", reinterpret_cast<void*>(qt_dialog_new));
+	mono_add_internal_call ("Qt.Dialog::qt_dialog_delete", reinterpret_cast<void*>(qt_dialog_delete));
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_modal_get", reinterpret_cast<void*>(qt_dialog_modal_get));
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_modal_set", reinterpret_cast<void*>(qt_dialog_modal_set));
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_exec", reinterpret_cast<void*>(qt_dialog_exec));
-
-	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_new", reinterpret_cast<void*>(qt_progressbar_new));
+	mono_add_internal_call ("Qt.Dialog::qt_dialog_accept", reinterpret_cast<void*>(qt_dialog_accept));
+	mono_add_internal_call ("Qt.Dialog::qt_dialog_reject", reinterpret_cast<void*>(qt_dialog_reject));
 
 	mono_add_internal_call ("Qt.TableView::qt_tableview_new", reinterpret_cast<void*>(qt_tableview_new));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_horizontalheader_get", reinterpret_cast<void*>(qt_widget_horizontalheader_get));
@@ -1265,29 +1699,43 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.TableView::qt_tableview_colwidth_set", reinterpret_cast<void*>(qt_tableview_colwidth_set));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_grid_show", reinterpret_cast<void*>(qt_tableview_grid_show));
 	mono_add_internal_call ("Qt.TableView::qt_tableview_scrollto", reinterpret_cast<void*>(qt_tableview_scrollto));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_rowheight_get", reinterpret_cast<void*>(qt_tableview_rowheight_get));
+	mono_add_internal_call ("Qt.TableView::qt_tableview_rowheight_set", reinterpret_cast<void*>(qt_tableview_rowheight_set));
 
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_new", reinterpret_cast<void*>(qt_tablewidget_new));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_get", reinterpret_cast<void*>(qt_tablewidget_rowcount_get));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_rowcount_set", reinterpret_cast<void*>(qt_tablewidget_rowcount_set));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_colcount_get", reinterpret_cast<void*>(qt_tablewidget_colcount_get));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_colcount_set", reinterpret_cast<void*>(qt_tablewidget_colcount_set));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_col_get", reinterpret_cast<void*>(qt_tablewidget_row_col_get));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_col_set", reinterpret_cast<void*>(qt_tablewidget_row_col_set));
 
-	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_get", reinterpret_cast<void*>(qt_itemview_model_get));
-	mono_add_internal_call ("Qt.ItemView::qt_itemview_model_set", reinterpret_cast<void*>(qt_itemview_model_set));
-	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionbehavior_get", reinterpret_cast<void*>(qt_itemview_selectctionbehavior_get));
-	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionbehavior_set", reinterpret_cast<void*>(qt_itemview_selectctionbehavior_set));
-	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionmode_get", reinterpret_cast<void*>(qt_itemview_selectctionmode_get));
-	mono_add_internal_call ("Qt.ItemView::qt_itemview_selectctionmode_set", reinterpret_cast<void*>(qt_itemview_selectctionmode_set));
+	mono_add_internal_call ("Qt.ListWidget::qt_listwidget_new", reinterpret_cast<void*>(qt_listwidget_new));
+	mono_add_internal_call ("Qt.ListWidget::qt_listwidget_item_add", reinterpret_cast<void*>(qt_listwidget_item_add));
+
+	mono_add_internal_call ("Qt.ListWidgetItem::qt_listwidgetitem_new", reinterpret_cast<void*>(qt_listwidgetitem_new));
+
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_model_get", reinterpret_cast<void*>(qt_itemview_model_get));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_model_set", reinterpret_cast<void*>(qt_itemview_model_set));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_selectctionbehavior_get", reinterpret_cast<void*>(qt_itemview_selectctionbehavior_get));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_selectctionbehavior_set", reinterpret_cast<void*>(qt_itemview_selectctionbehavior_set));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_selectctionmode_get", reinterpret_cast<void*>(qt_itemview_selectctionmode_get));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_selectctionmode_set", reinterpret_cast<void*>(qt_itemview_selectctionmode_set));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_autoscrollmargin_get", reinterpret_cast<void*>(qt_itemview_autoscrollmargin_get));
+	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_autoscrollmargin_set", reinterpret_cast<void*>(qt_itemview_autoscrollmargin_set));
 
 	mono_add_internal_call ("Qt.StandardItem::qt_standarditem_new", reinterpret_cast<void*>(qt_standarditem_new));
 
 	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_new", reinterpret_cast<void*>(qt_tablewidgetitem_new));
+	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_text_get", reinterpret_cast<void*>(qt_tablewidgetitem_text_get));
+	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_text_set", reinterpret_cast<void*>(qt_tablewidgetitem_text_set));
 
 	mono_add_internal_call ("Qt.Label::qt_label_new", reinterpret_cast<void*>(qt_label_new));
 	mono_add_internal_call ("Qt.Label::qt_label_new_with_text", reinterpret_cast<void*>(qt_label_new_with_text));
 	mono_add_internal_call ("Qt.Label::qt_label_text_get", reinterpret_cast<void*>(qt_label_text_get));
 	mono_add_internal_call ("Qt.Label::qt_label_text_set", reinterpret_cast<void*>(qt_label_text_set));
+	mono_add_internal_call ("Qt.Label::qt_label_pixmap_get", reinterpret_cast<void*>(qt_label_pixmap_get));
+	mono_add_internal_call ("Qt.Label::qt_label_pixmap_set", reinterpret_cast<void*>(qt_label_pixmap_set));
 	mono_add_internal_call ("Qt.Label::qt_label_alignment_get", reinterpret_cast<void*>(qt_label_alignment_get));
 	mono_add_internal_call ("Qt.Label::qt_label_alignment_set", reinterpret_cast<void*>(qt_label_alignment_set));
 	mono_add_internal_call ("Qt.Label::qt_label_indent_get", reinterpret_cast<void*>(qt_label_indent_get));
@@ -1305,15 +1753,18 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Frame::qt_frame_shadow_set", reinterpret_cast<void*>(qt_frame_shadow_set));
 	mono_add_internal_call ("Qt.Frame::qt_frame_linewidth_get", reinterpret_cast<void*>(qt_frame_linewidth_get));
 	mono_add_internal_call ("Qt.Frame::qt_frame_linewidth_set", reinterpret_cast<void*>(qt_frame_linewidth_set));
+	mono_add_internal_call ("Qt.Frame::qt_frame_width_get", reinterpret_cast<void*>(qt_frame_width_get));
 
-
+	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_new", reinterpret_cast<void*>(qt_progressbar_new));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_value_get", reinterpret_cast<void*>(qt_progressbar_value_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_value_set", reinterpret_cast<void*>(qt_progressbar_value_set));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_minimum_get", reinterpret_cast<void*>(qt_progressbar_minimum_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_minimum_set", reinterpret_cast<void*>(qt_progressbar_minimum_set));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_get", reinterpret_cast<void*>(qt_progressbar_maximum_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_set", reinterpret_cast<void*>(qt_progressbar_maximum_set));
+	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_range_set", reinterpret_cast<void*>(qt_progressbar_range_set));
 
+	mono_add_internal_call ("Qt.Size::qt_size_new", reinterpret_cast<void*>(qt_size_new));
 	mono_add_internal_call ("Qt.Size::qt_size_width_get", reinterpret_cast<void*>(qt_size_width_get));
 	mono_add_internal_call ("Qt.Size::qt_size_width_set", reinterpret_cast<void*>(qt_size_width_set));
 	mono_add_internal_call ("Qt.Size::qt_size_height_get", reinterpret_cast<void*>(qt_size_height_get));
@@ -1328,6 +1779,7 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_height_get", reinterpret_cast<void*>(qt_rectangle_height_get));
 	mono_add_internal_call ("Qt.Rectangle::qt_rectangle_height_set", reinterpret_cast<void*>(qt_rectangle_height_set));
 
+	mono_add_internal_call ("Qt.Point::qt_point_new", reinterpret_cast<void*>(qt_point_new));
 	mono_add_internal_call ("Qt.Point::qt_point_x_get", reinterpret_cast<void*>(qt_point_x_get));
 	mono_add_internal_call ("Qt.Point::qt_point_x_set", reinterpret_cast<void*>(qt_point_x_set));
 	mono_add_internal_call ("Qt.Point::qt_point_y_get", reinterpret_cast<void*>(qt_point_y_get));
@@ -1414,6 +1866,8 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_windowpos_get", reinterpret_cast<void*>(qt_mouseevent_windowpos_get));
 	mono_add_internal_call ("Qt.MouseEvent::qt_mouseevent_screenpos_get", reinterpret_cast<void*>(qt_mouseevent_screenpos_get));
 
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_new", reinterpret_cast<void*>(qt_keyevent_new));
+	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_native_new", reinterpret_cast<void*>(qt_keyevent_native_new));
 	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_nativescancode_get", reinterpret_cast<void*>(qt_keyevent_nativescancode_get));
 	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_nativevirtualkey_get", reinterpret_cast<void*>(qt_keyevent_nativevirtualkey_get));
 	mono_add_internal_call ("Qt.KeyEvent::qt_keyevent_nativemodifiers_get", reinterpret_cast<void*>(qt_keyevent_nativemodifiers_get));
@@ -1447,8 +1901,16 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Widget::qt_widget_stylesheet_set", reinterpret_cast<void*>(qt_widget_stylesheet_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_fixedsize_set", reinterpret_cast<void*>(qt_widget_fixedsize_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_show", reinterpret_cast<void*>(qt_widget_show));
+	mono_add_internal_call ("Qt.Widget::qt_widget_fullscreen_show", reinterpret_cast<void*>(qt_widget_fullscreen_show));
 	mono_add_internal_call ("Qt.Widget::qt_widget_hide", reinterpret_cast<void*>(qt_widget_hide));
+	mono_add_internal_call ("Qt.Widget::qt_widget_move", reinterpret_cast<void*>(qt_widget_move));
 	mono_add_internal_call ("Qt.Widget::qt_widget_resize", reinterpret_cast<void*>(qt_widget_resize));
+	mono_add_internal_call ("Qt.Widget::qt_widget_size_get", reinterpret_cast<void*>(qt_widget_size_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_size_set", reinterpret_cast<void*>(qt_widget_size_set));
+	mono_add_internal_call ("Qt.Widget::qt_widget_sizehint_get", reinterpret_cast<void*>(qt_widget_sizehint_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_width_get", reinterpret_cast<void*>(qt_widget_width_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_height_get", reinterpret_cast<void*>(qt_widget_height_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_update", reinterpret_cast<void*>(qt_widget_update));
 	mono_add_internal_call ("Qt.Widget::qt_widget_windowtitle_get", reinterpret_cast<void*>(qt_widget_windowtitle_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_windowtitle_set", reinterpret_cast<void*>(qt_widget_windowtitle_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_windowopacity_get", reinterpret_cast<void*>(qt_widget_windowopacity_get));
@@ -1467,6 +1929,14 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Widget::qt_widget_minimumsize_set", reinterpret_cast<void*>(qt_widget_minimumsize_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_maximumsize_get", reinterpret_cast<void*>(qt_widget_maximumsize_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_maximumsize_set", reinterpret_cast<void*>(qt_widget_maximumsize_set));
+	mono_add_internal_call ("Qt.Widget::qt_widget_minimumheight_get", reinterpret_cast<void*>(qt_widget_minimumheight_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_minimumheight_set", reinterpret_cast<void*>(qt_widget_minimumheight_set));
+	mono_add_internal_call ("Qt.Widget::qt_widget_maximumheight_get", reinterpret_cast<void*>(qt_widget_maximumheight_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_maximumheight_set", reinterpret_cast<void*>(qt_widget_maximumheight_set));
+	mono_add_internal_call ("Qt.Widget::qt_widget_minimumwidth_get", reinterpret_cast<void*>(qt_widget_minimumwidth_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_minimumwidth_set", reinterpret_cast<void*>(qt_widget_minimumwidth_set));
+	mono_add_internal_call ("Qt.Widget::qt_widget_maximumwidth_get", reinterpret_cast<void*>(qt_widget_maximumwidth_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_maximumwidth_set", reinterpret_cast<void*>(qt_widget_maximumwidth_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_focuspolicy_get", reinterpret_cast<void*>(qt_widget_focuspolicy_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_focuspolicy_set", reinterpret_cast<void*>(qt_widget_focuspolicy_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_windowmodality_get", reinterpret_cast<void*>(qt_widget_windowmodality_get));
@@ -1491,6 +1961,7 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Font::qt_font_pointsize_set", reinterpret_cast<void*>(qt_font_pointsize_set));
 
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_new", reinterpret_cast<void*>(qt_standarditemmodel_new));
+	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_index_get", reinterpret_cast<void*>(qt_standarditemmodel_index_get));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_set));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_row_col_set", reinterpret_cast<void*>(qt_standarditemmodel_item_row_col_set));
 	mono_add_internal_call ("Qt.StandardItemModel::qt_standarditemmodel_item_append", reinterpret_cast<void*>(qt_standarditemmodel_item_append));
@@ -1507,4 +1978,41 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.HeaderView::qt_headerview_sectionsize_set", reinterpret_cast<void*>(qt_headerview_sectionsize_set));
 	mono_add_internal_call ("Qt.HeaderView::qt_headerview_defaultalignment_get", reinterpret_cast<void*>(qt_headerview_defaultalignment_get));
 	mono_add_internal_call ("Qt.HeaderView::qt_headerview_defaultalignment_set", reinterpret_cast<void*>(qt_headerview_defaultalignment_set));
+
+	mono_add_internal_call ("Qt.ModelIndex::qt_modelindex_new", reinterpret_cast<void*>(qt_modelindex_new));
+	mono_add_internal_call ("Qt.ModelIndex::qt_modelindex_row_get", reinterpret_cast<void*>(qt_modelindex_row_get));
+	mono_add_internal_call ("Qt.ModelIndex::qt_modelindex_col_get", reinterpret_cast<void*>(qt_modelindex_col_get));
+	mono_add_internal_call ("Qt.ModelIndex::qt_modelindex_flags_get", reinterpret_cast<void*>(qt_modelindex_flags_get));
+
+	mono_add_internal_call ("Qt.Icon::qt_icon_new", reinterpret_cast<void*>(qt_icon_new));
+	mono_add_internal_call ("Qt.Icon::qt_icon_delete", reinterpret_cast<void*>(qt_icon_delete));
+	mono_add_internal_call ("Qt.Icon::qt_icon_from_pixmap_new", reinterpret_cast<void*>(qt_icon_from_pixmap_new));
+
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_new", reinterpret_cast<void*>(qt_pixmap_new));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_data_new", reinterpret_cast<void*>(qt_pixmap_data_new));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_delete", reinterpret_cast<void*>(qt_pixmap_delete));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_save", reinterpret_cast<void*>(qt_pixmap_save));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_scaled", reinterpret_cast<void*>(qt_pixmap_scaled));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_rotate", reinterpret_cast<void*>(qt_pixmap_rotate));
+
+	mono_add_internal_call ("Qt.Painter::qt_painter_new", reinterpret_cast<void*>(qt_painter_new));
+	mono_add_internal_call ("Qt.Painter::qt_painter_pixmap_draw", reinterpret_cast<void*>(qt_painter_pixmap_draw));
+
+	mono_add_internal_call ("Qt.Screen::qt_screen_window_grab", reinterpret_cast<void*>(qt_screen_window_grab));
+
+	mono_add_internal_call ("Qt.Style::qt_style_alignrect_get", reinterpret_cast<void*>(qt_style_alignrect_get));
+
+	mono_add_internal_call ("Qt.Menu::qt_menu_new", reinterpret_cast<void*>(qt_menu_new));
+	mono_add_internal_call ("Qt.Menu::qt_menu_title_new", reinterpret_cast<void*>(qt_menu_title_new));
+	mono_add_internal_call ("Qt.Menu::qt_menu_delete", reinterpret_cast<void*>(qt_menu_delete));
+	mono_add_internal_call ("Qt.Menu::qt_menu_exec", reinterpret_cast<void*>(qt_menu_exec));
+	mono_add_internal_call ("Qt.Menu::qt_menu_seperator_add", reinterpret_cast<void*>(qt_menu_seperator_add));
+	mono_add_internal_call ("Qt.Menu::qt_menu_action_add", reinterpret_cast<void*>(qt_menu_action_add));
+	mono_add_internal_call ("Qt.Menu::qt_menu_activeaction_get", reinterpret_cast<void*>(qt_menu_activeaction_get));
+	mono_add_internal_call ("Qt.Menu::qt_menu_activeaction_set", reinterpret_cast<void*>(qt_menu_activeaction_set));
+
+	mono_add_internal_call ("Qt.Action::qt_action_new", reinterpret_cast<void*>(qt_action_new));
+	mono_add_internal_call ("Qt.Action::qt_action_text_new", reinterpret_cast<void*>(qt_action_text_new));
+	mono_add_internal_call ("Qt.Action::qt_action_text_get", reinterpret_cast<void*>(qt_action_text_get));
+	mono_add_internal_call ("Qt.Action::qt_action_text_set", reinterpret_cast<void*>(qt_action_text_set));
 }

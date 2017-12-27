@@ -7,8 +7,9 @@ class GlueTableWidget : public QTableWidget
 #define BaseClass QTableWidget
 #include "internalevents.h"
 public:
-    explicit GlueTableWidget(MonoObject* thisObject, QWidget *parent=0);
-
+    GlueTableWidget(MonoObject* thisObject, QWidget *parent=0);
+    ~GlueTableWidget();
 private:
-    MonoObject* _thisObject;
+    guint32 _thisObject;
 };
+

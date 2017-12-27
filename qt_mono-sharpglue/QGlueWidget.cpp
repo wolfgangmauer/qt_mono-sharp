@@ -4,28 +4,23 @@
 GlueWidget::GlueWidget(MonoObject* thisObject, QWidget* parent, Qt::WindowFlags f)
 	: QWidget(parent, f)
 {
-	_thisObject = thisObject;
+	_thisObject = mono_gchandle_new(thisObject, TRUE);
+	_nameSpace = mono_class_get_namespace(mono_object_get_class (mono_gchandle_get_target(_thisObject)));
 }
 
-//void GlueWidget::geometry(int* x, int* y, int* width, int* height)
-//{
-//	QRect rect = QWidget::geometry();
-//	*x = rect.x();
-//	*y = rect.y();
-//	*width = rect.width();
-//	*height = rect.height();
-//}
-//
-GlueSizePolicy* GlueWidget::sizePolicy()
+GlueWidget::~GlueWidget()
 {
-	glueSizePolicy = QWidget::sizePolicy();
-	return reinterpret_cast<GlueSizePolicy*>(&glueSizePolicy);
+	doOnRawDispose(_thisObject);
+	mono_gchandle_free (_thisObject); 
 }
 
-bool dokeyPressEvent(MonoObject* thisObject, QKeyEvent *event)
+void doOnRawDispose(guint32 _thisObject)
 {
-	printf("dokeyPressEvent\n"); fflush(stdout);
-	auto klass = mono_object_get_class (thisObject);
+}
+
+bool dokeyPressEvent(guint32 _thisObject, QKeyEvent *event)
+{
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnKeyPress", 1);
 	if (eventMethod)
 	{
@@ -35,13 +30,15 @@ bool dokeyPressEvent(MonoObject* thisObject, QKeyEvent *event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -57,9 +54,9 @@ bool dokeyPressEvent(MonoObject* thisObject, QKeyEvent *event)
 	return false;
 }
 
-bool dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *event)
+bool dokeyReleaseEvent(guint32 _thisObject, QKeyEvent *event)
 {
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnKeyRelease", 1);
 	if (eventMethod)
 	{
@@ -69,13 +66,15 @@ bool dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -91,10 +90,9 @@ bool dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent *event)
 	return false;
 }
 
-bool doMouseEvent(MonoObject* thisObject, QMouseEvent* event, std::string managedName)
+bool doMouseEvent(guint32 _thisObject, QMouseEvent* event, std::string managedName)
 {
-	printf("Execute doMouseEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, managedName, 1);
 	if (eventMethod)
 	{
@@ -104,13 +102,15 @@ bool doMouseEvent(MonoObject* thisObject, QMouseEvent* event, std::string manage
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -126,24 +126,24 @@ bool doMouseEvent(MonoObject* thisObject, QMouseEvent* event, std::string manage
 	return false;
 }
 
-bool doMousePressEvent(MonoObject* thisObject, QMouseEvent* event)
+bool doMousePressEvent(guint32 _thisObject, QMouseEvent* event)
 {
-	return doMouseEvent(thisObject, event, "OnMousePress");
+	return doMouseEvent(_thisObject, event, "OnMousePress");
 }
 
-bool doMouseReleaseEvent(MonoObject* thisObject, QMouseEvent* event)
+bool doMouseReleaseEvent(guint32 _thisObject, QMouseEvent* event)
 {
-	return doMouseEvent(thisObject, event, "OnMouseRelease");
+	return doMouseEvent(_thisObject, event, "OnMouseRelease");
 }
 
-bool doMouseDoubleClickEvent(MonoObject* thisObject, QMouseEvent* event)
+bool doMouseDoubleClickEvent(guint32 _thisObject, QMouseEvent* event)
 {
-	return doMouseEvent(thisObject, event, "OnMouseDoubleClick");
+	return doMouseEvent(_thisObject, event, "OnMouseDoubleClick");
 }
 
-bool doMouseMoveEvent(MonoObject* thisObject, QMouseEvent* event)
+bool doMouseMoveEvent(guint32 _thisObject, QMouseEvent* event)
 {
-	return doMouseEvent(thisObject, event, "OnMouseMove");
+	return doMouseEvent(_thisObject, event, "OnMouseMove");
 }
 
 //bool doEvent(MonoObject* thisObject, QEvent* event)
@@ -177,10 +177,9 @@ bool doMouseMoveEvent(MonoObject* thisObject, QMouseEvent* event)
 //	return retVal;
 //}
 
-bool dowheelEvent(MonoObject* thisObject, QWheelEvent* event)
+bool dowheelEvent(guint32 _thisObject, QWheelEvent* event)
 {
-	printf("Execute dowheelEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnWheel", 1);
 	if (eventMethod)
 	{
@@ -190,13 +189,15 @@ bool dowheelEvent(MonoObject* thisObject, QWheelEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -212,10 +213,9 @@ bool dowheelEvent(MonoObject* thisObject, QWheelEvent* event)
 	return false;
 }
 
-bool dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
+bool dofocusInEvent(guint32 _thisObject, QFocusEvent* event)
 {
-	printf("Execute dofocusInEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnFocusIn", 1);
 	if (eventMethod)
 	{
@@ -225,13 +225,15 @@ bool dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -247,10 +249,9 @@ bool dofocusInEvent(MonoObject* thisObject, QFocusEvent* event)
 	return false;
 }
 
-bool dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
+bool dofocusOutEvent(guint32 _thisObject, QFocusEvent* event)
 {
-	printf("Execute dofocusOutEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnFocusOut", 1);
 	if (eventMethod)
 	{
@@ -260,13 +261,15 @@ bool dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -282,10 +285,9 @@ bool dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event)
 	return false;
 }
 
-bool doenterEvent(MonoObject* thisObject, QEvent* event)
+bool doenterEvent(guint32 _thisObject, QEvent* event)
 {
-	printf("Execute doenterEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnEnter", 1);
 	if (eventMethod)
 	{
@@ -295,13 +297,15 @@ bool doenterEvent(MonoObject* thisObject, QEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -317,10 +321,9 @@ bool doenterEvent(MonoObject* thisObject, QEvent* event)
 	return false;
 }
 
-bool doleaveEvent(MonoObject* thisObject, QEvent* event)
+bool doleaveEvent(guint32 _thisObject, QEvent* event)
 {
-	printf("Execute doleaveEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnLeave", 1);
 	if (eventMethod)
 	{
@@ -330,13 +333,15 @@ bool doleaveEvent(MonoObject* thisObject, QEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -352,10 +357,9 @@ bool doleaveEvent(MonoObject* thisObject, QEvent* event)
 	return false;
 }
 
-bool dopaintEvent(MonoObject* thisObject, QPaintEvent* event)
+bool dopaintEvent(guint32 _thisObject, QPaintEvent* event)
 {
-	printf("Execute dopaintEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnPaint", 1);
 	if (eventMethod)
 	{
@@ -365,13 +369,15 @@ bool dopaintEvent(MonoObject* thisObject, QPaintEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -387,10 +393,9 @@ bool dopaintEvent(MonoObject* thisObject, QPaintEvent* event)
 	return false;
 }
 
-bool domoveEvent(MonoObject* thisObject, QMoveEvent* event)
+bool domoveEvent(guint32 _thisObject, QMoveEvent* event)
 {
-	printf("Execute domoveEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnMove", 1);
 	if (eventMethod)
 	{
@@ -400,13 +405,15 @@ bool domoveEvent(MonoObject* thisObject, QMoveEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -422,10 +429,9 @@ bool domoveEvent(MonoObject* thisObject, QMoveEvent* event)
 	return false;
 }
 
-bool doresizeEvent(MonoObject* thisObject, QResizeEvent* event)
+bool doresizeEvent(guint32 _thisObject, QResizeEvent* event)
 {
-	printf("Execute doresizeEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnResize", 1);
 	if (eventMethod)
 	{
@@ -435,13 +441,15 @@ bool doresizeEvent(MonoObject* thisObject, QResizeEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -457,10 +465,9 @@ bool doresizeEvent(MonoObject* thisObject, QResizeEvent* event)
 	return false;
 }
 
-bool docloseEvent(MonoObject* thisObject, QCloseEvent* event)
+bool docloseEvent(guint32 _thisObject, QCloseEvent* event)
 {
-	printf("Execute docloseEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnClose", 1);
 	if (eventMethod)
 	{
@@ -470,13 +477,15 @@ bool docloseEvent(MonoObject* thisObject, QCloseEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -493,10 +502,9 @@ bool docloseEvent(MonoObject* thisObject, QCloseEvent* event)
 }
 
 #ifndef QT_NO_CONTEXTMENU
-void docontextMenuEvent(MonoObject* thisObject, QContextMenuEvent *event)
+void docontextMenuEvent(guint32 _thisObject, QContextMenuEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnContextMenu", 1);
 	if (eventMethod)
 	{
@@ -504,7 +512,7 @@ void docontextMenuEvent(MonoObject* thisObject, QContextMenuEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "ContextMenuEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -521,17 +529,16 @@ void docontextMenuEvent(MonoObject* thisObject, QContextMenuEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 #endif
 #ifndef QT_NO_TABLETEVENT
-void dotabletEvent(MonoObject* thisObject, QTabletEvent *event)
+void dotabletEvent(guint32 _thisObject, QTabletEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnTable", 1);
 	if (eventMethod)
 	{
@@ -539,7 +546,7 @@ void dotabletEvent(MonoObject* thisObject, QTabletEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "TabletEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -556,17 +563,16 @@ void dotabletEvent(MonoObject* thisObject, QTabletEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 #endif
 #ifndef QT_NO_ACTION
-void doactionEvent(MonoObject* thisObject, QActionEvent *event)
+void doactionEvent(guint32 _thisObject, QActionEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnAction", 1);
 	if (eventMethod)
 	{
@@ -574,7 +580,7 @@ void doactionEvent(MonoObject* thisObject, QActionEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "ActionEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -591,18 +597,17 @@ void doactionEvent(MonoObject* thisObject, QActionEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 #endif
 
 #ifndef QT_NO_DRAGANDDROP
-void dodragEnterEvent(MonoObject* thisObject, QDragEnterEvent *event)
+void dodragEnterEvent(guint32 _thisObject, QDragEnterEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnDragEnter", 1);
 	if (eventMethod)
 	{
@@ -610,7 +615,7 @@ void dodragEnterEvent(MonoObject* thisObject, QDragEnterEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "DragEnterEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -627,16 +632,15 @@ void dodragEnterEvent(MonoObject* thisObject, QDragEnterEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 
-void dodragMoveEvent(MonoObject* thisObject, QDragMoveEvent *event)
+void dodragMoveEvent(guint32 _thisObject, QDragMoveEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnDragMove", 1);
 	if (eventMethod)
 	{
@@ -644,7 +648,7 @@ void dodragMoveEvent(MonoObject* thisObject, QDragMoveEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "DragMoveEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -661,16 +665,15 @@ void dodragMoveEvent(MonoObject* thisObject, QDragMoveEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 
-void dodragLeaveEvent(MonoObject* thisObject, QDragLeaveEvent *event)
+void dodragLeaveEvent(guint32 _thisObject, QDragLeaveEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnDragLeave", 1);
 	if (eventMethod)
 	{
@@ -678,7 +681,7 @@ void dodragLeaveEvent(MonoObject* thisObject, QDragLeaveEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "DragLeaveEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -695,16 +698,15 @@ void dodragLeaveEvent(MonoObject* thisObject, QDragLeaveEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 
-void dodropEvent(MonoObject* thisObject, QDropEvent *event)
+void dodropEvent(guint32 _thisObject, QDropEvent *event)
 {
-	printf("Execute Event %d\n", event->type()); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnDrop", 1);
 	if (eventMethod)
 	{
@@ -712,7 +714,7 @@ void dodropEvent(MonoObject* thisObject, QDropEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "DropEvent");
 		if (eventArgs)
 		{
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			void *args [6];
 			int type = event->type();
 //			int key = event->key();
@@ -729,17 +731,16 @@ void dodropEvent(MonoObject* thisObject, QDropEvent *event)
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
 			mono_runtime_invoke (ctor, result, args, NULL);
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL)));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
 		}
 	}
 }
 #endif
 
-bool doshowEvent(MonoObject* thisObject, QShowEvent* event)
+bool doshowEvent(guint32 _thisObject, QShowEvent* event)
 {
-	printf("Execute doshowEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnShow", 1);
 	if (eventMethod)
 	{
@@ -749,13 +750,15 @@ bool doshowEvent(MonoObject* thisObject, QShowEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -771,10 +774,9 @@ bool doshowEvent(MonoObject* thisObject, QShowEvent* event)
 	return false;
 }
 
-bool dohideEvent(MonoObject* thisObject, QHideEvent *event)
+bool dohideEvent(guint32 _thisObject, QHideEvent *event)
 {
-	printf("Execute dohideEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnHide", 1);
 	if (eventMethod)
 	{
@@ -784,13 +786,15 @@ bool dohideEvent(MonoObject* thisObject, QHideEvent *event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{
@@ -841,10 +845,9 @@ bool dohideEvent(MonoObject* thisObject, QHideEvent *event)
 //	return retVal;
 //}
 
-bool dochangeEvent(MonoObject* thisObject, QEvent* event)
+bool dochangeEvent(guint32 _thisObject, QEvent* event)
 {
-	printf("Execute dochangeEvent\n"); fflush(stdout);//if (!thisObject) return;
-	auto klass = mono_object_get_class (thisObject);
+	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnChange", 1);
 	if (eventMethod)
 	{
@@ -854,13 +857,15 @@ bool dochangeEvent(MonoObject* thisObject, QEvent* event)
 		{
 			void *args [1];
 			args[0] = &event;
-			auto result = mono_object_new (mono_object_get_domain(thisObject), eventArgs);
+			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
 			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
 
 			args[0] = result;
-			MonoMethod* method = mono_object_get_virtual_method (thisObject, eventMethod);
-			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, thisObject, args, NULL));
+			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
 		}
 		else
 		{

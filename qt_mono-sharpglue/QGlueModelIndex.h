@@ -9,5 +9,5 @@ class GlueModelIndex : public QModelIndex
 public:
     GlueModelIndex(MonoObject* thisObject);
 private:
-    MonoObject* _thisObject;
+    guint32 _thisObject;
 };

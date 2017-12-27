@@ -11,10 +11,9 @@
 
 class GlueApplication : public QApplication
 {
-    //Q_OBJECT
 public:
-    GlueApplication(MonoObject*, int&, char**);
-
+	GlueApplication(MonoObject*, int&, char**);
+	~GlueApplication();
 private:
-	MonoObject* _thisObject;
+	guint32 _thisObject;
 };
