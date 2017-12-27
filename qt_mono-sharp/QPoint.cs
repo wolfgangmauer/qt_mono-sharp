@@ -5,22 +5,28 @@ namespace Qt
 {
 	public class Point
 	{
-		IntPtr raw;
-
-		public IntPtr Handle { get { return raw; } }
+		public IntPtr Handle { get ; private set; }
 
 		public Point (IntPtr raw)
 		{
-			this.raw = raw;
+			Handle = raw;
 		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_point_new(int x, int y);
+		public Point (int x, int y)
+		{
+			Handle = qt_point_new(x, y);
+		}
+
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern int qt_point_x_get(IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_point_x_set(IntPtr raw, int x);
 		public int X
 		{
-			get{ return qt_point_x_get (raw); }
-			set{ qt_point_x_set (raw, value); }
+			get{ return qt_point_x_get (Handle); }
+			set{ qt_point_x_set (Handle, value); }
 		}
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern int qt_point_y_get(IntPtr raw);
@@ -28,8 +34,8 @@ namespace Qt
 		protected static extern void qt_point_y_set(IntPtr raw, int y);
 		public int Y
 		{
-			get{ return qt_point_y_get (raw); }
-			set{ qt_point_y_set (raw, value); }
+			get{ return qt_point_y_get (Handle); }
+			set{ qt_point_y_set (Handle, value); }
 		}
 	}
 }

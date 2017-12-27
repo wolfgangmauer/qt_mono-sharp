@@ -8,20 +8,17 @@ namespace Qt
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_progressbar_new (ProgressBar thisObject, IntPtr parent);
-
-		private ProgressBar (IntPtr parent) : base(IntPtr.Zero)
+		public ProgressBar (IntPtr parent) : base(IntPtr.Zero)
 		{
-			if (GetType () != typeof(ProgressBar))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_progressbar_new (this, parent);
 		}
 
-		public ProgressBar () : this(null) {}
-
 		public ProgressBar (Widget parent) : base(IntPtr.Zero)
 		{
-			if (GetType () != typeof(ProgressBar))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_progressbar_new (this, parent != null ? parent.Handle : IntPtr.Zero);		
 		}
 
@@ -38,6 +35,22 @@ namespace Qt
 			set
 			{
 				qt_progressbar_value_set(Handle, value);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern string qt_progressbar_format_get(IntPtr raw);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_progressbar_format_set(IntPtr raw, string format);
+		public string Format
+		{
+			get
+			{
+				return qt_progressbar_format_get(Handle);
+			}
+			set
+			{
+				qt_progressbar_format_set(Handle, value);
 			}
 		}
 
@@ -71,6 +84,13 @@ namespace Qt
 			{
 				qt_progressbar_maximum_set(Handle, value);
 			}
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_progressbar_range_set(IntPtr raw, int min, int max);
+		public void SetRange(int min, int max)
+		{
+			qt_progressbar_range_set (Handle, min, max);
 		}
 	}
 }

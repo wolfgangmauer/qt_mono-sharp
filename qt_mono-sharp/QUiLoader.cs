@@ -18,10 +18,14 @@ namespace Qt
 		}
 
 		Widget _parentWidget;
+		bool _firstWidget;
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_uiloader_load (IntPtr handle, string uiFile, IntPtr parentWidget);
 		public IntPtr Load(Widget parentWidget, string uiFile)
 		{
+			_firstWidget = true;
+			if (!uiFile.EndsWith (".ui"))
+				uiFile = uiFile + ".ui";
 			_parentWidget = parentWidget;
 			var retVal = qt_uiloader_load (Handle, uiFile, parentWidget.Handle);
 			if (retVal != IntPtr.Zero)
@@ -62,8 +66,11 @@ namespace Qt
 			var t = Type.GetType ("Qt." + className.Substring (1));
 			if (t == null)
 				return IntPtr.Zero;
-			if (_parentWidget.ObjectName.Equals (objectName))
+			if (_firstWidget)
+			{
+				_firstWidget = false;
 				return _parentWidget.Handle;
+			}
 			var parentWidget = GetObjectFromRaw(parent) as Widget;
 			var obj = Activator.CreateInstance (t, BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance, null, new object[] { parentWidget }, null) as Widget;
 			obj.ObjectName = objectName;

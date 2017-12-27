@@ -9,9 +9,7 @@ namespace Qt
         [MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tablewidget_new(TableWidget thisObject, IntPtr parent);
 
-		protected TableWidget () { }
-
-		protected TableWidget (IntPtr raw) : base(raw) { }
+		public TableWidget (IntPtr raw) : base(raw) { }
 
 		public TableWidget(Widget parent)
         {
@@ -38,6 +36,13 @@ namespace Qt
 		{
 			get{ return qt_tablewidget_colcount_get (Handle); }
 			set{ qt_tablewidget_colcount_set (Handle, value); }
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_tablewidget_row_col_get (IntPtr handle, int row, int col);
+		public TableWidgetItem GetItem(int row, int col)
+		{
+			return new TableWidgetItem(qt_tablewidget_row_col_get (Handle, row, col));
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]

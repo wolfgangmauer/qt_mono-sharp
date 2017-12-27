@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-    public class HeaderView : ItemView
+	public class HeaderView : AbstractItemView
     {
 		public enum ResizeMode
 		{

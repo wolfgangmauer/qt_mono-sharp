@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-	public class TableView : ItemView
+	public class TableView : AbstractItemView
 	{
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tableview_new (TableView thisObject, IntPtr parent);
@@ -148,6 +148,21 @@ namespace Qt
 		public void ScrollTo(int row, int col, ScrollHint hint = ScrollHint.EnsureVisible)
 		{
 			qt_tableview_scrollto (Handle, row, col, hint);
+		}
+
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_tableview_rowheight_get (IntPtr raw, int row);
+		public int GetRowHeight(int row)
+		{
+			return qt_tableview_rowheight_get (Handle, row);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_tableview_rowheight_set (IntPtr raw, int row, int height);
+		public void SetRowHeight(int row, int height)
+		{
+			qt_tableview_rowheight_set (Handle, row, height);
 		}
 	}
 }

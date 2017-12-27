@@ -23,12 +23,12 @@ namespace Qt
 			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
-		public MainWindow (Widget parent, string uiFile)
+		public MainWindow (Widget parent, string uiFile, WindowType f = 0)
 			: base(IntPtr.Zero)
 		{
 			if (Raw != IntPtr.Zero)
 				throw new ArgumentException ("Raw not null!");
-			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, 0);
+			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 			new UiLoader ().Load (this, uiFile);
 		}
 	}

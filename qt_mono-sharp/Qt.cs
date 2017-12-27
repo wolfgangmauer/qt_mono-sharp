@@ -1,8 +1,56 @@
-﻿﻿using System;
+﻿using System;
 using System.Xml.Serialization;
 
 namespace Qt
 {
+
+	public enum TransformationMode {
+		FastTransformation,
+		SmoothTransformation
+	}
+
+	public enum AspectRatioMode {
+		IgnoreAspectRatio,
+		KeepAspectRatio,
+		KeepAspectRatioByExpanding
+	}
+
+	[Flags]
+	public enum ImageConversionFlag {
+		ColorMode_Mask          = 0x00000003,
+		AutoColor               = 0x00000000,
+		ColorOnly               = 0x00000003,
+		MonoOnly                = 0x00000002,
+		// Reserved             = 0x00000001,
+
+		AlphaDither_Mask        = 0x0000000c,
+		ThresholdAlphaDither    = 0x00000000,
+		OrderedAlphaDither      = 0x00000004,
+		DiffuseAlphaDither      = 0x00000008,
+		NoAlpha                 = 0x0000000c, // Not supported
+
+		Dither_Mask             = 0x00000030,
+		DiffuseDither           = 0x00000000,
+		OrderedDither           = 0x00000010,
+		ThresholdDither         = 0x00000020,
+		// ReservedDither       = 0x00000030,
+
+		DitherMode_Mask         = 0x000000c0,
+		AutoDither              = 0x00000000,
+		PreferDither            = 0x00000040,
+		AvoidDither             = 0x00000080,
+
+		NoOpaqueDetection       = 0x00000100,
+		NoFormatConversion      = 0x00000200
+	}
+
+	public enum EventPriority
+	{
+		HighEventPriority = 1,
+		NormalEventPriority = 0,
+		LowEventPriority = -1
+	}
+
 	public enum FocusReason : uint
 	{
 		MouseFocusReason,
@@ -123,38 +171,26 @@ namespace Qt
 
 	public enum Orientation : uint
 	{
-		[XmlEnum ("Qt::Horizontal")]
 		Horizontal = 0x1,
-		[XmlEnum ("Qt::Vertical")]
 		Vertical = 0x2
 	}
 
 	public enum TextInteractionFlags : uint
 	{
-		[XmlEnum ("Qt::NoTextInteraction")]
 		NoTextInteraction = 0,
-		[XmlEnum ("Qt::TextSelectableByMouse")]
 		TextSelectableByMouse = 1,
-		[XmlEnum ("Qt::TextSelectableByKeyboard")]
 		TextSelectableByKeyboard = 2,
-		[XmlEnum ("Qt::LinksAccessibleByMouse")]
 		LinksAccessibleByMouse = 4,
-		[XmlEnum ("Qt::LinksAccessibleByKeyboard")]
 		LinksAccessibleByKeyboard = 8,
-		[XmlEnum ("Qt::TextEditable")]
 		TextEditable = 16,
-		[XmlEnum ("Qt::TextEditorInteraction")]
 		TextEditorInteraction = TextSelectableByMouse | TextSelectableByKeyboard | TextEditable,
-		[XmlEnum ("Qt::TextBrowserInteraction")]
 		TextBrowserInteraction = TextSelectableByMouse | LinksAccessibleByMouse | LinksAccessibleByKeyboard
 	}
 
 	[Flags]
 	public enum Alignment : uint
 	{
-		[XmlEnum ("Qt::AlignLeft")]
 		AlignLeft = 0x0001,
-		[XmlEnum ("Qt::AlignLeading")]
 		AlignLeading = AlignLeft,
 		AlignRight = 0x0002,
 		AlignTrailing = AlignRight,
@@ -162,8 +198,6 @@ namespace Qt
 		AlignJustify = 0x0008,
 		AlignAbsolute = 0x0010,
 		AlignHorizontal_Mask = AlignLeft | AlignRight | AlignHCenter | AlignJustify | AlignAbsolute,
-
-		[XmlEnum ("Qt::AlignTop")]
 		AlignTop = 0x0020,
 		AlignBottom = 0x0040,
 		AlignVCenter = 0x0080,
@@ -173,22 +207,15 @@ namespace Qt
 		// it doesn't make sense to pass Qt::AlignBaseline to QPainter::drawText(), so there
 		// shouldn't really be any ambiguity between the two overlapping enum values.
 		AlignVertical_Mask = AlignTop | AlignBottom | AlignVCenter | AlignBaseline,
-
-		[XmlEnum ("Qt::AlignCenter")]
 		AlignCenter = AlignVCenter | AlignHCenter
 	}
 
 	public enum ContextMenuPolicy : uint
 	{
-		[XmlEnum ("Qt::NoContextMenu")]
 		NoContextMenu,
-		[XmlEnum ("Qt::DefaultContextMenu")]
 		DefaultContextMenu,
-		[XmlEnum ("Qt::ActionsContextMenu")]
 		ActionsContextMenu,
-		[XmlEnum ("Qt::CustomContextMenu")]
 		CustomContextMenu,
-		[XmlEnum ("Qt::PreventContextMenu")]
 		PreventContextMenu
 	}
 
@@ -205,43 +232,28 @@ namespace Qt
 
 	public enum TextFormat : uint
 	{
-		[XmlEnum ("Qt::PlainText")]
 		PlainText,
-		[XmlEnum ("Qt::RichText")]
 		RichText,
-		[XmlEnum ("Qt::AutoText")]
 		AutoText,
-		[XmlEnum ("Qt::LogText")]
 		LogText
 	}
 
 	public enum SizeConstraint : uint
 	{
-		[XmlEnum ("QLayout::SetDefaultConstraint")]
 		SetDefaultConstraint,
-		[XmlEnum ("QLayout::SetNoConstraint")]
 		SetNoConstraint,
-		[XmlEnum ("QLayout::SetMinimumSize")]
 		SetMinimumSize,
-		[XmlEnum ("QLayout::SetFixedSize")]
 		SetFixedSize,
-		[XmlEnum ("QLayout::SetMaximumSize")]
 		SetMaximumSize,
-		[XmlEnum ("QLayout::SetMinAndMaxSize")]
 		SetMinAndMaxSize
 	}
 
 	public enum FocusPolicy : uint
 	{
-		[XmlEnum ("Qt::NoFocus")]
 		NoFocus = 0,
-		[XmlEnum ("Qt::TabFocus")]
 		TabFocus = 0x1,
-		[XmlEnum ("Qt::ClickFocus")]
 		ClickFocus = 0x2,
-		[XmlEnum ("Qt::StrongFocus")]
 		StrongFocus = TabFocus | ClickFocus | 0x8,
-		[XmlEnum ("Qt::WheelFocus")]
 		WheelFocus = StrongFocus | 0x4
 	}
 
@@ -262,6 +274,12 @@ namespace Qt
 
 	public enum Key : uint
 	{
+		Key_Escape = 0x01000000,                // misc keys
+		Key_Tab = 0x01000001,
+		Key_Backtab = 0x01000002,
+		Key_Backspace = 0x01000003,
+		Key_Return = 0x01000004,
+		Key_Enter = 0x01000005,
 		Key_AX51_1 = 49,
 		Key_AX51_2 = 50,
 		Key_AX51_3 = 51,
@@ -312,15 +330,39 @@ namespace Qt
 		Key_AX51_Power = 16777399
 	}
 
-	public enum ApplicationAttribute : uint
+	public enum ApplicationAttribute
 	{
+		AA_ImmediateWidgetCreation = 0,
+		AA_MSWindowsUseDirect3DByDefault = 1, // Win only
 		AA_DontShowIconsInMenus = 2,
-		AA_NativeWindows,
-		AA_DontCreateNativeWidgetSiblings,
-		AA_PluginApplication,
-		AA_DontUseNativeMenuBar,
+		AA_NativeWindows = 3,
+		AA_DontCreateNativeWidgetSiblings = 4,
+		AA_PluginApplication = 5,
+		AA_MacPluginApplication = AA_PluginApplication,  // ### Qt 6: remove me
+		AA_DontUseNativeMenuBar = 6,
+		AA_MacDontSwapCtrlAndMeta = 7,
+		AA_Use96Dpi = 8,
+		AA_X11InitThreads = 10,
+		AA_SynthesizeTouchForUnhandledMouseEvents = 11,
+		AA_SynthesizeMouseForUnhandledTouchEvents = 12,
+		AA_UseHighDpiPixmaps = 13,
+		AA_ForceRasterWidgets = 14,
+		AA_UseDesktopOpenGL = 15,
 		AA_UseOpenGLES = 16,
-		AA_EnableHighDpiScaling = 20
+		AA_UseSoftwareOpenGL = 17,
+		AA_ShareOpenGLContexts = 18,
+		AA_SetPalette = 19,
+		AA_EnableHighDpiScaling = 20,
+		AA_DisableHighDpiScaling = 21,
+		AA_UseStyleSheetPropagationInWidgetStyles = 22, // ### Qt 6: remove me
+		AA_DontUseNativeDialogs = 23,
+		AA_SynthesizeMouseForUnhandledTabletEvents = 24,
+		AA_CompressHighFrequencyEvents = 25,
+		AA_DontCheckOpenGLContextThreadAffinity = 26,
+		AA_DisableShaderDiskCache = 27,
+
+		// Add new attributes before this line
+		AA_AttributeCount
 	}
 
 	public enum WidgetAttribute : uint
@@ -338,13 +380,55 @@ namespace Qt
 		ApplicationModal
 	}
 
+	public enum LayoutDirection
+	{
+		LeftToRight,
+		RightToLeft,
+		LayoutDirectionAuto
+	}
+
+	[Flags]
 	public enum WindowType : uint
 	{
+		Widget = 0x00000000,
 		Window = 0x00000001,
 		Dialog = 0x00000002 | Window,
+		Sheet = 0x00000004 | Window,
+		Drawer = Sheet | Dialog,
 		Popup = 0x00000008 | Window,
 		Tool = Popup | Dialog,
+		ToolTip = Popup | Sheet,
+		SplashScreen = ToolTip | Dialog,
+		Desktop = 0x00000010 | Window,
+		SubWindow = 0x00000012,
+		ForeignWindow = 0x00000020 | Window,
+		CoverWindow = 0x00000040 | Window,
+
+		WindowType_Mask = 0x000000ff,
+		MSWindowsFixedSizeDialogHint = 0x00000100,
+		MSWindowsOwnDC = 0x00000200,
+		BypassWindowManagerHint = 0x00000400,
+		X11BypassWindowManagerHint = BypassWindowManagerHint,
 		FramelessWindowHint = 0x00000800,
-		WindowStaysOnTopHint = 0x00040000
+		WindowTitleHint = 0x00001000,
+		WindowSystemMenuHint = 0x00002000,
+		WindowMinimizeButtonHint = 0x00004000,
+		WindowMaximizeButtonHint = 0x00008000,
+		WindowMinMaxButtonsHint = WindowMinimizeButtonHint | WindowMaximizeButtonHint,
+		WindowContextHelpButtonHint = 0x00010000,
+		WindowShadeButtonHint = 0x00020000,
+		WindowStaysOnTopHint = 0x00040000,
+		WindowTransparentForInput = 0x00080000,
+		WindowOverridesSystemGestures = 0x00100000,
+		WindowDoesNotAcceptFocus = 0x00200000,
+		MaximizeUsingFullscreenGeometryHint = 0x00400000,
+
+		CustomizeWindowHint = 0x02000000,
+		WindowStaysOnBottomHint = 0x04000000,
+		WindowCloseButtonHint = 0x08000000,
+		MacWindowToolBarButtonHint = 0x10000000,
+		BypassGraphicsProxyWidget = 0x20000000,
+		NoDropShadowWindowHint = 0x40000000,
+		WindowFullscreenButtonHint = 0x80000000
 	}
 }

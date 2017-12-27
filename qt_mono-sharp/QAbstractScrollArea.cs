@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-	public abstract class ScrollArea : Frame
+	public abstract class AbstractScrollArea : Frame
     {
 		public enum SizeAdjustPolicy {
 			AdjustIgnored,
@@ -17,7 +17,7 @@ namespace Qt
 //
 //		protected ScrollArea ()	{ }
 //
-		protected ScrollArea (IntPtr raw) : base(raw) { }
+		protected AbstractScrollArea (IntPtr raw) : base(raw) { }
 //
 //		public ScrollArea(Widget parent)
 //        {

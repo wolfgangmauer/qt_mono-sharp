@@ -27,30 +27,33 @@ namespace Qt
 		public event EventHandler<MouseEvent> MouseMoveEvent;
 		public event EventHandler<KeyEvent> KeyPressEvent;
 		public event EventHandler<KeyEvent> KeyReleaseEvent;
+		public event EventHandler<ContextMenuEvent> ContextmenuEvent;
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern IntPtr qt_widget_new (Widget thisObject, IntPtr parent, uint f);
+		protected static extern IntPtr qt_widget_new (Widget thisObject, IntPtr parent, WindowType f);
 
 		protected Widget () { }
 
 		protected Widget (IntPtr raw) : base(raw) {	}
 
-		public Widget (Widget parent) : this (parent, 0)
+		protected Widget (Widget parent, string uiFile, WindowType f = 0) : base (IntPtr.Zero)
 		{
+			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
+			new UiLoader ().Load (this, uiFile);
 		}
 
-		protected Widget (Widget parent, string uiFile) : base (IntPtr.Zero)
+		public Widget (Widget parent)
 		{
-			Raw = new UiLoader ().Load (this, uiFile);
-			if (parent != null)
-				Parent = parent;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
+			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, 0);
 		}
 
 		public Widget (Widget parent, WindowType f)
 		{
 			if (Raw != IntPtr.Zero)
 				throw new ArgumentException ("Raw not null!");
-			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, (uint)f);
+			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -92,10 +95,16 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_show (IntPtr raw);
-
 		public void Show ()
 		{
 			qt_widget_show (Handle);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_fullscreen_show (IntPtr raw);
+		public void ShowFullScreen()
+		{
+			qt_widget_fullscreen_show (Handle);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -115,11 +124,9 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_sizepolicy_set (IntPtr raw, IntPtr sizePolicy);
-
-		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_sizepolicy_get (IntPtr raw);
-
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_sizepolicy_set (IntPtr raw, IntPtr sizePolicy);
 		public SizePolicy SizePolicy {
 			get {
 				return new SizePolicy (qt_widget_sizepolicy_get (Handle));
@@ -131,21 +138,18 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_sizepolicyhv_set (IntPtr raw, Policy horizontal, Policy vertical);
-
 		public void SetSizePolicy (Policy horizontal, Policy vertical)
 		{
 			qt_widget_sizepolicyhv_set (Handle, horizontal, vertical);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern Size qt_widget_minimumsize_get (IntPtr raw);
-
+		protected static extern IntPtr qt_widget_minimumsize_get (IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_minimumsize_set (IntPtr raw, int minw, int minh);
-
 		public Size MinimumSize {
 			get {
-				return qt_widget_minimumsize_get (Handle);
+				return new Size(qt_widget_minimumsize_get (Handle));
 			}
 			set {
 				SetMinimumSize (value.Width, value.Height);
@@ -158,14 +162,12 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern Size qt_widget_maximumsize_get (IntPtr raw);
-
+		protected static extern IntPtr qt_widget_maximumsize_get (IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_maximumsize_set (IntPtr raw, int w, int h);
-
 		public Size MaximumSize {
 			get {
-				return qt_widget_maximumsize_get (Handle);
+				return new Size(qt_widget_maximumsize_get (Handle));
 			}
 			set {
 				qt_widget_maximumsize_set (Handle, value.Width, value.Height);
@@ -178,11 +180,98 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern uint qt_widget_focuspolicy_get (IntPtr raw);
+		protected static extern IntPtr qt_widget_size_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_size_set (IntPtr raw, IntPtr size);
+		public Size Size
+		{
+			get{ return new Size(qt_widget_size_get(Handle));}
+			set{ qt_widget_size_set (Handle, value.Handle); }
+		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_focuspolicy_set (IntPtr raw, uint focusPolicy);
+		protected static extern IntPtr qt_widget_sizehint_get (IntPtr raw);
+		public Size SizeHint
+		{
+			get{ return new Size(qt_widget_sizehint_get(Handle));}
+		}
 
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_widget_minimumheight_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_minimumheight_set (IntPtr raw, int min);
+		public int MinimumHeight {
+			get {
+				return qt_widget_minimumheight_get (Handle);
+			}
+			set {
+				qt_widget_minimumheight_set (Handle, value);
+			}
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_widget_maximumheight_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_maximumheight_set (IntPtr raw, int max);
+		public int MaximumHeight {
+			get {
+				return qt_widget_maximumheight_get (Handle);
+			}
+			set {
+				qt_widget_maximumheight_set (Handle, value);
+			}
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_widget_minimumwidth_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_minimumwidth_set (IntPtr raw, int min);
+		public int MinimumWidth {
+			get {
+				return qt_widget_minimumwidth_get (Handle);
+			}
+			set {
+				qt_widget_minimumwidth_set (Handle, value);
+			}
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_widget_maximumwidth_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_maximumwidth_set (IntPtr raw, int max);
+		public int MaximumWidth {
+			get {
+				return qt_widget_maximumwidth_get (Handle);
+			}
+			set {
+				qt_widget_maximumwidth_set (Handle, value);
+			}
+		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_widget_move (IntPtr raw, int x, int y);
+		public void Move(int x, int y)
+		{
+			qt_widget_move (Handle, x, y);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_widget_width_get (IntPtr raw);
+		public int Width
+		{
+			get{ return qt_widget_width_get (Handle); }
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_widget_height_get (IntPtr raw);
+		public int Height
+		{
+			get{ return qt_widget_height_get (Handle); }
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern uint qt_widget_focuspolicy_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_focuspolicy_set (IntPtr raw, uint focusPolicy);
 		public FocusPolicy FocusPolicy {
 			get {
 				return (FocusPolicy)qt_widget_focuspolicy_get (Handle);
@@ -194,10 +283,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern uint qt_widget_contextmenupolicy_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_contextmenupolicy_set (IntPtr raw, uint contextMenuPolicy);
-
 		public ContextMenuPolicy ContextMenuPolicy {
 			get {
 				return (ContextMenuPolicy)qt_widget_contextmenupolicy_get (Handle);
@@ -209,10 +296,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern float qt_widget_windowopacity_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_windowopacity_set (IntPtr raw, double windowopacity);
-
 		public double WindowOpacity {
 			get {
 				return qt_widget_windowopacity_get (Handle);
@@ -273,10 +358,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern WindowType qt_widget_windowflags_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_windowflags_set (IntPtr raw, WindowType windowflags);
-
 		public WindowType WindowFlags {
 			get {
 				return qt_widget_windowflags_get (Handle);
@@ -288,10 +371,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_parent_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_parent_set (IntPtr raw, IntPtr parent);
-
 		public Widget Parent {
 			get {
 				return GetObjectFromRaw (qt_widget_parent_get (Handle)) as Widget;
@@ -303,10 +384,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern string qt_widget_windowtitle_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_windowtitle_set (IntPtr raw, string windowtitle);
-
 		public string WindowTitle {
 			get {
 				return qt_widget_windowtitle_get (Handle);
@@ -318,7 +397,6 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_fixedsize_set (IntPtr raw, int w, int h);
-
 		public Size FixedSize {
 			set
 			{
@@ -327,23 +405,20 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern Rectangle qt_widget_geometry_get (IntPtr raw);
-
+		protected static extern IntPtr qt_widget_geometry_get (IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_geometry_set (IntPtr raw, Rectangle rect);
-
+		protected static extern void qt_widget_geometry_set (IntPtr raw, IntPtr rect);
 		public Rectangle Geometry {
 			get {
-				return qt_widget_geometry_get (Handle);
+				return new Rectangle(qt_widget_geometry_get (Handle));
 			}
 			set {
-				qt_widget_geometry_set (Handle, value);
+				qt_widget_geometry_set (Handle, value.Handle);
 			}
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_adjustsize (IntPtr raw);
-
 		public void AdjustSize ()
 		{
 			qt_widget_adjustsize (Handle);
@@ -351,10 +426,30 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_updategeometry (IntPtr raw);
-
 		public void UpdateGeometry ()
 		{
 			qt_widget_updategeometry (Handle);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_update (IntPtr raw);
+		public void Update()
+		{
+			qt_widget_update (Handle);
+		}
+
+		private bool OnContextMenu(ContextMenuEvent ev)
+		{
+			var tmp = ContextmenuEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
+		}
+
+		private bool OnEvent(Event ev)
+		{
+			var tmp = BaseEvent;
+			tmp?.Invoke (this, ev);
+			return ev.Accepted;
 		}
 
 		private bool OnChange(Event ev)

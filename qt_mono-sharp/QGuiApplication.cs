@@ -17,5 +17,12 @@ namespace Qt
 				InitMonoInternal ();
             Raw = qt_guiapplication_new();
         }
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_guiapplication_primaryscreen_get();
+		public static Screen PrimaryScreen
+		{
+			get{ return new Screen (qt_guiapplication_primaryscreen_get ()); }
+		}
     }
 }

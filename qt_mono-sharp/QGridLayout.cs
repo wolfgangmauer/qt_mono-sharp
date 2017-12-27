@@ -9,11 +9,9 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_gridlayout_new (GridLayout thisObject, IntPtr parent);
 
-		protected GridLayout () {}
+		public GridLayout (IntPtr raw) : base(raw) {}
 
-		protected GridLayout (IntPtr raw) : base(raw) {}
-
-		public GridLayout (Object parent)
+		public GridLayout (Widget parent = null)
 		{
 			if (Raw != IntPtr.Zero)
 				throw new ArgumentException ("Raw not null!");

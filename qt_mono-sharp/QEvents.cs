@@ -355,11 +355,11 @@ namespace Qt
 			// last user event id
 		}
 
-		protected IntPtr Raw;
+		public IntPtr Handle { get; protected set;}
 
 		protected Event (IntPtr raw)
 		{
-			Raw = raw;
+			Handle = raw;
 		}
 
 		public void Accept ()
@@ -376,14 +376,14 @@ namespace Qt
 		protected static extern EventType qt_event_type_get(IntPtr raw);
 		public EventType Type
 		{
-			get{ return qt_event_type_get (Raw); }
+			get{ return qt_event_type_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern bool qt_event_spontaneous_get(IntPtr raw);
 		public bool Spontaneous
 		{
-			get { return qt_event_spontaneous_get (Raw); }
+			get { return qt_event_spontaneous_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -392,8 +392,8 @@ namespace Qt
 		protected static extern void qt_event_accepted_set(IntPtr raw, bool accepted);
 		public bool Accepted
 		{
-			get { return qt_event_accepted_get (Raw); }
-			set { qt_event_accepted_set (Raw, value); }
+			get { return qt_event_accepted_get (Handle); }
+			set { qt_event_accepted_set (Handle, value); }
 		}
 	}
 
@@ -444,14 +444,15 @@ namespace Qt
 		protected InputEvent (IntPtr raw) : base (raw)
 		{
 		}
+
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern UInt64 qt_inputevent_timestamp_get(IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_inputevent_timestamp_set(IntPtr raw, UInt64 timestamp);
 		public UInt64 Timestamp
 		{
-			get { return qt_inputevent_timestamp_get (Raw); }
-			set { qt_inputevent_timestamp_set (Raw, value); }
+			get { return qt_inputevent_timestamp_get (Handle); }
+			set { qt_inputevent_timestamp_set (Handle, value); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -460,8 +461,8 @@ namespace Qt
 		protected static extern void qt_inputevent_modifiers_set(IntPtr raw, KeyboardModifier modifier);
 		public KeyboardModifier Modifiers
 		{
-			get { return qt_inputevent_modifiers_get (Raw); }
-			set { qt_inputevent_modifiers_set (Raw, value); }
+			get { return qt_inputevent_modifiers_get (Handle); }
+			set { qt_inputevent_modifiers_set (Handle, value); }
 		}
 	}
 
@@ -495,21 +496,21 @@ namespace Qt
 		protected static extern ReasonEnum qt_contextmenuevent_reason_get(IntPtr raw);
 		public ReasonEnum Reason
 		{
-			get{ return qt_contextmenuevent_reason_get (Raw); }
+			get{ return qt_contextmenuevent_reason_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_contextmenuevent_pos_get(IntPtr raw);
 		public Point Pos
 		{
-			get{ return new Point(qt_contextmenuevent_pos_get (Raw)); }
+			get{ return new Point(qt_contextmenuevent_pos_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_contextmenuevent_globalpos_get(IntPtr raw);
 		public Point GlobalPos
 		{
-			get{ return new Point(qt_contextmenuevent_globalpos_get (Raw)); }
+			get{ return new Point(qt_contextmenuevent_globalpos_get (Handle)); }
 		}
 	}
 
@@ -523,14 +524,14 @@ namespace Qt
 		protected static extern IntPtr qt_resizeevent_size_get(IntPtr raw);
 		public Size Size 
 		{
-			get{ return new Size(qt_resizeevent_size_get (Raw)); }
+			get{ return new Size(qt_resizeevent_size_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_resizeevent_oldsize_get(IntPtr raw);
 		public Size OldSize 
 		{
-			get{ return new Size(qt_resizeevent_oldsize_get (Raw)); }
+			get{ return new Size(qt_resizeevent_oldsize_get (Handle)); }
 		}
 	}
 
@@ -544,14 +545,14 @@ namespace Qt
 		protected static extern IntPtr qt_moveevent_pos_get(IntPtr raw);
 		public Point Pos 
 		{
-			get{ return new Point(qt_moveevent_pos_get (Raw)); }
+			get{ return new Point(qt_moveevent_pos_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_moveevent_oldpos_get(IntPtr raw);
 		public Point OldPos
 		{
-			get{ return new Point(qt_moveevent_oldpos_get (Raw)); }
+			get{ return new Point(qt_moveevent_oldpos_get (Handle)); }
 		}
 	}
 
@@ -565,7 +566,7 @@ namespace Qt
 		protected static extern IntPtr qt_paintevent_rect_get(IntPtr raw);
 		public Rectangle Rect
 		{
-			get{ return new Rectangle(qt_paintevent_rect_get (Raw)); }
+			get{ return new Rectangle(qt_paintevent_rect_get (Handle)); }
 		}
 	}
 
@@ -579,7 +580,7 @@ namespace Qt
 		protected static extern FocusReason qt_focusevent_reason_get(IntPtr raw);
 		public FocusReason Reason
 		{
-			get{ return qt_focusevent_reason_get (Raw); }
+			get{ return qt_focusevent_reason_get (Handle); }
 		}
 	}
 
@@ -593,70 +594,70 @@ namespace Qt
 		protected static extern bool qt_wheelevent_inverted_get(IntPtr raw);
 		public bool Inverted
 		{
-			get{ return qt_wheelevent_inverted_get (Raw); }
+			get{ return qt_wheelevent_inverted_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern ScrollPhase qt_wheelevent_phase_get(IntPtr raw);
 		public ScrollPhase Phase
 		{
-			get{ return qt_wheelevent_phase_get (Raw); }
+			get{ return qt_wheelevent_phase_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern int qt_wheelevent_delta_get(IntPtr raw);
 		public int Delta
 		{
-			get{ return qt_wheelevent_delta_get (Raw); }
+			get{ return qt_wheelevent_delta_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern Orientation qt_wheelevent_orientation_get(IntPtr raw);
 		public Orientation Orientation
 		{
-			get{ return qt_wheelevent_orientation_get (Raw); }
+			get{ return qt_wheelevent_orientation_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern MouseEventSource qt_wheelevent_source_get(IntPtr raw);
 		public MouseEventSource Source
 		{
-			get{ return qt_wheelevent_source_get (Raw); }
+			get{ return qt_wheelevent_source_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_wheelevent_pixeldelta_get(IntPtr raw);
 		public PointF PixelDelta
 		{
-			get{ return new PointF(qt_wheelevent_pixeldelta_get (Raw)); }
+			get{ return new PointF(qt_wheelevent_pixeldelta_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_wheelevent_angledelta_get(IntPtr raw);
 		public PointF AngleDelta
 		{
-			get{ return new PointF(qt_wheelevent_angledelta_get (Raw)); }
+			get{ return new PointF(qt_wheelevent_angledelta_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_wheelevent_posf_get(IntPtr raw);
 		public PointF PosF
 		{
-			get{ return new PointF(qt_wheelevent_posf_get (Raw)); }
+			get{ return new PointF(qt_wheelevent_posf_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_wheelevent_globalposf_get(IntPtr raw);
 		public PointF GlobalPosF
 		{
-			get{ return new PointF(qt_wheelevent_globalposf_get (Raw)); }
+			get{ return new PointF(qt_wheelevent_globalposf_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern MouseButton qt_wheelevent_buttons_get(IntPtr raw);
 		public MouseButton Buttons
 		{
-			get{ return qt_wheelevent_buttons_get (Raw); }
+			get{ return qt_wheelevent_buttons_get (Handle); }
 		}
 	}
 
@@ -670,49 +671,49 @@ namespace Qt
 		protected static extern MouseEventSource qt_mouseevent_source_get(IntPtr raw);
 		public MouseEventSource Source
 		{
-			get{ return qt_mouseevent_source_get (Raw); }
+			get{ return qt_mouseevent_source_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern MouseEventFlag qt_mouseevent_flags_get(IntPtr raw);
 		public MouseEventFlag Flags
 		{
-			get{ return qt_mouseevent_flags_get (Raw); }
+			get{ return qt_mouseevent_flags_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern MouseButton qt_mouseevent_button_get(IntPtr raw);
 		public MouseButton Button
 		{
-			get{ return qt_mouseevent_button_get (Raw); }
+			get{ return qt_mouseevent_button_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern MouseButton qt_mouseevent_buttons_get(IntPtr raw);
 		public MouseButton Buttons
 		{
-			get{ return qt_mouseevent_buttons_get (Raw); }
+			get{ return qt_mouseevent_buttons_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_mouseevent_localpos_get(IntPtr raw);
 		public PointF LocalPos
 		{
-			get{ return new PointF(qt_mouseevent_localpos_get (Raw)); }
+			get{ return new PointF(qt_mouseevent_localpos_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_mouseevent_windowpos_get(IntPtr raw);
 		public PointF WindowPos
 		{
-			get{ return new PointF(qt_mouseevent_windowpos_get (Raw)); }
+			get{ return new PointF(qt_mouseevent_windowpos_get (Handle)); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_mouseevent_screenpos_get(IntPtr raw);
 		public PointF ScreenPos
 		{
-			get{ return new PointF(qt_mouseevent_screenpos_get (Raw)); }
+			get{ return new PointF(qt_mouseevent_screenpos_get (Handle)); }
 		}
 	}
 
@@ -722,60 +723,77 @@ namespace Qt
 		{
 		}
 
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_keyevent_new(EventType type, int key, KeyboardModifier modifiers, string text, bool autorep, ushort count);
+		public KeyEvent(EventType type, int key, KeyboardModifier modifiers, string text = "", bool autorep = false, ushort count = 1)
+			: base(IntPtr.Zero)
+		{
+			Handle = qt_keyevent_new (type, key, modifiers, text, autorep, count);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_keyevent_native_new(EventType type, int key, KeyboardModifier modifiers, UInt32 nativeScanCode, UInt32 nativeVirtualKey, UInt32 nativeModifiers, string text, bool autorep, ushort count);
+		public KeyEvent (EventType type, int key, KeyboardModifier modifiers, UInt32 nativeScanCode, UInt32 nativeVirtualKey, UInt32 nativeModifiers, string text = "", bool autorep = false, ushort count = 1)
+			: base(IntPtr.Zero)
+		{
+			Handle = qt_keyevent_native_new (type, key, modifiers, nativeScanCode, nativeVirtualKey, nativeModifiers, text, autorep, count);
+		}
+				
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern UInt32 qt_keyevent_nativescancode_get(IntPtr raw);
 		public UInt32 NativeScanCode
 		{
-			get{ return qt_keyevent_nativescancode_get (Raw); }
+			get{ return qt_keyevent_nativescancode_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern UInt32 qt_keyevent_nativevirtualkey_get(IntPtr raw);
 		public UInt32 NativeVirtualKey
 		{ 
-			get{ return qt_keyevent_nativevirtualkey_get (Raw); }
+			get{ return qt_keyevent_nativevirtualkey_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern UInt32 qt_keyevent_nativemodifiers_get(IntPtr raw);
 		public UInt32 NativeModifiers
 		{ 
-			get{ return qt_keyevent_nativemodifiers_get (Raw); }
+			get{ return qt_keyevent_nativemodifiers_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern int qt_keyevent_key_get(IntPtr raw);
 		public int Key
 		{ 
-			get{ return qt_keyevent_key_get (Raw); }
+			get{ return qt_keyevent_key_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern string qt_keyevent_text_get(IntPtr raw);
 		public string Text
 		{
-			get{ return qt_keyevent_text_get (Raw); }
+			get{ return qt_keyevent_text_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern bool qt_keyevent_autorepeat_get(IntPtr raw);
 		public bool AutoRepeat
 		{
-			get{ return qt_keyevent_autorepeat_get (Raw); }
+			get{ return qt_keyevent_autorepeat_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern ushort qt_keyevent_count_get(IntPtr raw);
 		public ushort Count
 		{
-			get{ return qt_keyevent_count_get (Raw); }
+			get{ return qt_keyevent_count_get (Handle); }
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern KeyboardModifier qt_keyevent_modifiers_get(IntPtr raw);
 		public new KeyboardModifier Modifiers
 		{
-			get { return qt_keyevent_modifiers_get (Raw); }
+			get { return qt_keyevent_modifiers_get (Handle); }
 		}
 	}
 }

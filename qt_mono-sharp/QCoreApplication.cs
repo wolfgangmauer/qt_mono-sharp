@@ -19,6 +19,13 @@ namespace Qt
             Raw = qt_coreapplication_new();
         }
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_coreapplication_quit();
+		public static void Quit()
+		{
+			qt_coreapplication_quit ();
+		}
+
 		[DllImport("qt_mono-sharpglue", SetLastError = true)]
 		public static extern void qt_application_monointernal_init();
 		public static void InitMonoInternal()

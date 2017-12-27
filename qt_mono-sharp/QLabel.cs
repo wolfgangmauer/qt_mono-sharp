@@ -13,28 +13,27 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_label_new_with_text (Label thisObject, string text, IntPtr parent, WindowType f);
 
-		private Label (IntPtr parent) : base(IntPtr.Zero)
+		public Label (string text, Widget parent=null, WindowType f = 0)
+			: base(IntPtr.Zero)
 		{
-			if (GetType () != typeof(Label))
-				return;
-			Raw = qt_label_new (this, parent, 0);
-		}
-
-		public Label () : this(null, 0) {}
-
-		public Label (Widget parent) : this(parent, 0) {}
-
-		public Label (Widget parent, string text, WindowType f = 0) : base(IntPtr.Zero)
-		{
-			if (GetType () != typeof(Label))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_label_new_with_text (this, text, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
-		public Label (Widget parent, WindowType f = 0) : base(IntPtr.Zero)
+		public Label (Widget parent)
+			: base(IntPtr.Zero)
 		{
-			if (GetType () != typeof(Label))
-				return;
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
+			Raw = qt_label_new (this, parent != null ? parent.Handle : IntPtr.Zero, 0);
+		}
+
+		public Label (Widget parent, WindowType f = 0)
+			: base(IntPtr.Zero)
+		{
+			if (Raw != IntPtr.Zero)
+				throw new ArgumentException ("Raw not null!");
 			Raw = qt_label_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
 
@@ -54,11 +53,30 @@ namespace Qt
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_label_pixmap_get(IntPtr raw);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_label_pixmap_set(IntPtr raw, IntPtr pixmap);
+		public Pixmap Pixmap
+		{
+			get
+			{
+				var ptr = qt_label_pixmap_get(Handle);
+				if (ptr == IntPtr.Zero)
+					return null;
+				var retVal = new Pixmap (ptr);
+				return retVal;
+			}
+			set
+			{
+				qt_label_pixmap_set(Handle, value.Handle);
+			}
+		}
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         protected static extern Alignment qt_label_alignment_get(IntPtr raw);
         [MethodImpl(MethodImplOptions.InternalCall)]
         protected static extern void qt_label_alignment_set(IntPtr raw, Alignment alignment);
-		[XmlIgnore]
         public Alignment Alignment
         {
             get
@@ -71,7 +89,6 @@ namespace Qt
             }
         }
 
-		[XmlAttribute("stringAlignment")]
 		private string stringAlignment
 		{
 			get
@@ -147,6 +164,10 @@ namespace Qt
 		public bool WordWrap{
 			get;
 			set;
+		}
+
+		public void Clear()
+		{
 		}
     }
 }

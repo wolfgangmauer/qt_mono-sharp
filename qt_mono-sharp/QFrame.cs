@@ -46,11 +46,9 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_frame_new (Frame thisObject, IntPtr parent);
 
-		protected Frame () { }
+		public Frame (IntPtr raw) : base(raw) { }
 
-		protected Frame (IntPtr raw) : base(raw) { }
-
-		public Frame (Widget parent)
+		public Frame (Widget parent = null)
 		{
 			if (Raw != IntPtr.Zero)
 				throw new ArgumentException ("Raw not null!");
@@ -59,10 +57,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern Shape qt_frame_shape_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_frame_shape_set (IntPtr raw, Shape frameshape);
-
 		public Shape FrameShape {
 			get {
 				return qt_frame_shape_get (Handle);
@@ -73,11 +69,17 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern Shadow qt_frame_shadow_get (IntPtr raw);
+		protected static extern int qt_frame_width_get (IntPtr raw);
+		public int FrameWidth {
+			get {
+				return qt_frame_width_get (Handle);
+			}
+		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern Shadow qt_frame_shadow_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_frame_shadow_set (IntPtr raw, Shadow frameshadow);
-
 		public Shadow FrameShadow {
 			get {
 				return qt_frame_shadow_get (Handle);
@@ -90,10 +92,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern int qt_frame_linewidth_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_frame_linewidth_set (IntPtr raw, int linewidth);
-
 		public int LineWidth {
 			get {
 				return qt_frame_linewidth_get (Handle);

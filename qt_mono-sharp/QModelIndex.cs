@@ -5,36 +5,39 @@ namespace Qt
 {
 	public class ModelIndex
 	{
-		public ModelIndex (int row, int col)
+		public IntPtr Handle { get ; private set; }
+
+		public ModelIndex (IntPtr raw)
 		{
-			Row = row;
-			Column = col;
+			Handle = raw;
 		}
 
-		public int Row {
-			get ;
-			private set;
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_modelindex_row_get (IntPtr raw);
+		public int Row 
+		{
+			get 
+			{
+				return qt_modelindex_row_get (Handle);
+			}
 		}
 
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_modelindex_col_get (IntPtr raw);
 		public int Column
 		{
-			get ;
-			private set;
+			get 
+			{
+				return qt_modelindex_col_get (Handle);
+			}
 		}
 
-//		[MethodImpl (MethodImplOptions.InternalCall)]
-//		protected static extern object qt_modelindex_data_get (IntPtr handle);
-//		public object Data
-//		{
-//			get { return qt_modelindex_data_get (raw); }
-//		}
-
-//		[MethodImpl (MethodImplOptions.InternalCall)]
-//		protected static extern ItemFlags qt_modelindex_flags_get (IntPtr handle);
-//		public ItemFlags Flags
-//		{
-//			get { return qt_modelindex_flags_get (raw); }
-//		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern ItemFlags qt_modelindex_flags_get (IntPtr handle);
+		public ItemFlags Flags
+		{
+			get { return qt_modelindex_flags_get (Handle); }
+		}
 	}
 }
 

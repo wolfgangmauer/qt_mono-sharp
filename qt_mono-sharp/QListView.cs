@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-	public class ListView : Widget
+	public class ListView : AbstractItemView
 	{
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_listview_new (IntPtr parent);

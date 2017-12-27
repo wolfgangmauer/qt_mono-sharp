@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Qt
 {
-	public abstract class ItemView : ScrollArea
+	public abstract class AbstractItemView : AbstractScrollArea
 	{
 		public enum SelectionModeEnum
 		{
@@ -70,7 +70,7 @@ namespace Qt
 //
 //		protected ItemView () {	}
 //
-		protected ItemView (IntPtr raw) : base (raw) { }
+		protected AbstractItemView (IntPtr raw) : base (raw) { }
 //
 //		public ItemView (Widget parent)
 //		{
@@ -109,17 +109,27 @@ namespace Qt
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern SelectionModeEnum qt_itemview_selectctionmode_get (IntPtr parent);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_itemview_selectctionmode_get (IntPtr parent, SelectionModeEnum selectionBehavior);
+		protected static extern void qt_itemview_selectctionmode_set (IntPtr parent, SelectionModeEnum selectionBehavior);
 		public SelectionModeEnum SelectionMode
 		{
 			get{ return qt_itemview_selectctionmode_get (Handle); }
-			set{ qt_itemview_selectctionmode_get (Handle, value); }
+			set{ qt_itemview_selectctionmode_set (Handle, value); }
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern int qt_itemview_autoscrollmargin_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_itemview_autoscrollmargin_set (IntPtr raw, int autoscrollmargin);
+		public int AutoScrollMargin
+		{
+			get{ return qt_itemview_autoscrollmargin_get (Handle); }
+			set{ qt_itemview_autoscrollmargin_set (Handle, value); }
 		}
 
 		void OnPressed (ModelIndex index)
 		{
-//			var tmp = Pressed;
-//			tmp?.Invoke (this, index);
+			var tmp = Pressed;
+			tmp?.Invoke (this, index);
 		}
 
 		void OnClicked (ModelIndex index)

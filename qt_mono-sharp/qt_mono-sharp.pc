@@ -1,0 +1,6 @@
+Name: qt_mono-sharp
+Description: qt_mono-sharp
+Version: 0.1
+
+Requires: 
+Libs: -r:/usr/local/lib/qt_mono-sharp/qt_mono-sharp.dll
