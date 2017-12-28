@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MyMainWindow</class>
+ <widget class="QMainWindow" name="MyMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>826</width>
+    <height>370</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowOpacity">
+   <double>0.900000000000000</double>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow:enabled
+{
+	background-color:	rgb(0, 27, 88);
+	color : white;
+}
+
+QMainWindow:disabled
+{
+	background-color:	rgb(0, 27, 88);
+	color : gray;
+}
+
+QFrame#line
+{
+	color : rgb(188,150,44);
+}
+
+QFrame#frame:enabled
+{
+	border: 1px solid rgb(188,150,44);
+}
+
+QFrame#frame:disabled
+{
+	border: 1px solid gray;
+}
+
+QLabel:enabled{
+	color : white;
+}
+
+QLabel:disabled{
+	color : gray;
+}
+
+QWidget#widget:enabled{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(0, 27, 88), stop:1 rgb(0, 0, 255));
+}
+
+QWidget#widget:disabled{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(0, 27, 88), stop:1 rgb(0, 0, 255));
+}
+
+QLabel#CAPTION:enabled, QLabel#TIME:enabled
+{
+	color: rgb(188,150,44);
+}
+
+QLabel#CAPTION:disabled, QLabel#TIME:disabled
+{
+	color : black;
+}
+
+QLabel#REDBUTTON
+{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(255, 0, 0), stop:1 rgb(0, 27, 88));
+}
+
+QLabel#GREENBUTTON
+{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(0, 255, 0), stop:1 rgb(0, 27, 88));
+}
+
+QLabel#YELLOWBUTTON
+{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(255, 255, 0), stop:1 rgb(0, 27, 88));
+}
+
+QLabel#BLUEBUTTON
+{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(0, 0, 255), stop:1 rgb(0, 27, 88));
+}
+
+QTableView:enabled
+{
+	padding: 5px;
+	background-color: transparent;
+	color: white;
+
+	selection-background-color: white;
+	selection-color: black;
+}
+
+QTableView:disabled
+{
+	padding: 5px;
+	background-color: transparent;
+	color: gray;
+
+	selection-background-color: gray;
+	selection-color: black;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTableView" name="tableView">
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QTableView {
+   outline: 0; /* Disable focus rect*/
+}  
+QTableView:item {
+  border: 0px;
+ padding: 10px;
+}
+QTableView::item:focus { /*Emulate focus*/
+    border: 0px;
+}</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="autoScroll">
+         <bool>false</bool>
+        </property>
+        <property name="tabKeyNavigation">
+         <bool>false</bool>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="dragDropOverwriteMode">
+         <bool>false</bool>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SingleSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <property name="showGrid">
+         <bool>true</bool>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>826</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Test</string>
+    </property>
+    <addaction name="actionTest1"/>
+   </widget>
+   <addaction name="menuTest"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionTest1">
+   <property name="text">
+    <string>Test1</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SplashScreen</class>
+ <widget class="QWidget" name="SplashScreen">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>987</width>
+    <height>148</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Ubuntu Condensed</family>
+    <pointsize>30</pointsize>
+   </font>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="windowOpacity">
+   <double>0.900000000000000</double>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#SplashScreen:enabled
+{
+	background-color:	rgb(0, 27, 88);
+	color : white;
+}
+
+QWidget#SplashScreen:disabled
+{
+	background-color:	rgb(0, 27, 88);
+	color : gray;
+}
+
+QFrame#frame:enabled
+{
+	border: 1px solid rgb(188,150,44);
+}
+
+QFrame#frame:disabled
+{
+	border: 1px solid gray;
+}
+
+QLabel:enabled{
+	color : rgb(188,150,44);
+}
+
+QLabel:disabled{
+	color : gray;
+}
+
+QProgressBar
+{
+	selection-background-color: white;
+	text-align: center;
+	border: 1px solid rgb(188,150,44);
+	background-color:	rgb(0, 27, 88);
+	color : rgb(188,150,44);
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <family>Ubuntu Condensed</family>
+          <pointsize>30</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="font">
+         <font>
+          <family>Ubuntu Condensed</family>
+          <pointsize>30</pointsize>
+         </font>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
