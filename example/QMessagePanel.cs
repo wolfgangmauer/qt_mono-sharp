@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace TestQtMonoSharp
 {
-	public class SplashScreen : Dialog
+	public class SplashScreen : Widget
 	{
 		[UiLoader()]
 		VBoxLayout verticalLayout_2;
@@ -23,8 +23,9 @@ namespace TestQtMonoSharp
 		Label label;
 
 		public SplashScreen (Qt.Widget parent = null)
-			: base (parent, "./splashscreen.ui")
+			: base (parent, "./splashscreen.ui", (WindowType.WindowStaysOnTopHint | WindowType.SplashScreen))
 		{
+			Geometry = Style.AlignedRect(LayoutDirection.LeftToRight, Alignment.AlignCenter, Size, Qt.Application.Desktop.Geometry);
 //			if (string.IsNullOrEmpty(ObjectName))
 //				ObjectName = "Dialog";
 //			Resize(987, 146);
@@ -55,15 +56,26 @@ namespace TestQtMonoSharp
 //
 //			progressBar = new ProgressBar(frame);
 //			progressBar.ObjectName = "progressBar";
-//			progressBar.Value = 0;
+			progressBar.Value = 50;
 //			verticalLayout.AddWidget(progressBar);
 //
 //			verticalLayout_2.AddWidget(frame);
 
 			KeyPressEvent += SplashScreen_KeyPressEvent;
-			CloseEvent += SplashScreen_CloseEvent;
+//			CloseEvent += SplashScreen_CloseEvent;
 		}
 
+		public void SetRange(int min, int max)
+		{
+			progressBar.SetRange (min, max);
+		}
+
+		public void SetValue(int val)
+		{
+			progressBar.Value = val;
+		}
+
+		//
 		void SplashScreen_KeyPressEvent (object sender, KeyEvent e)
 		{
 			if (e.Text == "+")
@@ -75,11 +87,11 @@ namespace TestQtMonoSharp
 				progressBar.Value--;
 			}
 		}
-
-		void SplashScreen_CloseEvent (object sender, Qt.CloseEvent e)
-		{
-			e.Accept ();
-		}
+//
+//		void SplashScreen_CloseEvent (object sender, Qt.CloseEvent e)
+//		{
+//			e.Accept ();
+//		}
 	}
 }
 

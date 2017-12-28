@@ -1,6 +1,7 @@
 ﻿using System;
 using Qt;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace TestQtMonoSharp
 {
@@ -10,10 +11,11 @@ namespace TestQtMonoSharp
 		TableView tableView;
 
 		public MyMainWindow (Qt.Widget parent=null)
-			: base (parent, "./mainwindow.ui")
+			: base (parent, "mainwindow.ui")
 		{
 			//tableView = new TableView (this);
 
+			var g = tableView.Geometry;
 			var model = new StandardItemModel (this);
 			model.ColumnCount = 5;
 			model.RowCount = 10;
@@ -26,6 +28,8 @@ namespace TestQtMonoSharp
 			model.SetItem (3, 1, new StandardItem ("LINE_3_1"));
 
 			tableView.Model = model;
+
+			var index = model.Index (1, 1);
 
 			tableView.Font = new Font ("Ubuntu Condensed Regular", 30);
 //			tableView.ColumnCount = 5;
@@ -43,8 +47,8 @@ namespace TestQtMonoSharp
 			tableView.VerticalHeader.Visible = false;
 			tableView.HorizontalHeader.Visible = false;
 
-			tableView.SelectionBehavior = ItemView.SelectionBehaviorEnum.SelectRows;
-			tableView.SelectionMode = ItemView.SelectionModeEnum.SingleSelection;
+			tableView.SelectionBehavior = AbstractItemView.SelectionBehaviorEnum.SelectRows;
+			tableView.SelectionMode = AbstractItemView.SelectionModeEnum.SingleSelection;
 
 			tableView.SelectRow (1);
 
@@ -55,6 +59,10 @@ namespace TestQtMonoSharp
 			tableView.ResizeRowsToContents ();
 
 			tableView.ScrollTo (1, 0);
+
+//			var pixMap = Pixmap.FromResource ("example.audio-volume-medium.png", "PNG", Assembly.GetExecutingAssembly ());
+//			var pixMap1 = pixMap.Scale (128, 128);
+//			var icon = Icon.FromPixmap(pixMap1);
 		}
 
 		void MyMainWindow_CloseEvent (object sender, Qt.CloseEvent e)
@@ -63,4 +71,3 @@ namespace TestQtMonoSharp
 		}
 	}
 }
-

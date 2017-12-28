@@ -33,12 +33,19 @@ namespace TestQtMonoSharp
 			var mainWindow = new MyMainWindow ();
 //			mainWindow.FixedSize = new Size (1920 / 2, 1080 / 2);
 //			mainWindow.FocusPolicy = FocusPolicy.StrongFocus;
-//			mainWindow.WindowTitle = "NNNN";
+			mainWindow.WindowTitle = "NNNN";
 			mainWindow.Show ();
 
-			var splash = new SplashScreen();
-			splash.Exec ();
+			var splash = new SplashScreen (mainWindow);
+			splash.Show ();
 
+//			splash.SetRange (0, 10000);
+//			for (int i = 0; i < 10000; i++)
+//			{
+//				splash.SetValue (i);
+//				Thread.Sleep (10);
+//				Application.ProcessEvents ();
+//			}
 			app.Exec ();
 		}
 	}
