@@ -31,6 +31,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_new (Widget thisObject, IntPtr parent, WindowType f);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_delete (IntPtr raw);
 
 		protected Widget () { }
 
@@ -55,6 +57,21 @@ namespace Qt
 				throw new ArgumentException ("Raw not null!");
 			Raw = qt_widget_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 		}
+
+		#region IDisposable implementation
+		protected override void Dispose (bool disposing)
+		{
+			// free managed resources
+			if (disposing)
+			{
+				if (Handle != IntPtr.Zero) {
+					qt_widget_delete (Handle);
+					Raw = IntPtr.Zero;
+				}
+			}
+			base.Dispose (disposing);
+		}
+		#endregion
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_layout_get (IntPtr raw);
@@ -309,10 +326,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern bool qt_widget_autofillbackground_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_autofillbackground_set (IntPtr raw, bool autofillbackground);
-
 		public bool AutoFillBackground {
 			get {
 				return qt_widget_autofillbackground_get (Handle);
@@ -324,7 +339,6 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_stylesheet_set (IntPtr raw, string stylesheet);
-
 		public string StyleSheet {
 			set {
 				qt_widget_stylesheet_set (Handle, value);
@@ -333,10 +347,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_widget_font_get (IntPtr raw);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_font_set (IntPtr raw, IntPtr font);
-
 		public Font Font {
             get
             {
@@ -349,7 +361,6 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_attribute_set (IntPtr raw, WidgetAttribute attribute);
-
 		public WidgetAttribute Attribute {
 			set {
 				qt_widget_attribute_set (Handle, value);
@@ -436,6 +447,13 @@ namespace Qt
 		public void Update()
 		{
 			qt_widget_update (Handle);
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_action_add (IntPtr raw, IntPtr action);
+		public void AddAction(Action action)
+		{
+			qt_widget_action_add (Handle, action.Handle);
 		}
 
 		private bool OnContextMenu(ContextMenuEvent ev)

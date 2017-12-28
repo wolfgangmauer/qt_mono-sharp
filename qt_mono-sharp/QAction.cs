@@ -7,14 +7,12 @@ namespace Qt
 	{
 		public event EventHandler<bool> TriggerEvent;
 
-		public Action (IntPtr raw) : base(IntPtr.Zero)
-		{
-			Raw = raw;
-		}
+		public Action (IntPtr raw) : base(raw) { }
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern IntPtr qt_action_new(Action thisObject, IntPtr parent);
 		public Action(Object parent = null)
+			: base(IntPtr.Zero)
 		{
 			Raw = qt_action_new (this, parent == null ? IntPtr.Zero : parent.Handle);
 		}
@@ -22,6 +20,7 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern IntPtr qt_action_text_new(Action thisObject, string text, IntPtr parent);
 		public Action(string text, Object parent = null)
+			: base(IntPtr.Zero)
 		{
 			Raw = qt_action_text_new (this, text, parent == null ? IntPtr.Zero : parent.Handle);
 		}

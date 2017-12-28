@@ -12,7 +12,8 @@ namespace Qt
 		private static extern IntPtr qt_menu_new (Menu thisObject, IntPtr parent);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void qt_menu_delete (IntPtr raw);
-		protected Menu (IntPtr raw) : base(raw) 
+		protected Menu (IntPtr raw)
+			: base(raw) 
 		{
 		}
 
@@ -66,10 +67,17 @@ namespace Qt
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern IntPtr qt_menu_action_add (IntPtr raw, IntPtr action);
-		public Action AddAction(Action action)
+		private static extern IntPtr qt_menu_action_text_add (IntPtr raw, string text);
+		public Action AddAction(string text)
 		{
-			return new Action(qt_menu_action_add (Handle, action.Handle));
+			return new Action(qt_menu_action_text_add (Handle, text));
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern IntPtr qt_menu_action_icon_text_add (IntPtr raw, IntPtr icon, string text);
+		public Action AddAction(Icon icon, string text)
+		{
+			return new Action(qt_menu_action_icon_text_add (Handle, icon.Handle, text));
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

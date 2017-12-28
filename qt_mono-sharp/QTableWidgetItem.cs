@@ -5,6 +5,12 @@ namespace Qt
 {
 	public class TableWidgetItem
 	{
+		public enum ItemType
+		{
+			Type = 0,
+			UserType = 1000
+		}
+
 		public IntPtr Handle { get ; private set; }
 
 		[MethodImpl (MethodImplOptions.InternalCall)]

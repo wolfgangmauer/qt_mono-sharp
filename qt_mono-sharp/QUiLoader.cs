@@ -63,6 +63,8 @@ namespace Qt
 		protected IntPtr OnCreateWidget(string className, IntPtr parent, string objectName)
 		{
 			var retVal = IntPtr.Zero;
+			if (className.Equals ("Line"))
+				className = "Q"+className;
 			var t = Type.GetType ("Qt." + className.Substring (1));
 			if (t == null)
 				return IntPtr.Zero;

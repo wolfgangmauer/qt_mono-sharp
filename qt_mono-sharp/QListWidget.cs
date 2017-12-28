@@ -23,13 +23,18 @@ namespace Qt
 			qt_listwidget_item_add (Handle, item.Handle);
 		}
 
-		public void SetItemSelected(ListWidgetItem item, bool _select)
-		{
-		}
-
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_listwidget_item_get (IntPtr raw, int row);
 		public ListWidgetItem Item(int row)
 		{
-			return null;
+			return new ListWidgetItem(qt_listwidget_item_get(Handle, row));
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_listwidget_item_select (IntPtr raw, IntPtr item, bool _select);
+		public void SetItemSelected(ListWidgetItem item, bool _select)
+		{
+			qt_listwidget_item_select (Handle, item.Handle, _select);
 		}
 	}
 }

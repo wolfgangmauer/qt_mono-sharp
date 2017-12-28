@@ -29,7 +29,6 @@ namespace Qt
 		}
 
 		#region IDisposable implementation
-
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -41,13 +40,19 @@ namespace Qt
 		protected virtual void Dispose (bool disposing)
 		{
 			// free managed resources
-			if (disposing) {
+			if (disposing)
+			{
 			}
 			IsDisposed = true;
 			var tmp = DisposedEvent;
 			tmp?.Invoke (this, new System.EventArgs ());
 		}
-
+		private static void OnUnmanagedDeleted(Object obj)
+		{
+			obj.Raw = IntPtr.Zero;
+			obj.Dispose ();
+			obj = null;
+		}
 		#endregion
 
 		public IntPtr Handle {

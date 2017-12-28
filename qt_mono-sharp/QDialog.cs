@@ -37,7 +37,9 @@ namespace Qt
 			// free managed resources
 			if (disposing)
 			{
-				qt_dialog_delete (Handle);
+				if (Handle != IntPtr.Zero)
+					qt_dialog_delete (Handle);
+				Raw = IntPtr.Zero;
 			}
 			base.Dispose (disposing);
 		}

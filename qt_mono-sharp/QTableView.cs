@@ -35,7 +35,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tableview_verticalheader_get (IntPtr raw);
-		public HeaderView VerticalHeader {
+		public HeaderView VerticalHeader 
+		{
 			get
 			{
 				HeaderView retVal = null;

@@ -40,7 +40,7 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_tablewidget_row_col_get (IntPtr handle, int row, int col);
-		public TableWidgetItem GetItem(int row, int col)
+		public TableWidgetItem Item(int row, int col)
 		{
 			return new TableWidgetItem(qt_tablewidget_row_col_get (Handle, row, col));
 		}
@@ -50,6 +50,20 @@ namespace Qt
 		public void SetItem(int row, int col, TableWidgetItem item)
 		{
 			qt_tablewidget_row_col_set (Handle, row, col, item.Handle);
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_tablewidget_item_select (IntPtr raw, IntPtr item, bool _select);
+		public void SetItemSelected(TableWidgetItem item, bool _select)
+		{
+			qt_tablewidget_item_select (Handle, item.Handle, _select);
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_tablewidget_visual_item_rect (IntPtr raw, IntPtr item);
+		public Rectangle VisualItemRect(TableWidgetItem item)
+		{
+			return new Rectangle (qt_tablewidget_visual_item_rect (Handle, item.Handle));
 		}
     }
 }
