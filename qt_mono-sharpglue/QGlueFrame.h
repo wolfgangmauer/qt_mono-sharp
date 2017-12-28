@@ -8,7 +8,7 @@ class GlueFrame : public QFrame
 #include "internalevents.h"
 public:
     GlueFrame(MonoObject* thisObject, QWidget* parent = 0);
-
+    ~GlueFrame();
 private:
-	MonoObject* _thisObject;
+	guint32 _thisObject;
 };

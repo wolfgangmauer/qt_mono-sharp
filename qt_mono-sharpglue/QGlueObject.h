@@ -16,10 +16,8 @@ class GlueObject : public QObject
 {
 public:
 	GlueObject(MonoObject* thisObject, GlueObject* parent = 0);
-	void setObjectName(MonoString*);
-
 private:
-	MonoObject* _thisObject;
+	guint32 _thisObject;
 };
 
 MonoMethod* mono_class_get_method_from_name_recursive(MonoClass *klass, std::string name, uint32_t param_count);

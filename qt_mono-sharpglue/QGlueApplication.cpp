@@ -21,6 +21,6 @@ GlueApplication::GlueApplication(MonoObject* thisObject, int &argc, char**argv) 
 
 GlueApplication::~GlueApplication()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }

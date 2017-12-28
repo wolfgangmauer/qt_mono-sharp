@@ -7,6 +7,6 @@ GlueVBoxLayout::GlueVBoxLayout(MonoObject* thisObject, QWidget* parent) : QVBoxL
 
 GlueVBoxLayout::~GlueVBoxLayout()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }

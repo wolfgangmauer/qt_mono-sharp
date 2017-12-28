@@ -15,7 +15,7 @@ GlueUiLoader::GlueUiLoader(MonoObject* thisObject, QObject* parent) : QUiLoader(
 
 GlueUiLoader::~GlueUiLoader()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }
 

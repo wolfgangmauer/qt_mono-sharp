@@ -10,12 +10,21 @@ GlueWidget::GlueWidget(MonoObject* thisObject, QWidget* parent, Qt::WindowFlags 
 
 GlueWidget::~GlueWidget()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }
 
-void doOnRawDispose(guint32 _thisObject)
+void doOnRawDelete(guint32 thisObject)
 {
+	auto klass = mono_object_get_class (mono_gchandle_get_target(thisObject));
+	auto method = mono_class_get_method_from_name_recursive(klass, "OnUnmanagedDeleted", 1);
+	if (method)
+	{
+		void *args [1];
+		args[0] = mono_gchandle_get_target(thisObject);
+		mono_thread_attach (mono_get_root_domain ());
+		mono_runtime_invoke (method, NULL, args, NULL);
+	}
 }
 
 bool dokeyPressEvent(guint32 _thisObject, QKeyEvent *event)

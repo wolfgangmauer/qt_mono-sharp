@@ -8,7 +8,7 @@ class GlueDialog : public QDialog
 #include "internalevents.h"
 public:
     GlueDialog(MonoObject* thisObject, QWidget* parent = 0, Qt::WindowFlags f = 0);
-
+    ~GlueDialog();
 private:
-	MonoObject* _thisObject;
+	guint32 _thisObject;
 };

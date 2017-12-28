@@ -1,14 +1,14 @@
-﻿#include "QGlueFrame.h"
+﻿#include "QGlueListWidget.h"
 
-GlueFrame::GlueFrame(MonoObject* thisObject, QWidget* parent) : QFrame(parent)
+GlueListWidget::GlueListWidget(MonoObject* thisObject, QWidget *parent)
+	: QListWidget(parent)
 {
 	_thisObject = mono_gchandle_new(thisObject, TRUE);
 	_nameSpace = mono_class_get_namespace(mono_object_get_class (mono_gchandle_get_target(_thisObject)));
 }
 
-GlueFrame::~GlueFrame()
+GlueListWidget::~GlueListWidget()
 {
 	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }
-

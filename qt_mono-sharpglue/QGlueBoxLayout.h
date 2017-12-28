@@ -9,7 +9,7 @@ class GlueBoxLayout : public QBoxLayout
 {
 public:
     GlueBoxLayout(MonoObject*, QBoxLayout::Direction dir, QWidget* parent = 0);
-
+    ~GlueBoxLayout();
 private:
-	MonoObject* _thisObject;
+	guint32 _thisObject;
 };

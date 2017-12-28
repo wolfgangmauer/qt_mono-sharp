@@ -6,65 +6,60 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include "QGlueObject.h"
-#include "QGlueFont.h"
-#include "QGlueSizePolicy.h"
 
-bool dokeyPressEvent(MonoObject* thisObject, QKeyEvent* event);
-bool dokeyReleaseEvent(MonoObject* thisObject, QKeyEvent* event);
 
-bool doMousePressEvent(MonoObject* thisObject, QMouseEvent* event);
-bool doMouseReleaseEvent(MonoObject* thisObject, QMouseEvent* event);
-bool doMouseMoveEvent(MonoObject* thisObject, QMouseEvent* event);
-bool doMouseDoubleClickEvent(MonoObject* thisObject, QMouseEvent* event);
+bool dokeyPressEvent(guint32 thisObject, QKeyEvent* event);
+bool dokeyReleaseEvent(guint32 thisObject, QKeyEvent* event);
 
-bool dowheelEvent(MonoObject* thisObject, QWheelEvent *event);
+bool doMousePressEvent(guint32 thisObject, QMouseEvent* event);
+bool doMouseReleaseEvent(guint32 thisObject, QMouseEvent* event);
+bool doMouseMoveEvent(guint32 thisObject, QMouseEvent* event);
+bool doMouseDoubleClickEvent(guint32 thisObject, QMouseEvent* event);
 
-bool dofocusInEvent(MonoObject* thisObject, QFocusEvent* event);
-bool dofocusOutEvent(MonoObject* thisObject, QFocusEvent* event);
+bool dowheelEvent(guint32 thisObject, QWheelEvent *event);
 
-bool doenterEvent(MonoObject* thisObject, QEvent* event);
-bool doleaveEvent(MonoObject* thisObject, QEvent* event);
+bool dofocusInEvent(guint32 thisObject, QFocusEvent* event);
+bool dofocusOutEvent(guint32 thisObject, QFocusEvent* event);
 
-bool dopaintEvent(MonoObject* thisObject, QPaintEvent* event);
-bool domoveEvent(MonoObject* thisObject, QMoveEvent* event);
-bool doresizeEvent(MonoObject* thisObject, QResizeEvent* event);
-bool docloseEvent(MonoObject* thisObject, QCloseEvent* event);
+bool doenterEvent(guint32 thisObject, QEvent* event);
+bool doleaveEvent(guint32 thisObject, QEvent* event);
+
+bool dopaintEvent(guint32 thisObject, QPaintEvent* event);
+bool domoveEvent(guint32 thisObject, QMoveEvent* event);
+bool doresizeEvent(guint32 thisObject, QResizeEvent* event);
+bool docloseEvent(guint32 thisObject, QCloseEvent* event);
 
 #ifndef QT_NO_CONTEXTMENU
-void docontextMenuEvent(MonoObject* thisObject, QContextMenuEvent *event);
+void docontextMenuEvent(guint32 thisObject, QContextMenuEvent *event);
 #endif
 #ifndef QT_NO_TABLETEVENT
-void dotabletEvent(MonoObject* thisObject, QTabletEvent *event);
+void dotabletEvent(guint32 thisObject, QTabletEvent *event);
 #endif
 #ifndef QT_NO_ACTION
-void doactionEvent(MonoObject* thisObject, QActionEvent *event);
+void doactionEvent(guint32 thisObject, QActionEvent *event);
 #endif
 
 #ifndef QT_NO_DRAGANDDROP
-void dodragEnterEvent(MonoObject* thisObject, QDragEnterEvent *event);
-void dodragMoveEvent(MonoObject* thisObject, QDragMoveEvent *event);
-void dodragLeaveEvent(MonoObject* thisObject, QDragLeaveEvent *event);
-void dodropEvent(MonoObject* thisObject, QDropEvent *event);
+void dodragEnterEvent(guint32 thisObject, QDragEnterEvent *event);
+void dodragMoveEvent(guint32 thisObject, QDragMoveEvent *event);
+void dodragLeaveEvent(guint32 thisObject, QDragLeaveEvent *event);
+void dodropEvent(guint32 thisObject, QDropEvent *event);
 #endif
-bool doshowEvent(MonoObject* thisObject, QShowEvent* event);
-bool dohideEvent(MonoObject* thisObject, QHideEvent* event);
-//bool donativeEvent(MonoObject* thisObject, const QByteArray &eventType, void *message, long *result);
+bool doshowEvent(guint32 thisObject, QShowEvent* event);
+bool dohideEvent(guint32 thisObject, QHideEvent* event);
+//bool donativeEvent(guint32 thisObject, const QByteArray &eventType, void *message, long *result);
 
-bool dochangeEvent(MonoObject* thisObject, QEvent* event);
+bool dochangeEvent(guint32 thisObject, QEvent* event);
+
+void doOnRawDelete(guint32 thisObject);
 
 class GlueWidget : public QWidget
 {
 #define BaseClass QWidget
 #include "internalevents.h"
 public:
-    GlueWidget(MonoObject* thisObject, QWidget* parent = 0, Qt::WindowFlags f = 0);
-
-	GlueSizePolicy* sizePolicy();
+    GlueWidget(MonoObject* thisObject, QWidget* parent=0, Qt::WindowFlags f=0);
+    ~GlueWidget();
 private:
-	QSizePolicy glueSizePolicy;
-
-	MonoObject* _thisObject;
-
-	friend class GlueMainWindow;
-	friend class GlueDialog;
+	guint32 _thisObject;
 };

@@ -8,11 +8,10 @@ class GlueTableView : public QTableView
 #include "internalevents.h"
 public:
     explicit GlueTableView(MonoObject* thisObject, QWidget *parent=0);
-
+    ~GlueTableView();
 private:
 	void onpressed(const QModelIndex &index);
 
 private:
-    MonoObject* _thisObject;
+    guint32 _thisObject;
 };
-

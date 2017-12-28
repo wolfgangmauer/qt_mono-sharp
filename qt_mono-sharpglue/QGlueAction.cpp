@@ -16,7 +16,7 @@ GlueAction::GlueAction(MonoObject* thisObject, const QString& text, QObject* par
 
 GlueAction::~GlueAction()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }
 

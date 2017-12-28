@@ -85,7 +85,9 @@ MonoString* qt_objectname_get(GlueObject* obj)
 
 void qt_objectname_set(GlueObject* obj, MonoString* name)
 {
-	obj->setObjectName(name);
+	char* p = mono_string_to_utf8(name);
+	obj->setObjectName(p);
+	g_free(p);
 }
 
 GlueUiLoader* qt_uiloader_new(MonoObject* obj, GlueObject* parent)
@@ -113,6 +115,11 @@ QObject* qt_object_find(QWidget* startFrom, MonoString* name)
 GlueWidget* qt_widget_new(MonoObject* obj, QWidget* parent, Qt::WindowFlags f)
 {
 	return new GlueWidget(obj, parent, f);
+}
+
+void qt_widget_delete(GlueWidget* widget)
+{
+	delete widget;
 }
 
 MonoString* qt_widget_windowtitle_get(QWidget* widget)
@@ -354,6 +361,11 @@ bool qt_widget_autofillbackground_get(QWidget* widget)
 void qt_widget_autofillbackground_set(QWidget* widget, bool autofillbackground)
 {
 	widget->setAutoFillBackground(autofillbackground);
+}
+
+void qt_widget_action_add(QWidget* widget, QAction* action)
+{
+	widget->addAction(action);
 }
 
 QLayout* qt_widget_layout_get(QWidget* widget)
@@ -1416,34 +1428,44 @@ GlueTableWidget* qt_tablewidget_new(MonoObject* thisObject, QWidget* parent)
 	return new GlueTableWidget(thisObject, parent);
 }
 
-int qt_tablewidget_rowcount_get(QTableWidget* tableWidget)
+int qt_tablewidget_rowcount_get(GlueTableWidget* tableWidget)
 {
 	return tableWidget->rowCount();
 }
 
-void qt_tablewidget_rowcount_set(QTableWidget* tableWidget, int rows)
+void qt_tablewidget_rowcount_set(GlueTableWidget* tableWidget, int rows)
 {
 	return tableWidget->setRowCount(rows);
 }
 
-int qt_tablewidget_colcount_get(QTableWidget* tableWidget)
+int qt_tablewidget_colcount_get(GlueTableWidget* tableWidget)
 {
 	return tableWidget->columnCount();
 }
 
-void qt_tablewidget_colcount_set(QTableWidget* tableWidget, int cols)
+void qt_tablewidget_colcount_set(GlueTableWidget* tableWidget, int cols)
 {
 	return tableWidget->setColumnCount(cols);
 }
 
-QTableWidgetItem* qt_tablewidget_row_col_get(QTableWidget* tableWidget, int row, int col)
+QTableWidgetItem* qt_tablewidget_row_col_get(GlueTableWidget* tableWidget, int row, int col)
 {
 	return tableWidget->item(row, col);
 }
 
-void qt_tablewidget_row_col_set(QTableWidget* tableWidget, int row, int col, QTableWidgetItem* item)
+void qt_tablewidget_row_col_set(GlueTableWidget* tableWidget, int row, int col, QTableWidgetItem* item)
 {
 	tableWidget->setItem(row, col, item);
+}
+
+void qt_tablewidget_item_select(GlueTableWidget* tableWidget, QTableWidgetItem* item, bool select)
+{
+	tableWidget->setItemSelected(item, select);
+}
+
+QRect* qt_tablewidget_visual_item_rect(GlueTableWidget* tableWidget, QTableWidgetItem* item)
+{
+	return new QRect(tableWidget->visualItemRect(item));
 }
 
 GlueListWidget* qt_listwidget_new(MonoObject* thisObject, QWidget* parent)
@@ -1451,9 +1473,19 @@ GlueListWidget* qt_listwidget_new(MonoObject* thisObject, QWidget* parent)
 	return new GlueListWidget(thisObject, parent);
 }
 
-void qt_listwidget_item_add(GlueListWidget* listWidget, QListWidgetItem *item)
+void qt_listwidget_item_add(GlueListWidget* listWidget, QListWidgetItem* item)
 {
 	listWidget->addItem(item);
+}
+
+QListWidgetItem* qt_listwidget_item_get(GlueListWidget* listWidget, int row)
+{
+	return listWidget->item(row);
+}
+
+void qt_listwidget_item_select(GlueListWidget* listWidget, QListWidgetItem* item, bool select)
+{
+	listWidget->setItemSelected(item, select);
 }
 
 QListWidgetItem* qt_listwidgetitem_new (QIcon* icon, MonoString* text, QListWidget* view, int type)
@@ -1463,6 +1495,18 @@ QListWidgetItem* qt_listwidgetitem_new (QIcon* icon, MonoString* text, QListWidg
 	retVal = new QListWidgetItem(*icon, p, view, type);
 	g_free(p);
 	return retVal;
+}
+
+MonoString* qt_listwidgetitem_text_get(QListWidgetItem* item)
+{
+	return mono_string_new(mono_domain_get (), item->text().toStdString().c_str());
+}
+
+void qt_listwidgetitem_text_set(QListWidgetItem* item, MonoString* text)
+{
+	char* p = mono_string_to_utf8(text);
+	item->setText(p);
+	g_free(p);
 }
 
 GlueModelIndex* qt_modelindex_new(MonoObject* thisObject)
@@ -1531,12 +1575,11 @@ bool qt_pixmap_save(QPixmap* pixmap, MonoString* fileName, MonoString* format, i
 	return retVal;
 }
 
-QPixmap* qt_pixmap_data_new(MonoArray* data, int len, MonoString* format)
+QPixmap* qt_pixmap_data_new(const unsigned char* data, uint32_t len, MonoString* format)
 {
 	QPixmap* retVal = new QPixmap();
-	const unsigned char* p = 12 + (const unsigned char*)data;
 	char* p1 = mono_string_to_utf8(format);
-	retVal->loadFromData(p, len, p1);
+	retVal->loadFromData(data, len, p1);
 	g_free(p1);
 	return retVal;
 }
@@ -1551,6 +1594,26 @@ QPixmap* qt_pixmap_rotate(QPixmap* pixmap, qreal deg)
 	QTransform transform;
 	QTransform trans = transform.rotate(deg);
 	return new QPixmap(pixmap->transformed(trans));
+}
+
+int qt_pixmap_width_get(QPixmap* pixmap)
+{
+	return pixmap->width();
+}
+
+int qt_pixmap_height_get(QPixmap* pixmap)
+{
+	return pixmap->height();
+}
+
+QSize* qt_pixmap_size_get(QPixmap* pixmap)
+{
+	return new QSize(pixmap->size());
+}
+
+int qt_pixmap_depth_get(QPixmap* pixmap)
+{
+	return pixmap->depth();
 }
 
 QPainter* qt_painter_new(MonoObject* thisObject, QPixmap* pixmap)
@@ -1612,9 +1675,22 @@ QAction* qt_menu_seperator_add(GlueMenu* menu)
 	return menu->addSeparator();
 }
 
-void qt_menu_action_add(GlueMenu* menu, QAction* action)
+QAction* qt_menu_action_text_add(GlueMenu* menu, MonoString* text)
 {
-	menu->addAction(action);
+	QAction* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = menu->addAction(p);
+	g_free(p);
+	return retVal;
+}
+
+QAction* qt_menu_action_icon_text_add(GlueMenu* menu, QIcon* icon, MonoString* text)
+{
+	QAction* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = menu->addAction(*icon, p);
+	g_free(p);
+	return retVal;
 }
 
 QAction* qt_menu_activeaction_get(GlueMenu* menu)
@@ -1622,7 +1698,7 @@ QAction* qt_menu_activeaction_get(GlueMenu* menu)
 	return menu->activeAction();
 }
 
-void qt_menu_activeaction_set(GlueMenu* menu, QAction* action)
+void qt_menu_activeaction_set(GlueMenu* menu, GlueAction* action)
 {
 	return menu->setActiveAction(action);
 }
@@ -1709,11 +1785,21 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_colcount_set", reinterpret_cast<void*>(qt_tablewidget_colcount_set));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_col_get", reinterpret_cast<void*>(qt_tablewidget_row_col_get));
 	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_row_col_set", reinterpret_cast<void*>(qt_tablewidget_row_col_set));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_item_select", reinterpret_cast<void*>(qt_tablewidget_item_select));
+	mono_add_internal_call ("Qt.TableWidget::qt_tablewidget_visual_item_rect", reinterpret_cast<void*>(qt_tablewidget_visual_item_rect));
 
 	mono_add_internal_call ("Qt.ListWidget::qt_listwidget_new", reinterpret_cast<void*>(qt_listwidget_new));
 	mono_add_internal_call ("Qt.ListWidget::qt_listwidget_item_add", reinterpret_cast<void*>(qt_listwidget_item_add));
+	mono_add_internal_call ("Qt.ListWidget::qt_listwidget_item_get", reinterpret_cast<void*>(qt_listwidget_item_get));
+	mono_add_internal_call ("Qt.ListWidget::qt_listwidget_item_select", reinterpret_cast<void*>(qt_listwidget_item_select));
 
 	mono_add_internal_call ("Qt.ListWidgetItem::qt_listwidgetitem_new", reinterpret_cast<void*>(qt_listwidgetitem_new));
+	mono_add_internal_call ("Qt.ListWidgetItem::qt_listwidgetitem_text_get", reinterpret_cast<void*>(qt_listwidgetitem_text_get));
+	mono_add_internal_call ("Qt.ListWidgetItem::qt_listwidgetitem_text_set", reinterpret_cast<void*>(qt_listwidgetitem_text_set));
+
+	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_new", reinterpret_cast<void*>(qt_tablewidgetitem_new));
+	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_text_get", reinterpret_cast<void*>(qt_tablewidgetitem_text_get));
+	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_text_set", reinterpret_cast<void*>(qt_tablewidgetitem_text_set));
 
 	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_model_get", reinterpret_cast<void*>(qt_itemview_model_get));
 	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_model_set", reinterpret_cast<void*>(qt_itemview_model_set));
@@ -1725,10 +1811,6 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_autoscrollmargin_set", reinterpret_cast<void*>(qt_itemview_autoscrollmargin_set));
 
 	mono_add_internal_call ("Qt.StandardItem::qt_standarditem_new", reinterpret_cast<void*>(qt_standarditem_new));
-
-	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_new", reinterpret_cast<void*>(qt_tablewidgetitem_new));
-	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_text_get", reinterpret_cast<void*>(qt_tablewidgetitem_text_get));
-	mono_add_internal_call ("Qt.TableWidgetItem::qt_tablewidgetitem_text_set", reinterpret_cast<void*>(qt_tablewidgetitem_text_set));
 
 	mono_add_internal_call ("Qt.Label::qt_label_new", reinterpret_cast<void*>(qt_label_new));
 	mono_add_internal_call ("Qt.Label::qt_label_new_with_text", reinterpret_cast<void*>(qt_label_new_with_text));
@@ -1891,6 +1973,7 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Layout::qt_layout_geometry_set", reinterpret_cast<void*>(qt_layout_geometry_set));
 
 	mono_add_internal_call ("Qt.Widget::qt_widget_new", reinterpret_cast<void*>(qt_widget_new));
+	mono_add_internal_call ("Qt.Widget::qt_widget_delete", reinterpret_cast<void*>(qt_widget_delete));
 	mono_add_internal_call ("Qt.Widget::qt_widget_parent_get", reinterpret_cast<void*>(qt_widget_parent_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_parent_set", reinterpret_cast<void*>(qt_widget_parent_set));
 
@@ -1946,6 +2029,8 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Widget::qt_widget_autofillbackground_get", reinterpret_cast<void*>(qt_widget_autofillbackground_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_autofillbackground_set", reinterpret_cast<void*>(qt_widget_autofillbackground_set));
 
+	mono_add_internal_call ("Qt.Widget::qt_widget_action_add", reinterpret_cast<void*>(qt_widget_action_add));
+
 	mono_add_internal_call ("Qt.Widget::qt_widget_layout_get", reinterpret_cast<void*>(qt_widget_layout_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_layout_set", reinterpret_cast<void*>(qt_widget_layout_set));
 
@@ -1994,6 +2079,10 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_save", reinterpret_cast<void*>(qt_pixmap_save));
 	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_scaled", reinterpret_cast<void*>(qt_pixmap_scaled));
 	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_rotate", reinterpret_cast<void*>(qt_pixmap_rotate));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_width_get", reinterpret_cast<void*>(qt_pixmap_width_get));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_height_get", reinterpret_cast<void*>(qt_pixmap_height_get));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_size_get", reinterpret_cast<void*>(qt_pixmap_size_get));
+	mono_add_internal_call ("Qt.Pixmap::qt_pixmap_depth_get", reinterpret_cast<void*>(qt_pixmap_depth_get));
 
 	mono_add_internal_call ("Qt.Painter::qt_painter_new", reinterpret_cast<void*>(qt_painter_new));
 	mono_add_internal_call ("Qt.Painter::qt_painter_pixmap_draw", reinterpret_cast<void*>(qt_painter_pixmap_draw));
@@ -2007,7 +2096,8 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Menu::qt_menu_delete", reinterpret_cast<void*>(qt_menu_delete));
 	mono_add_internal_call ("Qt.Menu::qt_menu_exec", reinterpret_cast<void*>(qt_menu_exec));
 	mono_add_internal_call ("Qt.Menu::qt_menu_seperator_add", reinterpret_cast<void*>(qt_menu_seperator_add));
-	mono_add_internal_call ("Qt.Menu::qt_menu_action_add", reinterpret_cast<void*>(qt_menu_action_add));
+	mono_add_internal_call ("Qt.Menu::qt_menu_action_text_add", reinterpret_cast<void*>(qt_menu_action_text_add));
+	mono_add_internal_call ("Qt.Menu::qt_menu_action_icon_text_add", reinterpret_cast<void*>(qt_menu_action_icon_text_add));
 	mono_add_internal_call ("Qt.Menu::qt_menu_activeaction_get", reinterpret_cast<void*>(qt_menu_activeaction_get));
 	mono_add_internal_call ("Qt.Menu::qt_menu_activeaction_set", reinterpret_cast<void*>(qt_menu_activeaction_set));
 

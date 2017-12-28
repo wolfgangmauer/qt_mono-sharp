@@ -6,8 +6,7 @@ class GlueHBoxLayout : public QHBoxLayout
 {
 public:
     GlueHBoxLayout(MonoObject* thisObject, QWidget* parent = 0);
+    ~GlueHBoxLayout();
 private:
-    MonoObject* _thisObject;
+    guint32 _thisObject;
 };
-
-//QHBoxLayout* qt_hboxlayout_new(QWidget* parent);

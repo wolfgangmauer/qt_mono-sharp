@@ -9,6 +9,6 @@ GlueProgressBar::GlueProgressBar(MonoObject* thisObject, QWidget* parent)
 
 GlueProgressBar::~GlueProgressBar()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }

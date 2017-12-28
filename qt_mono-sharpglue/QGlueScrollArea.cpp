@@ -8,6 +8,6 @@ GlueScrollArea::GlueScrollArea(MonoObject* thisObject, QWidget *parent) : QScrol
 
 GlueScrollArea::~GlueScrollArea()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }

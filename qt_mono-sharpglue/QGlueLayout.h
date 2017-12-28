@@ -6,6 +6,7 @@ class GlueLayout : public QLayout
 {
 public:
     GlueLayout(MonoObject* thisObject, GlueWidget* parent = 0);
+    ~GlueLayout();
 private:
-    MonoObject* _thisObject;
+    guint32 _thisObject;
 };

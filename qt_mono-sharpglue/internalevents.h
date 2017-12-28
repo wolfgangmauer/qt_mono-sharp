@@ -26,14 +26,14 @@ protected:
 			doMouseMoveEvent(_thisObject, event);
 		BaseClass::mouseMoveEvent(event);
 	}
-	#ifndef QT_NO_WHEELEVENT
+#ifndef QT_NO_WHEELEVENT
 	void wheelEvent(QWheelEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))
 			dowheelEvent(_thisObject, event);
 		BaseClass::wheelEvent(event);
 	}
-	#endif
+#endif
 	void keyPressEvent(QKeyEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))
@@ -94,31 +94,31 @@ protected:
 			docloseEvent(_thisObject, event);
 		BaseClass::closeEvent(event);
 	}
-	#ifndef QT_NO_CONTEXTMENU
+#ifndef QT_NO_CONTEXTMENU
 	void contextMenuEvent(QContextMenuEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))
 			docontextMenuEvent(_thisObject, event);
 		BaseClass::contextMenuEvent(event);
 	}
-	#endif
-	#ifndef QT_NO_TABLETEVENT
+#endif
+#ifndef QT_NO_TABLETEVENT
 	void tabletEvent(QTabletEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))
 			dotabletEvent(_thisObject, event);
 		BaseClass::tabletEvent(event);
 	}
-	#endif
-	#ifndef QT_NO_ACTION
+#endif
+#ifndef QT_NO_ACTION
 	void actionEvent(QActionEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))
 			doactionEvent(_thisObject, event);
 		BaseClass::actionEvent(event);
 	}
-	#endif
-	#ifndef QT_NO_DRAGANDDROP
+#endif
+#ifndef QT_NO_DRAGANDDROP
 	void dragEnterEvent(QDragEnterEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))
@@ -143,7 +143,7 @@ protected:
 			dodropEvent(_thisObject, event);
 		BaseClass::dropEvent(event);
 	}
-	#endif
+#endif
 	void showEvent(QShowEvent *event) override
 	{
 		//if (strcmp(_nameSpace, "Qt"))

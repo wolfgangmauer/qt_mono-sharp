@@ -7,6 +7,6 @@ GlueBoxLayout::GlueBoxLayout(MonoObject* thisObject, QBoxLayout::Direction dir, 
 
 GlueBoxLayout::~GlueBoxLayout()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }

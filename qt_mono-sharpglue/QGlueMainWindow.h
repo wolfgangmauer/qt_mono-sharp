@@ -11,5 +11,5 @@ public:
     GlueMainWindow(MonoObject* thisObject, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~GlueMainWindow();
 private:
-	MonoObject* _thisObject;
+	guint32 _thisObject;
 };

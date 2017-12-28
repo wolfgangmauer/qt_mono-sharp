@@ -8,6 +8,6 @@ GlueTableWidget::GlueTableWidget(MonoObject* thisObject, QWidget *parent) : QTab
 
 GlueTableWidget::~GlueTableWidget()
 {
-	doOnRawDispose(_thisObject);
+	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }

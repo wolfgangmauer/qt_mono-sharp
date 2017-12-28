@@ -1,20 +1,20 @@
-﻿#include "QGlueTableView.h"
+﻿#include "QGlueListView.h"
 
-GlueTableView::GlueTableView(MonoObject* thisObject, QWidget *parent) : QTableView(parent)
+GlueListView::GlueListView(MonoObject* thisObject, QWidget *parent) : QListView(parent)
 {
 	_thisObject = mono_gchandle_new(thisObject, TRUE);
 	_nameSpace = mono_class_get_namespace(mono_object_get_class (mono_gchandle_get_target(_thisObject)));
 
-	connect(this, &QTableView::pressed, this, &GlueTableView::onpressed);
+	connect(this, &QListView::pressed, this, &GlueListView::onpressed);
 }
 
-GlueTableView::~GlueTableView()
+GlueListView::~GlueListView()
 {
 	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }
 
-void GlueTableView::onpressed(const QModelIndex& index)
+void GlueListView::onpressed(const QModelIndex& index)
 {
 	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnPressed", 1);
