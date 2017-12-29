@@ -13,6 +13,8 @@ More Widgets/Functions can be implemented as needed.
   
   CheckBox
   
+  ComboBox
+  
   ToolButton
   
   CommandLinkButton
