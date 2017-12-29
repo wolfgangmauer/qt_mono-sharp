@@ -18,6 +18,12 @@
 #include "QGlueListWidget.h"
 #include "QGlueAction.h"
 #include "QGlueMenu.h"
+#include "QGlueMenuBar.h"
+#include "QGlueToolBar.h"
+#include "QGlueCheckBox.h"
+#include "QGluePushButton.h"
+#include "QGlueToolButton.h"
+#include "QGlueCommandLinkButton.h"
 
 #include <QtPlatformHeaders/qeglfsfunctions.h>
 
@@ -53,6 +59,16 @@ void qt_eglfs_loadkeymap(MonoString* keymap)
 	g_free(p);
 }
 
+QStyle* qt_application_style_get()
+{
+	return QApplication::style();
+}
+
+void qt_application_style_set(QStyle* style)
+{
+	QApplication::setStyle(style);
+}
+
 QWidget* qt_application_activewindow_get()
 {
 	return QApplication::activeWindow();
@@ -76,6 +92,53 @@ void qt_application_attribute_set(Qt::ApplicationAttribute attribute)
 QScreen* qt_guiapplication_primaryscreen_get()
 {
 	return QGuiApplication::primaryScreen();
+}
+
+QStyle* qt_stylefactory_create(MonoString* name)
+{
+	char* p = mono_string_to_utf8(name);
+	QStyle* retVal = QStyleFactory::create(p);
+	g_free(p);
+	return retVal;
+}
+
+extern "C" MonoClass* mono_class_bind_generic_parameters(MonoClass *klass, int type_argc, MonoType **types, bool is_dynamic);
+
+MonoArray* qt_stylefactory_keys()
+{
+	auto keyList = QStyleFactory::keys();
+	MonoArray* retVal = mono_array_new (mono_domain_get (), mono_get_string_class(), keyList.size());
+
+	int i = 0;
+	foreach (const QString &str, keyList)
+	{
+		printf("%s\n", str.toStdString().c_str());
+		auto _string = mono_string_new (mono_domain_get (), str.toStdString().c_str());
+		mono_array_set (retVal, gpointer, i, _string);
+		i++;
+	}
+	fflush(stdout);
+//
+//	MonoAssemblyName *aname = mono_assembly_name_new ("mscorlib");
+//	MonoAssembly* mscorlibAssembly = mono_assembly_loaded(aname);
+//	MonoImage* systemImage = mono_assembly_get_image(mscorlibAssembly);
+//	mono_assembly_name_free (aname);
+//
+//	MonoClass* list = mono_class_from_name(systemImage, "System.Collections.Generic", "List`1");
+//	MonoClass* strcls = mono_class_from_name(systemImage, "System", "String");
+//	printf("str class: %p\n", strcls);
+//	MonoType* strtype = mono_class_get_type(strcls);
+//	printf("str type: %p\n", strtype);
+//	MonoType* types[1];
+//	types[0] = strtype;
+//	list = mono_class_bind_generic_parameters(list, 1, types, false);
+//	printf("list[string] class: %p\n", list);
+//	MonoObject* obj = mono_object_new(mono_domain_get (), list);
+//	printf("list[string] created: %p\n", obj);
+	//char* p = mono_string_to_utf8(name);
+	//QStyle* retVal = QStyleFactory::create(p);
+	//g_free(p);
+	return retVal;
 }
 
 MonoString* qt_objectname_get(GlueObject* obj)
@@ -124,7 +187,7 @@ void qt_widget_delete(GlueWidget* widget)
 
 MonoString* qt_widget_windowtitle_get(QWidget* widget)
 {
-	return mono_string_new(mono_domain_get (), widget->windowTitle().toLatin1().data());
+	return mono_string_new(mono_domain_get (), widget->windowTitle().toStdString().c_str());
 }
 
 void qt_widget_windowtitle_set(QWidget* widget, MonoString* windowtitle)
@@ -256,9 +319,9 @@ void qt_widget_sizepolicy_set(QWidget* widget, QSizePolicy* sizePolicy)
 	widget->setSizePolicy(*sizePolicy);
 }
 
-void qt_widget_sizepolicyhv_set(QWidget* widget, uint32_t horizontal, uint32_t vertical)
+void qt_widget_sizepolicyhv_set(QWidget* widget, QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)
 {
-	widget->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
+	widget->setSizePolicy(horizontal, vertical);
 }
 
 QSize* qt_widget_minimumsize_get(QWidget* widget)
@@ -323,34 +386,44 @@ void qt_widget_maximumheight_set(QWidget* widget, int max)
 	return widget->setMaximumHeight(max);
 }
 
-uint32_t qt_widget_windowmodality_get(QWidget* widget)
+Qt::WindowModality qt_widget_windowmodality_get(QWidget* widget)
 {
-	return (uint32_t)widget->windowModality();
+	return widget->windowModality();
 }
 
-void qt_widget_windowmodality_set(QWidget* widget, uint32_t windowModality)
+void qt_widget_windowmodality_set(QWidget* widget, Qt::WindowModality windowModality)
 {
-	widget->setWindowModality((Qt::WindowModality)windowModality);
+	widget->setWindowModality(windowModality);
 }
 
-uint32_t qt_widget_focuspolicy_get(QWidget* widget)
+Qt::LayoutDirection qt_widget_layoutdirection_get(QWidget* widget)
 {
-	return (uint32_t)widget->focusPolicy();
+	return widget->layoutDirection();
 }
 
-void qt_widget_focuspolicy_set(QWidget* widget, uint32_t focusPolicy)
+void qt_widget_layoutdirection_set(QWidget* widget, Qt::LayoutDirection layoutdirection)
 {
-	widget->setFocusPolicy((Qt::FocusPolicy)focusPolicy);
+	widget->setLayoutDirection(layoutdirection);
 }
 
-uint qt_widget_contextmenupolicy_get(QWidget* widget)
+Qt::FocusPolicy qt_widget_focuspolicy_get(QWidget* widget)
 {
-	return (uint32_t)widget->contextMenuPolicy();
+	return widget->focusPolicy();
 }
 
-void qt_widget_contextmenupolicy_set(QWidget* widget, uint32_t contextMenuPolicy)
+void qt_widget_focuspolicy_set(QWidget* widget, Qt::FocusPolicy focusPolicy)
 {
-	widget->setContextMenuPolicy((Qt::ContextMenuPolicy)contextMenuPolicy);
+	widget->setFocusPolicy(focusPolicy);
+}
+
+Qt::ContextMenuPolicy qt_widget_contextmenupolicy_get(QWidget* widget)
+{
+	return widget->contextMenuPolicy();
+}
+
+void qt_widget_contextmenupolicy_set(QWidget* widget, Qt::ContextMenuPolicy contextMenuPolicy)
+{
+	widget->setContextMenuPolicy(contextMenuPolicy);
 }
 
 bool qt_widget_autofillbackground_get(QWidget* widget)
@@ -391,6 +464,16 @@ QRect* qt_widget_geometry_get(QWidget* widget)
 void qt_widget_geometry_set(QWidget* widget, QRect* rect)
 {
 	widget->setGeometry(*rect);
+}
+
+bool qt_widget_enabled_get(QWidget* widget)
+{
+	return widget->isEnabled();
+}
+
+void qt_widget_enabled_set(QWidget* widget, bool enabled)
+{
+	widget->setEnabled(enabled);
 }
 
 void qt_widget_updategeometry(QWidget* widget)
@@ -538,6 +621,19 @@ void qt_progressbar_value_set(GlueProgressBar* widget, int value)
 	widget->setValue(value);
 }
 
+MonoString* qt_progressbar_format_get(GlueProgressBar* widget)
+{
+	return mono_string_new(mono_domain_get (), widget->format().toStdString().c_str());
+}
+
+void qt_progressbar_format_set(GlueProgressBar* widget, MonoString* format)
+{
+	char* p = mono_string_to_utf8(format);
+	widget->setFormat(p);
+	g_free(p);
+}
+
+
 int qt_progressbar_minimum_get(GlueProgressBar* widget)
 {
 	return widget->minimum();
@@ -579,7 +675,7 @@ GlueLabel* qt_label_new_with_text(MonoObject* thisObject, MonoString* text, QWid
 
 MonoString* qt_label_text_get(GlueLabel* label)
 {
-	return mono_string_new(mono_domain_get (), label->text().toLatin1().data());
+	return mono_string_new(mono_domain_get (), label->text().toStdString().c_str());
 }
 
 void qt_label_text_set(GlueLabel* label, MonoString* text)
@@ -587,6 +683,11 @@ void qt_label_text_set(GlueLabel* label, MonoString* text)
 	char* p = mono_string_to_utf8(text);
 	label->setText(p);
 	g_free(p);
+}
+
+void qt_label_clear(GlueLabel* label)
+{
+	label->clear();
 }
 
 const QPixmap* qt_label_pixmap_get(GlueLabel* label)
@@ -637,6 +738,113 @@ Qt::TextFormat qt_label_textformat_get(GlueLabel* label)
 void qt_label_textformat_set(GlueLabel* label, Qt::TextFormat textFormat)
 {
 	label->setTextFormat(textFormat);
+}
+
+bool qt_label_scaledcontents_get(GlueLabel* label)
+{
+	return label->hasScaledContents();
+}
+
+void qt_label_scaledcontents_set(GlueLabel* label, bool scaled)
+{
+	label->setScaledContents(scaled);
+}
+
+bool qt_label_wordwrap_get(GlueLabel* label)
+{
+	return label->wordWrap();
+}
+
+void qt_label_wordwrap_set(GlueLabel* label, bool wrap)
+{
+	label->setWordWrap(wrap);
+}
+
+int qt_label_margin_get(GlueLabel* label)
+{
+	return label->margin();
+}
+
+void qt_label_margin_set(GlueLabel* label, int margin)
+{
+	label->setMargin(margin);
+}
+
+GlueCheckBox* qt_checkbox_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueCheckBox(thisObject, parent);
+}
+
+GlueCheckBox* qt_checkbox_new_with_text(MonoObject* thisObject, MonoString* text, QWidget* parent)
+{
+	GlueCheckBox* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new GlueCheckBox(thisObject, p, parent);
+	g_free(p);
+	return retVal;
+}
+
+QSize* qt_checkbox_sizehint_get(GlueCheckBox* checkbox)
+{
+	return new QSize(checkbox->sizeHint());
+}
+
+bool qt_checkbox_tristate_get(GlueCheckBox* checkbox)
+{
+	return checkbox->isTristate();
+}
+
+void qt_checkbox_tristate_set(GlueCheckBox* checkbox, bool tristate)
+{
+	return checkbox->setTristate(tristate);
+}
+
+GluePushButton* qt_pushbutton_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GluePushButton(thisObject, parent);
+}
+
+GluePushButton* qt_pushbutton_new_with_text(MonoObject* thisObject, MonoString* text, QWidget* parent)
+{
+	GluePushButton* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new GluePushButton(thisObject, p, parent);
+	g_free(p);
+	return retVal;
+}
+
+QSize* qt_pushbutton_sizehint_get(GluePushButton* button)
+{
+	return new QSize(button->sizeHint());
+}
+
+GlueCommandLinkButton* qt_commandlinkbutton_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueCommandLinkButton(thisObject, parent);
+}
+
+GlueCommandLinkButton* qt_commandlinkbutton_new_with_text(MonoObject* thisObject, MonoString* text, QWidget* parent)
+{
+	GlueCommandLinkButton* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = new GlueCommandLinkButton(thisObject, p, parent);
+	g_free(p);
+	return retVal;
+}
+
+QSize* qt_commandlinkbutton_sizehint_get(GlueCommandLinkButton* button)
+{
+	return new QSize(button->sizeHint());
+}
+
+GlueToolButton* qt_toolbutton_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueToolButton(thisObject, parent);
+}
+
+QSize* qt_toolbutton_sizehint_get(GlueToolButton* button)
+{
+	return new QSize(button->sizeHint());
 }
 
 GlueProgressBar* qt_progressbar_new(MonoObject* thisObject, QWidget* parent)
@@ -720,7 +928,7 @@ QFont* qt_font_new_with_params(MonoString* fontfamily, int pointSize, int weight
 
 MonoString* qt_font_family_get(QFont* font)
 {
-	return mono_string_new(mono_domain_get (), font->family().toLatin1().data());
+	return mono_string_new(mono_domain_get (), font->family().toStdString().c_str());
 }
 
 void qt_font_family_set(QFont* obj, MonoString* fontfamily)
@@ -743,6 +951,16 @@ void qt_font_pointsize_set(QFont* obj, int pointsize)
 GlueMainWindow* qt_mainwindow_new(MonoObject* obj, QWidget* parent, Qt::WindowFlags f)
 {
 	return new GlueMainWindow(obj, parent, f);
+}
+
+QMenuBar* qt_mainwindow_menubar_get(GlueMainWindow* mainwindow)
+{
+	return mainwindow->menuBar();
+}
+
+void qt_mainwindow_menubar_set(GlueMainWindow* mainwindow, GlueMenuBar* menubar)
+{
+	mainwindow->setMenuBar(menubar);
 }
 
 QSizePolicy* qt_sizepolicy_new ()
@@ -1273,6 +1491,38 @@ void qt_itemview_autoscrollmargin_set(QAbstractItemView* abstractItemView, int m
 	return abstractItemView->setAutoScrollMargin(margin);
 }
 
+MonoString* qt_abstractbutton_text_get(QAbstractButton* widget)
+{
+	return mono_string_new(mono_domain_get (), widget->text().toStdString().c_str());
+}
+
+void qt_abstractbutton_text_set(QAbstractButton* widget, MonoString* text)
+{
+	char* p = mono_string_to_utf8(text);
+	widget->setText(p);
+	g_free(p);
+}
+
+QIcon* qt_abstractbutton_icon_get(QAbstractButton* widget)
+{
+	return new QIcon(widget->icon());
+}
+
+void qt_abstractbutton_icon_set(QAbstractButton* widget, QIcon* icon)
+{
+	widget->setIcon(*icon);
+}
+
+QSize* qt_abstractbutton_iconsize_get(QAbstractButton* widget)
+{
+	return new QSize(widget->iconSize());
+}
+
+void qt_abstractbutton_iconsize_set(QAbstractButton* widget, QSize* iconsize)
+{
+	widget->setIconSize(*iconsize);
+}
+
 void qt_tableview_resizerowtocontents(GlueTableView* tableView, int row)
 {
 	tableView->resizeRowToContents(row);
@@ -1703,9 +1953,48 @@ void qt_menu_activeaction_set(GlueMenu* menu, GlueAction* action)
 	return menu->setActiveAction(action);
 }
 
+GlueMenuBar* qt_menubar_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueMenuBar(thisObject, parent);
+}
+
+void qt_menubar_delete(GlueMenuBar* menuBar)
+{
+	delete menuBar;
+}
+
+QAction* qt_menubar_action_text_add(GlueMenuBar* menubar, MonoString* text)
+{
+	QAction* retVal;
+	char* p = mono_string_to_utf8(text);
+	retVal = menubar->addAction(p);
+	g_free(p);
+	return retVal;
+}
+
+QAction* qt_menubar_activeaction_get(GlueMenuBar* menu)
+{
+	return menu->activeAction();
+}
+
+void qt_menubar_activeaction_set(GlueMenuBar* menu, GlueAction* action)
+{
+	return menu->setActiveAction(action);
+}
+
+GlueToolBar* qt_toolbar_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueToolBar(thisObject, parent);
+}
+
 GlueAction* qt_action_new(MonoObject* thisObject, QObject* parent)
 {
 	return new GlueAction(thisObject, parent);
+}
+
+void qt_action_delete(GlueAction* action)
+{
+	delete action;
 }
 
 GlueAction* qt_action_text_new(MonoObject* thisObject, MonoString* text, QObject* parent)
@@ -1737,11 +2026,16 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Application::qt_application_events_process", reinterpret_cast<void*>(qt_application_events_process));
 	mono_add_internal_call ("Qt.Application::qt_application_desktop_get", reinterpret_cast<void*>(qt_application_desktop_get));
 	mono_add_internal_call ("Qt.Application::qt_application_activewindow_get", reinterpret_cast<void*>(qt_application_activewindow_get));
+	mono_add_internal_call ("Qt.Application::qt_application_style_get", reinterpret_cast<void*>(qt_application_style_get));
+	mono_add_internal_call ("Qt.Application::qt_application_style_set", reinterpret_cast<void*>(qt_application_style_set));
 
 	mono_add_internal_call ("Qt.GuiApplication::qt_guiapplication_primaryscreen_get", reinterpret_cast<void*>(qt_guiapplication_primaryscreen_get));
 
 	mono_add_internal_call ("Qt.CoreApplication::qt_application_attribute_set", reinterpret_cast<void*>(qt_application_attribute_set));
 	mono_add_internal_call ("Qt.CoreApplication::qt_coreapplication_quit", reinterpret_cast<void*>(qt_coreapplication_quit));
+
+	mono_add_internal_call ("Qt.StyleFactory::qt_stylefactory_create", reinterpret_cast<void*>(qt_stylefactory_create));
+	mono_add_internal_call ("Qt.StyleFactory::qt_stylefactory_keys", reinterpret_cast<void*>(qt_stylefactory_keys));
 
 	mono_add_internal_call ("Qt.EglFSFunctions::qt_eglfs_loadkeymap", reinterpret_cast<void*>(qt_eglfs_loadkeymap));
 
@@ -1749,6 +2043,8 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.UiLoader::qt_uiloader_load", reinterpret_cast<void*>(qt_uiloader_load));
 
 	mono_add_internal_call ("Qt.MainWindow::qt_mainwindow_new", reinterpret_cast<void*>(qt_mainwindow_new));
+	mono_add_internal_call ("Qt.MainWindow::qt_mainwindow_menubar_get", reinterpret_cast<void*>(qt_mainwindow_menubar_get));
+	mono_add_internal_call ("Qt.MainWindow::qt_mainwindow_menubar_set", reinterpret_cast<void*>(qt_mainwindow_menubar_set));
 
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_new", reinterpret_cast<void*>(qt_dialog_new));
 	mono_add_internal_call ("Qt.Dialog::qt_dialog_delete", reinterpret_cast<void*>(qt_dialog_delete));
@@ -1810,12 +2106,20 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_autoscrollmargin_get", reinterpret_cast<void*>(qt_itemview_autoscrollmargin_get));
 	mono_add_internal_call ("Qt.AbstractItemView::qt_itemview_autoscrollmargin_set", reinterpret_cast<void*>(qt_itemview_autoscrollmargin_set));
 
+	mono_add_internal_call ("Qt.AbstractButton::qt_abstractbutton_text_get", reinterpret_cast<void*>(qt_abstractbutton_text_get));
+	mono_add_internal_call ("Qt.AbstractButton::qt_abstractbutton_text_set", reinterpret_cast<void*>(qt_abstractbutton_text_set));
+	mono_add_internal_call ("Qt.AbstractButton::qt_abstractbutton_icon_get", reinterpret_cast<void*>(qt_abstractbutton_icon_get));
+	mono_add_internal_call ("Qt.AbstractButton::qt_abstractbutton_icon_set", reinterpret_cast<void*>(qt_abstractbutton_icon_set));
+	mono_add_internal_call ("Qt.AbstractButton::qt_abstractbutton_iconsize_get", reinterpret_cast<void*>(qt_abstractbutton_iconsize_get));
+	mono_add_internal_call ("Qt.AbstractButton::qt_abstractbutton_iconsize_set", reinterpret_cast<void*>(qt_abstractbutton_iconsize_set));
+
 	mono_add_internal_call ("Qt.StandardItem::qt_standarditem_new", reinterpret_cast<void*>(qt_standarditem_new));
 
 	mono_add_internal_call ("Qt.Label::qt_label_new", reinterpret_cast<void*>(qt_label_new));
 	mono_add_internal_call ("Qt.Label::qt_label_new_with_text", reinterpret_cast<void*>(qt_label_new_with_text));
 	mono_add_internal_call ("Qt.Label::qt_label_text_get", reinterpret_cast<void*>(qt_label_text_get));
 	mono_add_internal_call ("Qt.Label::qt_label_text_set", reinterpret_cast<void*>(qt_label_text_set));
+	mono_add_internal_call ("Qt.Label::qt_label_clear", reinterpret_cast<void*>(qt_label_clear));
 	mono_add_internal_call ("Qt.Label::qt_label_pixmap_get", reinterpret_cast<void*>(qt_label_pixmap_get));
 	mono_add_internal_call ("Qt.Label::qt_label_pixmap_set", reinterpret_cast<void*>(qt_label_pixmap_set));
 	mono_add_internal_call ("Qt.Label::qt_label_alignment_get", reinterpret_cast<void*>(qt_label_alignment_get));
@@ -1827,6 +2131,29 @@ extern "C" void qt_application_monointernal_init()
 
 	mono_add_internal_call ("Qt.Label::qt_label_textformat_get", reinterpret_cast<void*>(qt_label_textformat_get));
 	mono_add_internal_call ("Qt.Label::qt_label_textformat_set", reinterpret_cast<void*>(qt_label_textformat_set));
+	mono_add_internal_call ("Qt.Label::qt_label_scaledcontents_get", reinterpret_cast<void*>(qt_label_scaledcontents_get));
+	mono_add_internal_call ("Qt.Label::qt_label_scaledcontents_set", reinterpret_cast<void*>(qt_label_scaledcontents_set));
+	mono_add_internal_call ("Qt.Label::qt_label_wordwrap_get", reinterpret_cast<void*>(qt_label_wordwrap_get));
+	mono_add_internal_call ("Qt.Label::qt_label_wordwrap_set", reinterpret_cast<void*>(qt_label_wordwrap_set));
+	mono_add_internal_call ("Qt.Label::qt_label_margin_get", reinterpret_cast<void*>(qt_label_margin_get));
+	mono_add_internal_call ("Qt.Label::qt_label_margin_set", reinterpret_cast<void*>(qt_label_margin_set));
+
+	mono_add_internal_call ("Qt.CheckBox::qt_checkbox_new", reinterpret_cast<void*>(qt_checkbox_new));
+	mono_add_internal_call ("Qt.CheckBox::qt_checkbox_new_with_text", reinterpret_cast<void*>(qt_checkbox_new_with_text));
+	mono_add_internal_call ("Qt.CheckBox::qt_checkbox_sizehint_get", reinterpret_cast<void*>(qt_checkbox_sizehint_get));
+	mono_add_internal_call ("Qt.CheckBox::qt_checkbox_tristate_get", reinterpret_cast<void*>(qt_checkbox_tristate_get));
+	mono_add_internal_call ("Qt.CheckBox::qt_checkbox_tristate_set", reinterpret_cast<void*>(qt_checkbox_tristate_set));
+
+	mono_add_internal_call ("Qt.PushButton::qt_pushbutton_new", reinterpret_cast<void*>(qt_pushbutton_new));
+	mono_add_internal_call ("Qt.PushButton::qt_pushbutton_new_with_text", reinterpret_cast<void*>(qt_pushbutton_new_with_text));
+	mono_add_internal_call ("Qt.PushButton::qt_pushbutton_sizehint_get", reinterpret_cast<void*>(qt_pushbutton_sizehint_get));
+
+	mono_add_internal_call ("Qt.CommandLinkButton::qt_commandlinkbutton_new", reinterpret_cast<void*>(qt_commandlinkbutton_new));
+	mono_add_internal_call ("Qt.CommandLinkButton::qt_commandlinkbutton_new_with_text", reinterpret_cast<void*>(qt_commandlinkbutton_new_with_text));
+	mono_add_internal_call ("Qt.CommandLinkButton::qt_commandlinkbutton_sizehint_get", reinterpret_cast<void*>(qt_commandlinkbutton_sizehint_get));
+
+	mono_add_internal_call ("Qt.ToolButton::qt_toolbutton_new", reinterpret_cast<void*>(qt_toolbutton_new));
+	mono_add_internal_call ("Qt.ToolButton::qt_toolbutton_sizehint_get", reinterpret_cast<void*>(qt_toolbutton_sizehint_get));
 
 	mono_add_internal_call ("Qt.Frame::qt_frame_new", reinterpret_cast<void*>(qt_frame_new));
 	mono_add_internal_call ("Qt.Frame::qt_frame_shape_get", reinterpret_cast<void*>(qt_frame_shape_get));
@@ -1840,6 +2167,8 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_new", reinterpret_cast<void*>(qt_progressbar_new));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_value_get", reinterpret_cast<void*>(qt_progressbar_value_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_value_set", reinterpret_cast<void*>(qt_progressbar_value_set));
+	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_format_get", reinterpret_cast<void*>(qt_progressbar_format_get));
+	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_format_set", reinterpret_cast<void*>(qt_progressbar_format_set));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_minimum_get", reinterpret_cast<void*>(qt_progressbar_minimum_get));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_minimum_set", reinterpret_cast<void*>(qt_progressbar_minimum_set));
 	mono_add_internal_call ("Qt.ProgressBar::qt_progressbar_maximum_get", reinterpret_cast<void*>(qt_progressbar_maximum_get));
@@ -1980,6 +2309,8 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Widget::qt_widget_updategeometry", reinterpret_cast<void*>(qt_widget_updategeometry));
 	mono_add_internal_call ("Qt.Widget::qt_widget_geometry_get", reinterpret_cast<void*>(qt_widget_geometry_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_geometry_set", reinterpret_cast<void*>(qt_widget_geometry_set));
+	mono_add_internal_call ("Qt.Widget::qt_widget_enabled_get", reinterpret_cast<void*>(qt_widget_enabled_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_enabled_set", reinterpret_cast<void*>(qt_widget_enabled_set));
 
 	mono_add_internal_call ("Qt.Widget::qt_widget_stylesheet_set", reinterpret_cast<void*>(qt_widget_stylesheet_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_fixedsize_set", reinterpret_cast<void*>(qt_widget_fixedsize_set));
@@ -2024,6 +2355,10 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Widget::qt_widget_focuspolicy_set", reinterpret_cast<void*>(qt_widget_focuspolicy_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_windowmodality_get", reinterpret_cast<void*>(qt_widget_windowmodality_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_windowmodality_set", reinterpret_cast<void*>(qt_widget_windowmodality_set));
+
+	mono_add_internal_call ("Qt.Widget::qt_widget_layoutdirection_get", reinterpret_cast<void*>(qt_widget_layoutdirection_get));
+	mono_add_internal_call ("Qt.Widget::qt_widget_layoutdirection_set", reinterpret_cast<void*>(qt_widget_layoutdirection_set));
+
 	mono_add_internal_call ("Qt.Widget::qt_widget_contextmenupolicy_get", reinterpret_cast<void*>(qt_widget_contextmenupolicy_get));
 	mono_add_internal_call ("Qt.Widget::qt_widget_contextmenupolicy_set", reinterpret_cast<void*>(qt_widget_contextmenupolicy_set));
 	mono_add_internal_call ("Qt.Widget::qt_widget_autofillbackground_get", reinterpret_cast<void*>(qt_widget_autofillbackground_get));
@@ -2101,7 +2436,16 @@ extern "C" void qt_application_monointernal_init()
 	mono_add_internal_call ("Qt.Menu::qt_menu_activeaction_get", reinterpret_cast<void*>(qt_menu_activeaction_get));
 	mono_add_internal_call ("Qt.Menu::qt_menu_activeaction_set", reinterpret_cast<void*>(qt_menu_activeaction_set));
 
+	mono_add_internal_call ("Qt.MenuBar::qt_menubar_new", reinterpret_cast<void*>(qt_menubar_new));
+	mono_add_internal_call ("Qt.MenuBar::qt_menubar_delete", reinterpret_cast<void*>(qt_menubar_delete));
+	mono_add_internal_call ("Qt.MenuBar::qt_menubar_action_text_add", reinterpret_cast<void*>(qt_menubar_action_text_add));
+	mono_add_internal_call ("Qt.MenuBar::qt_menubar_activeaction_get", reinterpret_cast<void*>(qt_menubar_activeaction_get));
+	mono_add_internal_call ("Qt.MenuBar::qt_menubar_activeaction_set", reinterpret_cast<void*>(qt_menubar_activeaction_set));
+
+	mono_add_internal_call ("Qt.ToolBar::qt_toolbar_new", reinterpret_cast<void*>(qt_toolbar_new));
+
 	mono_add_internal_call ("Qt.Action::qt_action_new", reinterpret_cast<void*>(qt_action_new));
+	mono_add_internal_call ("Qt.Action::qt_action_delete", reinterpret_cast<void*>(qt_action_delete));
 	mono_add_internal_call ("Qt.Action::qt_action_text_new", reinterpret_cast<void*>(qt_action_text_new));
 	mono_add_internal_call ("Qt.Action::qt_action_text_get", reinterpret_cast<void*>(qt_action_text_get));
 	mono_add_internal_call ("Qt.Action::qt_action_text_set", reinterpret_cast<void*>(qt_action_text_set));

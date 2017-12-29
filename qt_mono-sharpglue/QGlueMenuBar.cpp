@@ -1,34 +1,25 @@
-﻿#include "QGlueMenu.h"
+﻿#include "QGlueMenuBar.h"
 #include "QGlueWidget.h"
 
-GlueMenu::GlueMenu(MonoObject* thisObject, QWidget* parent)
-	: QMenu(parent)
+GlueMenuBar::GlueMenuBar(MonoObject* thisObject, QWidget* parent)
+	: QMenuBar(parent)
 {
 	_thisObject = mono_gchandle_new(thisObject, TRUE);
 	_nameSpace = mono_class_get_namespace(mono_object_get_class (mono_gchandle_get_target(_thisObject)));
-	connect(this, &QMenu::triggered, this, &GlueMenu::ontriggered);
-	connect(this, &QMenu::hovered, this, &GlueMenu::onhovered);
+	connect(this, &QMenuBar::triggered, this, &GlueMenuBar::ontriggered);
+	connect(this, &QMenuBar::hovered, this, &GlueMenuBar::onhovered);
 }
 
-GlueMenu::GlueMenu(MonoObject* thisObject, const QString& text, QWidget* parent)
-	: QMenu(text, parent)
+GlueMenuBar::~GlueMenuBar()
 {
-	_thisObject = mono_gchandle_new(thisObject, TRUE);
-	_nameSpace = mono_class_get_namespace(mono_object_get_class (mono_gchandle_get_target(_thisObject)));
-	connect(this, &QMenu::triggered, this, &GlueMenu::ontriggered);
-	connect(this, &QMenu::hovered, this, &GlueMenu::onhovered);
-}
-
-GlueMenu::~GlueMenu()
-{
-	disconnect(this, &QMenu::hovered, this, &GlueMenu::onhovered);
-	disconnect(this, &QMenu::triggered, this, &GlueMenu::ontriggered);
+	disconnect(this, &QMenuBar::hovered, this, &GlueMenuBar::onhovered);
+	disconnect(this, &QMenuBar::triggered, this, &GlueMenuBar::ontriggered);
 
 	doOnRawDelete(_thisObject);
 	mono_gchandle_free (_thisObject); 
 }
 
-void GlueMenu::ontriggered(QAction *action)
+void GlueMenuBar::ontriggered(QAction *action)
 {
 	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnTriggered", 1);
@@ -46,7 +37,7 @@ void GlueMenu::ontriggered(QAction *action)
 	}
 }
 
-void GlueMenu::onhovered(QAction *action)
+void GlueMenuBar::onhovered(QAction *action)
 {
 	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnHovered", 1);

@@ -30,7 +30,7 @@ bool doresizeEvent(guint32 thisObject, QResizeEvent* event);
 bool docloseEvent(guint32 thisObject, QCloseEvent* event);
 
 #ifndef QT_NO_CONTEXTMENU
-void docontextMenuEvent(guint32 thisObject, QContextMenuEvent *event);
+bool docontextMenuEvent(guint32 thisObject, QContextMenuEvent *event);
 #endif
 #ifndef QT_NO_TABLETEVENT
 void dotabletEvent(guint32 thisObject, QTabletEvent *event);

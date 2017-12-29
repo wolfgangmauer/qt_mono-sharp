@@ -9,6 +9,12 @@ class GlueProgressBar : public QProgressBar
 public:
     GlueProgressBar(MonoObject* thisObject, QWidget* parent = 0);
     ~GlueProgressBar();
+
+private:
+   	void onpressed();
+ 	void onreleased();
+ 	void onclicked(bool checked);
+ 	void ontoggled(bool checked);
 private:
     guint32 _thisObject;
 };

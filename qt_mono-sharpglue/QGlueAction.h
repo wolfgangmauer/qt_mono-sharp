@@ -11,6 +11,7 @@ public:
 
 private:
 	void ontriggered(bool checked);
+	void onhovered();
 
 private:
     guint32 _thisObject;

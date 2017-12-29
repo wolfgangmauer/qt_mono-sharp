@@ -511,7 +511,7 @@ bool docloseEvent(guint32 _thisObject, QCloseEvent* event)
 }
 
 #ifndef QT_NO_CONTEXTMENU
-void docontextMenuEvent(guint32 _thisObject, QContextMenuEvent *event)
+bool docontextMenuEvent(guint32 _thisObject, QContextMenuEvent *event)
 {
 	auto klass = mono_object_get_class (mono_gchandle_get_target(_thisObject));
 	auto eventMethod = mono_class_get_method_from_name_recursive(klass, "OnContextMenu", 1);
@@ -521,27 +521,30 @@ void docontextMenuEvent(guint32 _thisObject, QContextMenuEvent *event)
 		MonoClass* eventArgs = mono_class_from_name (image, "Qt", "ContextMenuEvent");
 		if (eventArgs)
 		{
+			void *args [1];
+			args[0] = &event;
 			auto result = mono_object_new (mono_object_get_domain(mono_gchandle_get_target(_thisObject)), eventArgs);
-			void *args [6];
-			int type = event->type();
-//			int key = event->key();
-//			int modifiers = (int)event->modifiers();
-//			MonoString* text = mono_string_new(mono_domain_get (), event->text().toLatin1().data());
-//			bool autoRepeat = event->isAutoRepeat();
-//			int count = event->count();
-			args[0] = &type;
-//			args[1] = &key;
-//			args[2] = &modifiers;
-//			args[3] = text;
-//			args[4] = &autoRepeat;
-//			args[5] = &count;
-			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 6);
+			MonoMethod* ctor = mono_class_get_method_from_name (eventArgs, ".ctor", 1);
+			mono_thread_attach (mono_get_root_domain ());
 			mono_runtime_invoke (ctor, result, args, NULL);
+
 			args[0] = result;
 			MonoMethod* method = mono_object_get_virtual_method (mono_gchandle_get_target(_thisObject), eventMethod);
-			event->setAccepted(*(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL)));
+			mono_thread_attach (mono_get_root_domain ());
+			return *(bool*)mono_object_unbox(mono_runtime_invoke(method, mono_gchandle_get_target(_thisObject), args, NULL));
+		}
+		else
+		{
+			printf("Can't create Qt.ContextMenuEvent\n");
+			fflush(stdout);
 		}
 	}
+	else
+	{
+		printf("Cant find OnContextMenu\n");
+		fflush(stdout);
+	}
+	return false;
 }
 #endif
 #ifndef QT_NO_TABLETEVENT

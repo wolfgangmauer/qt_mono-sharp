@@ -11,7 +11,9 @@ public:
     GlueMenu(MonoObject* thisObject, const QString& text, QWidget* parent);
     ~GlueMenu();
 private:
+	void ontriggered(QAction *action);
+ 	void onhovered(QAction *action);
+
+private:
     guint32 _thisObject;
 };
-
-
