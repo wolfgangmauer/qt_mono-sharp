@@ -9,6 +9,14 @@ More Widgets/Functions can be implemented as needed.
 
 ### Namespace Qt
 
+  PushButton
+  
+  CheckBox
+  
+  ToolButton
+  
+  CommandLinkButton
+
   Rect
   
   Size
