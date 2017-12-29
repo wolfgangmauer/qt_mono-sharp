@@ -125,6 +125,8 @@
     <Compile Include="QPushButton.cs" />
     <Compile Include="QToolButton.cs" />
     <Compile Include="QCommandLinkButton.cs" />
+    <Compile Include="QComboBox.cs" />
+    <Compile Include="QAbstractItemModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

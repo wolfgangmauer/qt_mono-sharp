@@ -3,6 +3,37 @@ using System.Xml.Serialization;
 
 namespace Qt
 {
+	public enum ItemDataRole {
+		DisplayRole = 0,
+		DecorationRole = 1,
+		EditRole = 2,
+		ToolTipRole = 3,
+		StatusTipRole = 4,
+		WhatsThisRole = 5,
+		// Metadata
+		FontRole = 6,
+		TextAlignmentRole = 7,
+		BackgroundColorRole = 8,
+		BackgroundRole = 8,
+		TextColorRole = 9,
+		ForegroundRole = 9,
+		CheckStateRole = 10,
+		// Accessibility
+		AccessibleTextRole = 11,
+		AccessibleDescriptionRole = 12,
+		// More general purpose
+		SizeHintRole = 13,
+		InitialSortOrderRole = 14,
+		// Internal UiLib roles. Start worrying when public roles go that high.
+		DisplayPropertyRole = 27,
+		DecorationPropertyRole = 28,
+		ToolTipPropertyRole = 29,
+		StatusTipPropertyRole = 30,
+		WhatsThisPropertyRole = 31,
+		// Reserved
+		UserRole = 0x0100
+	}
+
 	[Flags]
 	public enum TextInteractionFlag {
 		NoTextInteraction         = 0,
