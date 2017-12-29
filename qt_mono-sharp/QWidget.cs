@@ -64,7 +64,8 @@ namespace Qt
 			// free managed resources
 			if (disposing)
 			{
-				if (Handle != IntPtr.Zero) {
+				if (Handle != IntPtr.Zero)
+				{
 					qt_widget_delete (Handle);
 					Raw = IntPtr.Zero;
 				}
@@ -98,15 +99,28 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern uint qt_widget_windowmodality_get (IntPtr raw);
+		protected static extern LayoutDirection qt_widget_layoutdirection_get (IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_windowmodality_set (IntPtr raw, uint windowModality);
-		public WindowModality WindowModality {
+		protected static extern void qt_widget_layoutdirection_set (IntPtr raw, LayoutDirection layoutDirection);
+		public LayoutDirection LayoutDirection {
 			get {
-				return (WindowModality)qt_widget_windowmodality_get (Handle);
+				return qt_widget_layoutdirection_get (Handle);
 			}
 			set {
-				qt_widget_windowmodality_set (Handle, (uint)value);
+				qt_widget_layoutdirection_set (Handle, value);
+			}
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern WindowModality qt_widget_windowmodality_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_windowmodality_set (IntPtr raw, WindowModality windowModality);
+		public WindowModality WindowModality {
+			get {
+				return qt_widget_windowmodality_get (Handle);
+			}
+			set {
+				qt_widget_windowmodality_set (Handle, value);
 			}
 		}
 
@@ -126,7 +140,6 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_hide (IntPtr raw);
-
 		public void Hide ()
 		{
 			qt_widget_hide (Handle);
@@ -134,7 +147,6 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_widget_resize (IntPtr raw, int w, int h);
-
 		public void Resize (int w, int h)
 		{
 			qt_widget_resize (Handle, w, h);
@@ -286,28 +298,28 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern uint qt_widget_focuspolicy_get (IntPtr raw);
+		protected static extern FocusPolicy qt_widget_focuspolicy_get (IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_focuspolicy_set (IntPtr raw, uint focusPolicy);
+		protected static extern void qt_widget_focuspolicy_set (IntPtr raw, FocusPolicy focusPolicy);
 		public FocusPolicy FocusPolicy {
 			get {
-				return (FocusPolicy)qt_widget_focuspolicy_get (Handle);
+				return qt_widget_focuspolicy_get (Handle);
 			}
 			set {
-				qt_widget_focuspolicy_set (Handle, (uint)value);
+				qt_widget_focuspolicy_set (Handle, value);
 			}
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern uint qt_widget_contextmenupolicy_get (IntPtr raw);
+		protected static extern ContextMenuPolicy qt_widget_contextmenupolicy_get (IntPtr raw);
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern void qt_widget_contextmenupolicy_set (IntPtr raw, uint contextMenuPolicy);
+		protected static extern void qt_widget_contextmenupolicy_set (IntPtr raw, ContextMenuPolicy contextMenuPolicy);
 		public ContextMenuPolicy ContextMenuPolicy {
 			get {
-				return (ContextMenuPolicy)qt_widget_contextmenupolicy_get (Handle);
+				return qt_widget_contextmenupolicy_get (Handle);
 			}
 			set {
-				qt_widget_contextmenupolicy_set (Handle, (uint)value);
+				qt_widget_contextmenupolicy_set (Handle, value);
 			}
 		}
 
@@ -425,6 +437,19 @@ namespace Qt
 			}
 			set {
 				qt_widget_geometry_set (Handle, value.Handle);
+			}
+		}
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern bool qt_widget_enabled_get (IntPtr raw);
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		protected static extern void qt_widget_enabled_set (IntPtr raw, bool enabled);
+		public bool Enabled {
+			get {
+				return qt_widget_enabled_get (Handle);
+			}
+			set {
+				qt_widget_enabled_set (Handle, value);
 			}
 		}
 

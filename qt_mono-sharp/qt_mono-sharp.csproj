@@ -47,6 +47,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;</DefineConstants>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\VuDuo2Backend\base.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <Optimize>true</Optimize>
@@ -116,6 +118,13 @@
     <Compile Include="QPainter.cs" />
     <Compile Include="QStandardItemModel.cs" />
     <Compile Include="QListWidgetItem.cs" />
+    <Compile Include="QMenuBar.cs" />
+    <Compile Include="QToolBar.cs" />
+    <Compile Include="QCheckBox.cs" />
+    <Compile Include="QAbstractButton.cs" />
+    <Compile Include="QPushButton.cs" />
+    <Compile Include="QToolButton.cs" />
+    <Compile Include="QCommandLinkButton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

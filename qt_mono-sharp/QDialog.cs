@@ -38,12 +38,13 @@ namespace Qt
 			if (disposing)
 			{
 				if (Handle != IntPtr.Zero)
+				{
 					qt_dialog_delete (Handle);
-				Raw = IntPtr.Zero;
+					Raw = IntPtr.Zero;
+				}
 			}
 			base.Dispose (disposing);
 		}
-
 		#endregion
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -6,11 +6,14 @@ namespace Qt
 	public class Action : Object
 	{
 		public event EventHandler<bool> TriggerEvent;
+		public event EventHandler HoveredEvent;
 
 		public Action (IntPtr raw) : base(raw) { }
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern IntPtr qt_action_new(Action thisObject, IntPtr parent);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void qt_action_delete(IntPtr raw);
 		public Action(Object parent = null)
 			: base(IntPtr.Zero)
 		{
@@ -24,6 +27,22 @@ namespace Qt
 		{
 			Raw = qt_action_text_new (this, text, parent == null ? IntPtr.Zero : parent.Handle);
 		}
+
+		#region IDisposable implementation
+		protected override void Dispose (bool disposing)
+		{
+			// free managed resources
+			if (disposing)
+			{
+				if (Handle != IntPtr.Zero)
+				{
+					qt_action_delete (Handle);
+					Raw = IntPtr.Zero;
+				}
+			}
+			base.Dispose (disposing);
+		}
+		#endregion
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern string qt_action_text_get(IntPtr raw);
@@ -85,6 +104,12 @@ namespace Qt
 		{
 			var tmp = TriggerEvent;
 			tmp?.Invoke (this, _checked);
+		}
+
+		private void OnHovered ()
+		{
+			var tmp = HoveredEvent;
+			tmp?.Invoke (this, EventArgs.Empty);
 		}
 	}
 }

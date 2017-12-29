@@ -7,6 +7,8 @@ namespace Qt
 	{
 		public new event EventHandler<KeyEvent> KeyPressEvent;
 		public new event EventHandler<KeyEvent> KeyReleaseEvent;
+		public event EventHandler<Action> TriggerEvent;
+		public event EventHandler<Action> HoveredEvent;
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern IntPtr qt_menu_new (Menu thisObject, IntPtr parent);
@@ -52,10 +54,6 @@ namespace Qt
 				}
 			}
 			base.Dispose (disposing);
-		}
-		private void OnRawDeleted()
-		{
-			Raw = IntPtr.Zero;
 		}
 		#endregion
 
@@ -117,6 +115,24 @@ namespace Qt
 			var tmp = KeyReleaseEvent;
 			tmp?.Invoke (this, ev);
 			return ev.Accepted;
+		}
+
+		private void OnTriggered (IntPtr action)
+		{
+			var acObj = GetObjectFromRaw (action) as Action;
+			if (acObj == null)
+				acObj = new Action (action);
+			var tmp = TriggerEvent;
+			tmp?.Invoke (this, acObj);
+		}
+
+		private void OnHovered (IntPtr action)
+		{
+			var acObj = GetObjectFromRaw (action) as Action;
+			if (acObj == null)
+				acObj = new Action (action);
+			var tmp = HoveredEvent;
+			tmp?.Invoke (this, acObj);
 		}
 	}
 }

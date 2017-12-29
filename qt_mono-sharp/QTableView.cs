@@ -133,10 +133,6 @@ namespace Qt
 			qt_tableview_resizecolstocontents (Handle);
 		}
 
-		public void SortByColumn (int col)
-		{
-		}
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_tableview_grid_show (IntPtr raw, bool show);
 		public void ShowGrid (bool show)

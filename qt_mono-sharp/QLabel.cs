@@ -40,7 +40,7 @@ namespace Qt
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern string qt_label_text_get(IntPtr raw);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern void qt_label_text_set(IntPtr raw, string alignment);
+		protected static extern void qt_label_text_set(IntPtr raw, string text);
 		public string Text
 		{
 			get
@@ -89,30 +89,11 @@ namespace Qt
             }
         }
 
-		private string stringAlignment
-		{
-			get
-			{
-				return Alignment.ToString();
-			}
-			set
-			{
-				Alignment alignment = default(Alignment);
-				var s = value;
-				var strenums = s.Split (new[]{ '|' });
-				foreach (var strenum in strenums)
-				{
-					alignment |= (Alignment)Alignment.Parse (typeof(Alignment), strenum.Replace("Qt::", ""));
-				}
-				Alignment = alignment;
-			}
-		}
-
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern TextInteractionFlags qt_label_textinteractionflags_get(IntPtr raw);
+		protected static extern TextInteractionFlag qt_label_textinteractionflags_get(IntPtr raw);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		protected static extern void qt_label_textinteractionflags_set(IntPtr raw, TextInteractionFlags flag);
-		public TextInteractionFlags TextInteractionFlags
+		protected static extern void qt_label_textinteractionflags_set(IntPtr raw, TextInteractionFlag flag);
+		public TextInteractionFlag TextInteractionFlags
 		{
 			get
 			{
@@ -156,18 +137,56 @@ namespace Qt
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern bool qt_label_scaledcontents_get(IntPtr raw);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_label_scaledcontents_set(IntPtr raw, bool scaled);
 		public bool ScaledContents{
-			get;
-			set;
+			get
+			{
+				return qt_label_scaledcontents_get(Handle);
+			}
+			set
+			{
+				qt_label_scaledcontents_set(Handle, value);
+			}
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern bool qt_label_wordwrap_get(IntPtr raw);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_label_wordwrap_set(IntPtr raw, bool wrap);
 		public bool WordWrap{
-			get;
-			set;
+			get
+			{
+				return qt_label_wordwrap_get(Handle);
+			}
+			set
+			{
+				qt_label_wordwrap_set(Handle, value);
+			}
 		}
 
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern int qt_label_margin_get(IntPtr raw);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_label_margin_set(IntPtr raw, int margin);
+		public int Margin{
+			get
+			{
+				return qt_label_margin_get(Handle);
+			}
+			set
+			{
+				qt_label_margin_set(Handle, value);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern bool qt_label_clear(IntPtr raw);
 		public void Clear()
 		{
+			qt_label_clear (Handle);
 		}
     }
 }

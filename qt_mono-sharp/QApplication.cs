@@ -31,6 +31,22 @@ namespace Qt
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_application_style_get ();
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_application_style_set (IntPtr style);
+		public static Style Style
+		{
+			get
+			{
+				return new Style(qt_application_style_get());
+			}
+			set
+			{
+				qt_application_style_set(value.Handle);
+			}
+		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_application_desktop_get ();
 		public static DesktopWidget Desktop
 		{

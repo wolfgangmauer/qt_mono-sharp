@@ -87,16 +87,21 @@ namespace Qt
 			return this;
 		}
 
+		public List<T> FindChildren<T>(string aName = "", FindChildOption options = FindChildOption.FindChildrenRecursively)
+		{
+			var t = typeof(T);
+			var qtName = "Q" + t.Name;
+			return null;
+		}
+
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern void qt_native_delegate_set (IntPtr raw, Delegate method);
-
 		protected virtual void CreateNativeObject (Delegate method = null)
 		{
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		protected static extern IntPtr qt_object_find (IntPtr raw, string objectName);
-
 		public static IntPtr FindRawObject (IntPtr raw, string objectName)
 		{
 			return qt_object_find (raw, objectName);
@@ -117,10 +122,8 @@ namespace Qt
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static string qt_objectname_get (IntPtr handle);
-
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static void qt_objectname_set (IntPtr handle, string name);
-
 		public string ObjectName {
 			get {
 				if (Handle == IntPtr.Zero)

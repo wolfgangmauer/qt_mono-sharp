@@ -31,6 +31,23 @@ namespace Qt
 			Raw = qt_mainwindow_new (this, parent != null ? parent.Handle : IntPtr.Zero, f);
 			new UiLoader ().Load (this, uiFile);
 		}
+
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern IntPtr qt_mainwindow_menubar_get (IntPtr raw);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		protected static extern void qt_mainwindow_menubar_set (IntPtr raw, IntPtr menubar);
+		public MenuBar MenuBar
+		{
+			get
+			{
+				var ptr = qt_mainwindow_menubar_get (Handle);
+				return ptr == IntPtr.Zero ? null : new MenuBar (ptr);
+			}
+			set
+			{
+				qt_mainwindow_menubar_set (Handle, value.Handle);
+			}
+		}
 	}
 }
 

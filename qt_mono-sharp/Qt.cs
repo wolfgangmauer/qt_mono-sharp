@@ -3,6 +3,24 @@ using System.Xml.Serialization;
 
 namespace Qt
 {
+	[Flags]
+	public enum TextInteractionFlag {
+		NoTextInteraction         = 0,
+		TextSelectableByMouse     = 1,
+		TextSelectableByKeyboard  = 2,
+		LinksAccessibleByMouse    = 4,
+		LinksAccessibleByKeyboard = 8,
+		TextEditable              = 16,
+		TextEditorInteraction     = TextSelectableByMouse | TextSelectableByKeyboard | TextEditable,
+		TextBrowserInteraction    = TextSelectableByMouse | LinksAccessibleByMouse | LinksAccessibleByKeyboard
+	}
+
+	[Flags]
+	public enum FindChildOption
+	{
+		FindDirectChildrenOnly = 0x0,
+		FindChildrenRecursively = 0x1
+	}
 
 	public enum TransformationMode {
 		FastTransformation,
@@ -173,18 +191,6 @@ namespace Qt
 	{
 		Horizontal = 0x1,
 		Vertical = 0x2
-	}
-
-	public enum TextInteractionFlags : uint
-	{
-		NoTextInteraction = 0,
-		TextSelectableByMouse = 1,
-		TextSelectableByKeyboard = 2,
-		LinksAccessibleByMouse = 4,
-		LinksAccessibleByKeyboard = 8,
-		TextEditable = 16,
-		TextEditorInteraction = TextSelectableByMouse | TextSelectableByKeyboard | TextEditable,
-		TextBrowserInteraction = TextSelectableByMouse | LinksAccessibleByMouse | LinksAccessibleByKeyboard
 	}
 
 	[Flags]
