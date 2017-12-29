@@ -1,4 +1,5 @@
 ﻿#include <QScreen>
+#include <QVariant>
 
 #include "QGlueApplication.h"
 #include "QGlueLabel.h"
@@ -24,6 +25,7 @@
 #include "QGluePushButton.h"
 #include "QGlueToolButton.h"
 #include "QGlueCommandLinkButton.h"
+#include "QGlueComboBox.h"
 
 #include <QtPlatformHeaders/qeglfsfunctions.h>
 
@@ -845,6 +847,111 @@ GlueToolButton* qt_toolbutton_new(MonoObject* thisObject, QWidget* parent)
 QSize* qt_toolbutton_sizehint_get(GlueToolButton* button)
 {
 	return new QSize(button->sizeHint());
+}
+
+GlueComboBox* qt_combobox_new(MonoObject* thisObject, QWidget* parent)
+{
+	return new GlueComboBox(thisObject, parent);
+}
+
+QSize* qt_combobox_sizehint_get(GlueComboBox* combobox)
+{
+	return new QSize(combobox->sizeHint());
+}
+
+int qt_combobox_modelcolumn_get(GlueComboBox* combobox)
+{
+	return combobox->modelColumn();
+}
+
+void qt_combobox_modelcolumn_set(GlueComboBox* combobox, int visibleColumn)
+{
+	combobox->setModelColumn(visibleColumn);
+}
+
+QAbstractItemModel* qt_combobox_model_get(GlueComboBox* combobox)
+{
+	return combobox->model();
+}
+
+void qt_combobox_model_set(GlueComboBox* combobox, QAbstractItemModel* model)
+{
+	combobox->setModel(model);
+}
+
+MonoString* qt_combobox_itemtext_get(GlueComboBox* combobox, int index)
+{
+	return mono_string_new(mono_domain_get (), combobox->itemText(index).toStdString().c_str());
+}
+
+void qt_combobox_itemtext_set(GlueComboBox* combobox, int index, MonoString* text)
+{
+	char* p = mono_string_to_utf8(text);
+	combobox->setItemText(index, p);
+	g_free(p);
+}
+
+QIcon* qt_combobox_itemicon_get(GlueComboBox* combobox, int index)
+{
+	return new QIcon(combobox->itemIcon(index));
+}
+
+void qt_combobox_itemicon_set(GlueComboBox* combobox, int index, QIcon* icon)
+{
+	combobox->setItemIcon(index, *icon);
+}
+
+MonoObject* qt_combobox_itemdata_get(GlueComboBox* combobox, int index, int role)
+{
+	return mono_gchandle_get_target(combobox->itemData(index, role).toUInt());
+}
+
+void qt_combobox_itemdata_set(GlueComboBox* combobox, int index, MonoObject* userData, int role)
+{
+	guint32 data = mono_gchandle_new(userData, TRUE);
+	combobox->setItemData(index, data, role);
+}
+
+void qt_combobox_item_text_add(GlueComboBox* combobox, MonoString* text, MonoObject* userData)
+{
+	char* p = mono_string_to_utf8(text);
+	guint32 data = mono_gchandle_new(userData, TRUE);
+	combobox->addItem(p, data);
+	g_free(p);
+}
+
+void qt_combobox_item_icon_text_add(GlueComboBox* combobox, QIcon *icon, MonoString* text, MonoObject* userData)
+{
+	char* p = mono_string_to_utf8(text);
+	guint32 data = mono_gchandle_new(userData, TRUE);
+	combobox->addItem(*icon, p, data);
+	g_free(p);
+}
+
+void qt_combobox_item_text_insert(GlueComboBox* combobox, int index, MonoString* text, MonoObject* userData)
+{
+	char* p = mono_string_to_utf8(text);
+	guint32 data = mono_gchandle_new(userData, TRUE);
+	combobox->insertItem(index, p, data);
+	g_free(p);
+}
+
+void qt_combobox_item_icon_text_insert(GlueComboBox* combobox, int index, QIcon *icon, MonoString* text, MonoObject* userData)
+{
+	char* p = mono_string_to_utf8(text);
+	guint32 data = mono_gchandle_new(userData, TRUE);
+	combobox->insertItem(index, *icon, p, data);
+	g_free(p);
+}
+
+void qt_combobox_separator_insert(GlueComboBox* combobox, int index)
+{
+	combobox->insertSeparator(index);
+}
+
+void qt_combobox_item_remove(GlueComboBox* combobox, int index)
+{
+	combobox->removeItem(index);
 }
 
 GlueProgressBar* qt_progressbar_new(MonoObject* thisObject, QWidget* parent)
@@ -2154,6 +2261,25 @@ extern "C" void qt_application_monointernal_init()
 
 	mono_add_internal_call ("Qt.ToolButton::qt_toolbutton_new", reinterpret_cast<void*>(qt_toolbutton_new));
 	mono_add_internal_call ("Qt.ToolButton::qt_toolbutton_sizehint_get", reinterpret_cast<void*>(qt_toolbutton_sizehint_get));
+
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_new", reinterpret_cast<void*>(qt_combobox_new));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_sizehint_get", reinterpret_cast<void*>(qt_combobox_sizehint_get));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_modelcolumn_get", reinterpret_cast<void*>(qt_combobox_modelcolumn_get));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_modelcolumn_set", reinterpret_cast<void*>(qt_combobox_modelcolumn_set));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_model_get", reinterpret_cast<void*>(qt_combobox_model_get));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_model_set", reinterpret_cast<void*>(qt_combobox_model_set));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_itemtext_get", reinterpret_cast<void*>(qt_combobox_itemtext_get));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_itemtext_set", reinterpret_cast<void*>(qt_combobox_itemtext_set));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_itemicon_get", reinterpret_cast<void*>(qt_combobox_itemicon_get));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_itemicon_set", reinterpret_cast<void*>(qt_combobox_itemicon_set));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_itemdata_get", reinterpret_cast<void*>(qt_combobox_itemdata_get));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_itemdata_set", reinterpret_cast<void*>(qt_combobox_itemdata_set));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_item_text_add", reinterpret_cast<void*>(qt_combobox_item_text_add));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_item_icon_text_add", reinterpret_cast<void*>(qt_combobox_item_icon_text_add));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_item_text_insert", reinterpret_cast<void*>(qt_combobox_item_text_insert));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_item_icon_text_insert", reinterpret_cast<void*>(qt_combobox_item_icon_text_insert));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_separator_insert", reinterpret_cast<void*>(qt_combobox_separator_insert));
+	mono_add_internal_call ("Qt.ComboBox::qt_combobox_item_remove", reinterpret_cast<void*>(qt_combobox_item_remove));
 
 	mono_add_internal_call ("Qt.Frame::qt_frame_new", reinterpret_cast<void*>(qt_frame_new));
 	mono_add_internal_call ("Qt.Frame::qt_frame_shape_get", reinterpret_cast<void*>(qt_frame_shape_get));

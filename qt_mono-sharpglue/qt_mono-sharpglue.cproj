@@ -105,6 +105,7 @@
     <Compile Include="QGluePushButton.cpp" />
     <Compile Include="QGlueToolButton.cpp" />
     <Compile Include="QGlueCommandLinkButton.cpp" />
+    <Compile Include="QGlueComboBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="QGlueApplication.h" />
@@ -137,5 +138,6 @@
     <None Include="QGluePushButton.h" />
     <None Include="QGlueToolButton.h" />
     <None Include="QGlueCommandLinkButton.h" />
+    <None Include="QGlueComboBox.h" />
   </ItemGroup>
 </Project>
