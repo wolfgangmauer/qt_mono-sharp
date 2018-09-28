@@ -9,73 +9,40 @@ More Widgets/Functions can be implemented as needed.
 
 ### Namespace Qt
 
-  PushButton
-  
-  CheckBox
-  
-  ComboBox
-  
-  ToolButton
-  
-  CommandLinkButton
-
-  Rect
-  
-  Size
-  
-  SizePolicy
-  
-  Style
-  
-  Menu
-  
-  Font
-  
-  Action
-  
-  Application
-  
-  GuiApplication
-  
-  CoreApplication
-  
-  MainWindow
-  
-  Dialog
-  
-  Object
-  
-  Widget
-  
-  Line
-  
-  Frame
-  
-  Label
-  
-  ProgressBar
-  
-  Layout
-  
-  BoxLayout
-  
-  GridLayout
-  
-  HBoxLayout
-  
-  VBoxLayout
-  
-  UiLoader
-  
-  UiLoaderAttribute
-  
-  TableView
-  
-  TableWidget
-  
-  ListView
-  
-  ListWidget
+  - PushButton
+  - CheckBox
+  - ComboBox
+  - ToolButton
+  - CommandLinkButton
+  - Rect
+  - Size
+  - SizePolicy
+  - Style
+  - Menu
+  - Font
+  - Action
+  - Application
+  - GuiApplication
+  - CoreApplication
+  - MainWindow
+  - Dialog
+  - Object
+  - Widget
+  - Line
+  - Frame
+  - Label
+  - ProgressBar
+  - Layout
+  - BoxLayout
+  - GridLayout
+  - HBoxLayout
+  - VBoxLayout
+  - UiLoader
+  - UiLoaderAttribute
+  - TableView
+  - TableWidget
+  - ListView
+  - ListWidget
   
   ....
   
