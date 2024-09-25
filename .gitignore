@@ -6,3 +6,9 @@
 /qt-sharp/obj/Debug/qt_mono-sharp.dll
 /qt-sharp/obj/Debug/qt_mono-sharp.pdb
 /qt-sharp/obj/Debug
+/qt_mono-sharp/obj/Debug
+/qt_mono-sharp/.vs
+/libqt-sharp
+/.vs/qt_mono-sharp
+/example/obj/x64/Debug
+/example/bin/Debug
