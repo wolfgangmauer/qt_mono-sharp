@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace Qt
 		public Application(string[] argv) : base(IntPtr.Zero)
         {
 			if (!monointernal_init)
-				InitMonoInternal ();
+                QtApplicationMonoInit();
 			var ass = Assembly.GetEntryAssembly ().CodeBase.Replace("file://", string.Empty);
 			var list = new List<string> (argv);
 			list.Insert (0, ass);
@@ -89,43 +88,43 @@ namespace Qt
 			qt_application_events_process (flags);
 		}
 
-		internal class InvokeCB 
-		{
-			EventHandler d;
-			object sender;
-			EventArgs args;
+		//internal class InvokeCB 
+		//{
+		//	EventHandler d;
+		//	object sender;
+		//	EventArgs args;
 
-			internal InvokeCB (EventHandler d)
-			{
-				this.d = d;
-				args = EventArgs.Empty;
-				sender = this;
-			}
+		//	internal InvokeCB (EventHandler d)
+		//	{
+		//		this.d = d;
+		//		args = EventArgs.Empty;
+		//		sender = this;
+		//	}
 
-			internal InvokeCB (EventHandler d, object sender, EventArgs args)
-			{
-				this.d = d;
-				this.args = args;
-				this.sender = sender;
-			}
+		//	internal InvokeCB (EventHandler d, object sender, EventArgs args)
+		//	{
+		//		this.d = d;
+		//		this.args = args;
+		//		this.sender = sender;
+		//	}
 
-			internal bool Invoke ()
-			{
-				d (sender, args);
-				return false;
-			}
-		}
+		//	internal bool Invoke ()
+		//	{
+		//		d (sender, args);
+		//		return false;
+		//	}
+		//}
 
-		public static void Invoke (EventHandler d)
-		{
-			InvokeCB icb = new InvokeCB (d);
-			GLib.Timeout.Add (0, new GLib.TimeoutHandler (icb.Invoke));
-		}
+		//public static void Invoke (EventHandler d)
+		//{
+		//	InvokeCB icb = new InvokeCB (d);
+		//	GLib.Timeout.Add (0, new GLib.TimeoutHandler (icb.Invoke));
+		//}
 
-		public static void Invoke (object sender, EventArgs args, EventHandler d)
-		{
-			InvokeCB icb = new InvokeCB (d, sender, args);
-			GLib.Timeout.Add (0, new GLib.TimeoutHandler (icb.Invoke));
-		}
+		//public static void Invoke (object sender, EventArgs args, EventHandler d)
+		//{
+		//	InvokeCB icb = new InvokeCB (d, sender, args);
+		//	GLib.Timeout.Add (0, new GLib.TimeoutHandler (icb.Invoke));
+		//}
     }
 }

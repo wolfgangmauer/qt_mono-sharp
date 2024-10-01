@@ -14,7 +14,7 @@ namespace Qt
 		public GuiApplication(string[] argv) : base(IntPtr.Zero)
         {
 			if (!monointernal_init)
-				InitMonoInternal ();
+                QtApplicationMonoInit();
             Raw = qt_guiapplication_new();
         }
 

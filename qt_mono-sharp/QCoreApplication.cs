@@ -15,7 +15,7 @@ namespace Qt
         public CoreApplication(string[] argv) : base(IntPtr.Zero)
         {
 			if (!monointernal_init)
-				InitMonoInternal ();
+                QtApplicationMonoInit();
             Raw = qt_coreapplication_new();
         }
 
@@ -26,9 +26,9 @@ namespace Qt
 			qt_coreapplication_quit ();
 		}
 
-		[DllImport("qt_mono-sharpglue", SetLastError = true)]
+		[DllImport("qt_mono-sharp", SetLastError = true)]
 		public static extern void qt_application_monointernal_init();
-		public static void InitMonoInternal()
+		public static void QtApplicationMonoInit()
 		{
 			qt_application_monointernal_init ();
 			monointernal_init = true;
@@ -41,7 +41,7 @@ namespace Qt
 			set
 			{
 				if (!monointernal_init)
-					InitMonoInternal ();
+                    QtApplicationMonoInit();
 				qt_application_attribute_set (value);
 			}
 		}

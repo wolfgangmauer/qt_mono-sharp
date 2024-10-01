@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace Qt
 {
-	public enum PolicyFlag {
+    public enum PolicyFlag {
 		GrowFlag = 1,
 		ExpandFlag = 2,
 		ShrinkFlag = 4,

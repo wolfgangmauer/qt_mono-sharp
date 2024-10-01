@@ -783,8 +783,8 @@ namespace Qt
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		protected static extern ushort qt_keyevent_count_get(IntPtr raw);
-		public ushort Count
+		protected static extern int qt_keyevent_count_get(IntPtr raw);
+		public int Count
 		{
 			get{ return qt_keyevent_count_get (Handle); }
 		}

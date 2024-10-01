@@ -12,3 +12,4 @@
 /.vs/qt_mono-sharp
 /example/obj/x64/Debug
 /example/bin/Debug
+/qt_mono-sharp/Debug/bin

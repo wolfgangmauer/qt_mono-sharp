@@ -9,7 +9,6 @@ namespace Qt
 		public event EventHandler ReleasedEvent;
 		public event EventHandler<bool> ClickedEvent;
 		public event EventHandler<bool> ToggledEvent;
-
 		protected AbstractButton (IntPtr raw) : base (raw) { }
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -9,7 +9,6 @@ namespace Qt
 	{
 		public event EventHandler<int> ActivatedByIndex;
 		public event EventHandler<string> ActivatedByString;
-
 		public ComboBox (IntPtr raw) : base(raw) {}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

@@ -8,10 +8,10 @@ namespace Qt
 		public IntPtr Handle { get ; private set; }
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern IntPtr qt_painter_new (Painter thisObject, IntPtr pixmap);
+		private static extern IntPtr qt_painter_new (IntPtr pixmap);
 		public Painter (Pixmap pixmap)
 		{
-			Handle = qt_painter_new (this, pixmap.Handle);
+			Handle = qt_painter_new (pixmap.Handle);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]

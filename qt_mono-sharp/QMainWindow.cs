@@ -36,7 +36,7 @@ namespace Qt
 		protected static extern IntPtr qt_mainwindow_menubar_get (IntPtr raw);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		protected static extern void qt_mainwindow_menubar_set (IntPtr raw, IntPtr menubar);
-		public MenuBar MenuBar
+        public MenuBar MenuBar
 		{
 			get
 			{
