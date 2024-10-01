@@ -26,7 +26,7 @@ namespace Qt
 			qt_coreapplication_quit ();
 		}
 
-		[DllImport("qt_mono-sharp", SetLastError = true)]
+		[DllImport("qt-mono-sharp", SetLastError = true)]
 		public static extern void qt_application_monointernal_init();
 		public static void QtApplicationMonoInit()
 		{
